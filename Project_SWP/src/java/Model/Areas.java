@@ -13,22 +13,24 @@ public class Areas {
     private String name;
     private String location;
     private String manager_id;
+    private int  emptyCourt;
 
-    public Areas() {
-    }
-
-    public Areas(String area_id, String name, String location, String manager_id) {
+    public Areas(String area_id, String name, String location, String manager_id, int emptyCourt) {
         this.area_id = area_id;
         this.name = name;
         this.location = location;
         this.manager_id = manager_id;
+        this.emptyCourt = emptyCourt;
     }
 
-    public String getAreaId() {
+    public Areas() {
+    }
+
+    public String getArea_id() {
         return area_id;
     }
 
-    public void setAreaId(String area_id) {
+    public void setArea_id(String area_id) {
         this.area_id = area_id;
     }
 
@@ -55,6 +57,17 @@ public class Areas {
     public void setManager_id(String manager_id) {
         this.manager_id = manager_id;
     }
+
+    public int getEmptyCourt() {
+        return emptyCourt;
+    }
+
+    public void setEmptyCourt(int emptyCourt) {
+        this.emptyCourt = emptyCourt;
+    }
+
+   
+    
     
     
 }

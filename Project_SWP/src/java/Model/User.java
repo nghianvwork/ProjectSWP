@@ -15,7 +15,7 @@ public class User {
     private String username;
     private String password;
     private String email;
-    private String phone_number;
+    private String phone_number ;
     private String role;
     private  LocalDateTime createdAt = LocalDateTime.now();
 
