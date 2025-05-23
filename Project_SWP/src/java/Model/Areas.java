@@ -20,7 +20,7 @@ public class Areas {
         this.name = name;
         this.location = location;
         this.manager_id = manager_id;
-        this.emptyCourt = emptyCourt;
+        this.emptyCourt = emptyCourt ;
     }
 
     public Areas() {
