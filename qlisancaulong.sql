@@ -20,6 +20,7 @@ CREATE TABLE Areas (
     name VARCHAR(100) NOT NULL,
     location VARCHAR(255),
     manager_id INT NOT NULL,
+	EmptyCourt  INT,
     FOREIGN KEY (manager_id) REFERENCES Users(user_id)
 );
 
@@ -123,7 +124,7 @@ CREATE TABLE Reviews (
     comment VARCHAR(MAX),
     created_at DATETIME DEFAULT GETDATE(),
     FOREIGN KEY (user_id) REFERENCES Users(user_id),
-    FOREIGN KEY (court_id) REFERENCES Courts(court_id)
+    FOREIGN KEY (area_id) REFERENCES Areas(area_id)
 );
 
 -- ==========================

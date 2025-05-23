@@ -143,7 +143,7 @@
                                 <div class="modal-body">
                                     <div class="form-group">
                                         <label>Region Name</label>
-                                        <input type="text" name="departmentName" class="form-control" required>
+                                        <input type="text" name="regionName" class="form-control" required>
                                     </div>
                                     <div class="form-group">
                                         <label>Address</label>
@@ -151,7 +151,7 @@
                                     </div>
                                     <div class="form-group">
                                         <label>Empty Court</label>
-                                        <input type="number" name="emptyRoom" class="form-control" value="0" min="0">
+                                        <input type="number" name="emptyCourt" class="form-control" value="0" min="0">
                                     </div>
                                 </div>
                                 <div class="modal-footer">

@@ -8,6 +8,10 @@ import Dal.DBContext;
 import Model.Areas;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -45,6 +49,47 @@ public class AreaDAO extends DBContext {
              System.out.println(e.getMessage());
         }
     }
+    public int countAreasByManagerId(String id){
+        String sql  ="SELECT count(*) as Total FROM Areas where manager_id = ?";
+        try {
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setString(1, id);
+            ResultSet rs = stmt.executeQuery();
+            while(rs.next()){
+                return rs.getInt("Toltal");
+            }
+        } catch (Exception e) {
+            System.out.println("getAllAreas: " + e.getMessage());
+        }
+        return 0;
+    }
+    public List<Areas> getAllByManagerID(String id, int pageNum,int pageSize){
+        List<Areas> list = new ArrayList<>();
+        String sql = "SELECT * FROM Areas where manager_id = ? and 1 = 1\n" +
+"                + ORDER BY area_id OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+        try{
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setString(1, id);
+            stmt.setInt(2, pageNum);
+            stmt.setInt(3, pageSize);
+            ResultSet rs = stmt.executeQuery();
+            while(rs.next()){
+                String areasID = rs.getString("area_id");
+                String areaName = rs.getString("name");
+                String location = rs.getString("location");
+                String managerID = rs.getString("manager_id");
+                int emptyCourt = rs.getInt("EmptyCourt");
+                Areas ar = new Areas(areasID, areaName, location, managerID, emptyCourt);
+                list.add(ar);
+                
+            }
+        }catch(SQLException e){
+            System.out.println("getAllArea: " + e.getMessage());
+            
+        }
+        return list;
+    }
+    
     public static void main(String[] args) {
        AreaDAO areaDAO = new AreaDAO();
 
