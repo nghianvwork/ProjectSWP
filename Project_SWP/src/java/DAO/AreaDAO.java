@@ -63,32 +63,35 @@ public class AreaDAO extends DBContext {
         }
         return 0;
     }
-    public List<Areas> getAllByManagerID(String id, int pageNum,int pageSize){
-        List<Areas> list = new ArrayList<>();
-        String sql = "SELECT * FROM Areas where manager_id = ? and 1 = 1\n" +
-"                + ORDER BY area_id OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
-        try{
-            PreparedStatement stmt = conn.prepareStatement(sql);
-            stmt.setString(1, id);
-            stmt.setInt(2, pageNum);
-            stmt.setInt(3, pageSize);
-            ResultSet rs = stmt.executeQuery();
-            while(rs.next()){
-                String areasID = rs.getString("area_id");
-                String areaName = rs.getString("name");
-                String location = rs.getString("location");
-                String managerID = rs.getString("manager_id");
-                int emptyCourt = rs.getInt("EmptyCourt");
-                Areas ar = new Areas(areasID, areaName, location, managerID, emptyCourt);
-                list.add(ar);
-                
-            }
-        }catch(SQLException e){
-            System.out.println("getAllArea: " + e.getMessage());
-            
+   public List<Areas> getAllByManagerID(String id, int pageNum, int pageSize) {
+    List<Areas> list = new ArrayList<>();
+    String sql = "SELECT * FROM Areas WHERE manager_id = ? ORDER BY area_id OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+
+    try {
+        PreparedStatement stmt = conn.prepareStatement(sql);
+        stmt.setString(1, id);
+        stmt.setInt(2, pageNum * pageSize); // OFFSET = số dòng cần bỏ qua
+        stmt.setInt(3, pageSize); // Số dòng cần lấy
+        ResultSet rs = stmt.executeQuery();
+
+        while (rs.next()) {
+            String areasID = rs.getString("area_id");
+            String areaName = rs.getString("name");
+            String location = rs.getString("location");
+            String managerID = rs.getString("manager_id");
+            int emptyCourt = rs.getInt("EmptyCourt");
+
+            Areas ar = new Areas(areasID, areaName, location, managerID, emptyCourt);
+            list.add(ar);
         }
-        return list;
+
+    } catch (SQLException e) {
+        System.out.println("getAllByManagerID: " + e.getMessage());
     }
+
+    return list;
+}
+
     
     public static void main(String[] args) {
        AreaDAO areaDAO = new AreaDAO();
@@ -104,5 +107,23 @@ public class AreaDAO extends DBContext {
     areaDAO.addRegion(newArea);
     
     System.out.println("Đã thêm khu vực thành công!");
+     String managerId = "2";
+    int pageNum = 0; // OFFSET sẽ là 0
+    int pageSize = 5;
+
+    List<Areas> areas = areaDAO.getAllByManagerID(managerId, pageNum, pageSize);
+
+    if (areas.isEmpty()) {
+        System.out.println("Không có khu vực nào được tìm thấy cho manager_id: " + managerId);
+    } else {
+        for (Areas area : areas) {
+            System.out.println("ID: " + area.getArea_id());
+            System.out.println("Tên khu: " + area.getName());
+            System.out.println("Địa chỉ: " + area.getLocation());
+            System.out.println("Quản lý: " + area.getManager_id());
+            System.out.println("Sân trống: " + area.getEmptyCourt());
+            System.out.println("---------------");
+        }
+    }
     }
 }

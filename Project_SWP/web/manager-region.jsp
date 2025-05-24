@@ -65,15 +65,15 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <c:forEach var="dorm" items="${dormList}" varStatus="loop">
+                        <c:forEach var="area" items="${area}" varStatus="loop">
                             <tr>
-                                <td>${dorm.name}</td>
-                                <td>${dorm.address}</td>
-                                <td>${dorm.emptyRoom}</td>
+                                <td>${area.name}</td>
+                                <td>${area.location}</td>
+                                <td>${area.emptyCourt}</td>
                                 <td>
                                     <button class="btn btn-warning btn-sm" data-toggle="modal" data-target="#updateModal${loop.index}">Update</button>
-                                    <a href="dorm-detail?id=${dorm.id}" class="btn btn-info btn-sm">Detail</a>
-                                    <a href="delete-dorm?id=${dorm.id}" class="btn btn-danger btn-sm" onclick="return confirmDelete()">Delete</a>
+                                    <a href="dorm-detail?id=${area.area_id}" class="btn btn-info btn-sm">Detail</a>
+                                    <a href="delete-dorm?id=${area.area_id}" class="btn btn-danger btn-sm" onclick="return confirmDelete()">Delete</a>
 
                                     <!-- Update Modal -->
                                     <div class="modal fade" id="updateModal${loop.index}" tabindex="-1" role="dialog">
@@ -85,18 +85,18 @@
                                                         <button type="button" class="close text-white" data-dismiss="modal">&times;</button>
                                                     </div>
                                                     <div class="modal-body">
-                                                        <input type="hidden" name="regionID" value="${dorm.id}">
+                                                        <input type="hidden" name="regionID" value="${area.area_id}">
                                                         <div class="form-group">
                                                             <label>Region Name</label>
-                                                            <input type="text" name="RegionName" class="form-control" value="${dorm.name}" required>
+                                                            <input type="text" name="RegionName" class="form-control" value="${area.name}" required>
                                                         </div>
                                                         <div class="form-group">
                                                             <label>Address</label>
-                                                            <input type="text" name="address" class="form-control" value="${dorm.address}">
+                                                            <input type="text" name="address" class="form-control" value="${area.location}">
                                                         </div>
                                                         <div class="form-group">
                                                             <label>Empty Court</label>
-                                                            <input type="number" name="empty" class="form-control" value="${dorm.emptyRoom}">
+                                                            <input type="number" name="empty" class="form-control" value="${area.emptyCourt}">
                                                         </div>
                                                     </div>
                                                     <div class="modal-footer">
@@ -116,15 +116,15 @@
                 <!-- Pagination -->
                 <ul class="pagination justify-content-center mt-4">
                     <li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
-                        <a class="page-link" href="manage-department?page=${currentPage - 1}">Previous</a>
+                        <a class="page-link" href="view-region?page=${currentPage - 1}">Previous</a>
                     </li>
                     <c:forEach begin="1" end="${numberOfPages}" var="i">
                         <li class="page-item ${currentPage == i ? 'active' : ''}">
-                            <a class="page-link" href="manage-department?page=${i}">${i}</a>
+                            <a class="page-link" href="view-region?page=${i}">${i}</a>
                         </li>
                     </c:forEach>
                     <li class="page-item ${currentPage == numberOfPages ? 'disabled' : ''}">
-                        <a class="page-link" href="manage-department?page=${currentPage + 1}">Next</a>
+                        <a class="page-link" href="view-region?page=${currentPage + 1}">Next</a>
                     </li>
                 </ul>
 
@@ -135,7 +135,7 @@
                 <div class="modal fade" id="addModal" tabindex="-1" role="dialog">
                     <div class="modal-dialog">
                         <div class="modal-content">
-                            <form action="add-dorm" method="POST">
+                            <form action="add-region" method="POST">
                                 <div class="modal-header">
                                     <h5 class="modal-title">Add Region</h5>
                                     <button type="button" class="close text-white" data-dismiss="modal">&times;</button>

@@ -11,6 +11,7 @@ import Model.User;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -20,6 +21,7 @@ import jakarta.servlet.http.HttpSession;
  *
  * @author admin
  */
+@WebServlet(name = "AddRegionController", urlPatterns = {"/add-region"})
 public class AddRegion extends HttpServlet {
    
     /** 
@@ -89,7 +91,7 @@ public class AddRegion extends HttpServlet {
                 ar.setArea_id(user.getUser_Id());
                 ar.setLocation(address);
                 dao.addRegion(ar);
-                response.sendRedirect("manage-region");
+                response.sendRedirect("manager-region");
                 
             }else{
                 response.sendError(403);

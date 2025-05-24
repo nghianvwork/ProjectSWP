@@ -51,4 +51,29 @@ public class UserDAO extends DBContext{
         user.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
         return user;
     }
+     public void updatePassword(User us) {
+        String sql = "update Users set password = ? where user_id = ?";
+        try {
+            PreparedStatement pre = conn.prepareStatement(sql);
+            pre.setString(1, us.getPassword());
+            pre.setString(2, us.getUser_Id());
+            pre.executeUpdate();
+        } catch (SQLException e) {
+
+        }
+    }
+    public static void main(String[] args) {
+    UserDAO dao = new UserDAO();
+    String testUsername = "admin1"; 
+    User user = dao.getUserByUsername(testUsername);
+    
+    if (user != null) {
+        System.out.println(user.toString());
+    } else {
+        System.out.println("User not found!");
+    }
 }
+
+}
+    
+    
