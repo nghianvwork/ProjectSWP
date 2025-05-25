@@ -4,6 +4,8 @@
  */
 package controller.manager;
 
+import DAO.UserDAO;
+import Model.User;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -79,6 +81,15 @@ public class ChangePassword extends HttpServlet {
             request.setAttribute("error", "mismatch");
             request.getRequestDispatcher("ChangePassword.jsp").forward(request, response);
             return;
+        }
+        User user = new UserDAO().getUserByUsername(username);
+        if(user != null){
+            user.setPassword(newPass);
+            new UserDAO().updatePassword(user);
+            response.sendRedirect("login");
+        }else{
+            request.setAttribute("error", "username");
+            request.getRequestDispatcher("forgot-password.jsp").forward(request, response);
         }
         
 

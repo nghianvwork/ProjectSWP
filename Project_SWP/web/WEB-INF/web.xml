@@ -4,8 +4,16 @@
         <servlet-name>java</servlet-name>
         <servlet-class>DBContext.java</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>ViewRegion</servlet-name>
+        <servlet-class>controller.manager.ViewRegion</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>java</servlet-name>
         <url-pattern>/java</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ViewRegion</servlet-name>
+        <url-pattern>/view</url-pattern>
     </servlet-mapping>
 </web-app>
