@@ -31,13 +31,12 @@ public class CourtDAO extends DBContext{
     }
 
     public void addCourt(Courts court) {
-        String sql = "INSERT INTO Courts (court_id, court_number, status, area_id) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO Courts (court_number, status, area_id) VALUES (?, ?, ?)";
         try {
             PreparedStatement ps = connection.prepareStatement(sql);
-            ps.setInt(1, court.getCourt_id());
-            ps.setString(2, court.getCourt_number());
-            ps.setString(3, court.getStatus());
-            ps.setInt(4, court.getArea_id());
+            ps.setString(1, court.getCourt_number());
+            ps.setString(2, court.getStatus());
+            ps.setInt(3, court.getArea_id());
             ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -120,12 +119,12 @@ public class CourtDAO extends DBContext{
     
     Courts newCourt = new Courts();
 
-    newCourt.setCourt_number("1");
+    newCourt.setCourt_number("san3");
     newCourt.setStatus("Available");
-    newCourt.setArea_id(1);
+    newCourt.setArea_id(4);
 
     
-    courtDAO.addCourt(newCourt);
+    courtDAO.getAllCourts();
     System.out.println("Đã thêm sân thành công!");
     
     }

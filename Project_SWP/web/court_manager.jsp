@@ -31,10 +31,10 @@
                 <div class="modal-body">
                     <form id="courtForm" action="courts" method="post">
                         <input type="hidden" name="action" value="${court != null ? 'update' : 'add'}">
-                        <input type="hidden" name="courtId" value="${court != null ? court.courtId : ''}">
+                        <input type="hidden" name="courtId" value="${court != null ? court.court_id : ''}">
                         <div class="form-group">
                             <label for="courtNumber">Mã Sân</label>
-                            <input type="text" class="form-control" id="courtNumber" name="courtNumber" value="${court != null ? court.courtNumber : ''}" required>
+                            <input type="text" class="form-control" id="courtNumber" name="courtNumber" value="${court != null ? court.court_number : ''}" required>
                         </div>
                         <div class="form-group">
                             <label for="status">Trạng Thái</label>
@@ -42,7 +42,7 @@
                         </div>
                         <div class="form-group">
                             <label for="areaId">Khu Vực ID</label>
-                            <input type="number" class="form-control" id="areaId" name="areaId" value="${court != null ? court.areaId : ''}" required>
+                            <input type="number" class="form-control" id="areaId" name="areaId" value="${court != null ? court.area_id : ''}" required>
                         </div>
                         <button type="submit" class="btn btn-primary">${court != null ? 'Cập Nhật' : 'Lưu'}</button>
                     </form>
@@ -70,13 +70,13 @@
                 <tbody>
                 <c:forEach var="court" items="${courts}">
                     <tr>
-                        <td>${court.courtId}</td>
-                        <td>${court.courtNumber}</td>
+                        <td>${court.court_id}</td>
+                        <td>${court.court_number}</td>
                         <td>${court.status}</td>
-                        <td>${court.areaId}</td>
+                        <td>${court.area_id}</td>
                         <td>
-                            <a href="courts?action=edit&courtId=${court.courtId}" class="btn btn-sm btn-warning">Sửa</a>
-                            <button class="btn btn-sm btn-danger delete-btn" data-id="${court.courtId}">Xóa</button>
+                            <a href="courts?action=edit&courtId=${court.court_id}" class="btn btn-sm btn-warning">Sửa</a>
+                            <button class="btn btn-sm btn-danger delete-btn" data-id="${court.court_id}">Xóa</button>
                         </td>
                     </tr>
                 </c:forEach>
