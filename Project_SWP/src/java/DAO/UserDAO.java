@@ -2,24 +2,33 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package dal;
+package DAO;
 
 /**
  *
  * @author Hoang Tan Bao
  */
+import Dal.DBContext;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import model.User;
+import Model.User;
 
-public class UserDAO extends MyDAO {
-
-    // Đăng nhập
+public class UserDAO extends DBContext {
+    Connection conn;
+  public void finalize() {
+     try {
+        if(conn != null) conn.close();
+     }
+     catch(Exception e) {
+        e.printStackTrace();
+     }
+  }
+    
     public User login(String username, String password) {
         String sql = "SELECT * FROM Users WHERE username = ? AND password = ?";
         try {
-            PreparedStatement ps = con.prepareStatement(sql);
+            PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, username);
             ps.setString(2, password);
             ResultSet rs = ps.executeQuery();
@@ -45,7 +54,7 @@ public class UserDAO extends MyDAO {
         List<User> list = new ArrayList<>();
         String sql = "SELECT * FROM Users";
         try {
-            PreparedStatement ps = con.prepareStatement(sql);
+            PreparedStatement ps = conn.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 User u = new User(
@@ -68,7 +77,7 @@ public class UserDAO extends MyDAO {
     public void insertUser(User u) {
         String sql = "INSERT INTO Users (username, password, email, phone_number, role, created_at) VALUES (?, ?, ?, ?, ?, ?)";
         try {
-            PreparedStatement ps = con.prepareStatement(sql);
+            PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, u.getUsername());
             ps.setString(2, u.getPassword());
             ps.setString(3, u.getEmail());
@@ -85,7 +94,7 @@ public class UserDAO extends MyDAO {
     public void updateUser(User u) {
         String sql = "UPDATE Users SET username = ?, password = ?, email = ?, phone_number = ?, role = ? WHERE user_id = ?";
         try {
-            PreparedStatement ps = con.prepareStatement(sql);
+            PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, u.getUsername());
             ps.setString(2, u.getPassword());
             ps.setString(3, u.getEmail());
@@ -102,7 +111,7 @@ public class UserDAO extends MyDAO {
     public void deleteUser(int userId) {
         String sql = "DELETE FROM Users WHERE user_id = ?";
         try {
-            PreparedStatement ps = con.prepareStatement(sql);
+            PreparedStatement ps = conn.prepareStatement(sql);
             ps.setInt(1, userId);
             ps.executeUpdate();
         } catch (SQLException e) {
@@ -114,7 +123,7 @@ public class UserDAO extends MyDAO {
     public User getUserById(int userId) {
         String sql = "SELECT * FROM Users WHERE user_id = ?";
         try {
-            PreparedStatement ps = con.prepareStatement(sql);
+            PreparedStatement ps = conn.prepareStatement(sql);
             ps.setInt(1, userId);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
@@ -137,7 +146,7 @@ public class UserDAO extends MyDAO {
     public User getUserByUsernameOrEmail(String username, String email) {
         String sql = "SELECT * FROM Users WHERE username = ? OR email = ?";
         try {
-            PreparedStatement ps = con.prepareStatement(sql);
+            PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, username);
             ps.setString(2, email);
             ResultSet rs = ps.executeQuery();
@@ -167,7 +176,7 @@ public class UserDAO extends MyDAO {
 
         String sql = "INSERT INTO Users (username, password, email, phone_number, role) VALUES (?, ?, ?, ?, ?)";
         try {
-            PreparedStatement ps = con.prepareStatement(sql);
+            PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, user.getUsername());
             ps.setString(2, user.getPassword());
             ps.setString(3, user.getEmail());
@@ -183,7 +192,7 @@ public class UserDAO extends MyDAO {
 
     public void saveResetToken(int userId, String token) {
         String sql = "INSERT INTO password_reset_tokens (user_id, token) VALUES (?, ?)";
-        try (PreparedStatement ps = con.prepareStatement(sql)) {
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, userId);
             ps.setString(2, token);
             ps.executeUpdate();
@@ -195,7 +204,7 @@ public class UserDAO extends MyDAO {
     public boolean isValidToken(String token) {
         String sql = "SELECT * FROM password_reset_tokens "
                 + "WHERE token = ? AND is_used = 0 AND DATEDIFF(MINUTE, created_at, GETDATE()) <= 5";
-        try (PreparedStatement ps = con.prepareStatement(sql)) {
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, token);
             ResultSet rs = ps.executeQuery();
             return rs.next(); // Nếu có dòng khớp thì token còn hiệu lực
@@ -210,7 +219,7 @@ public class UserDAO extends MyDAO {
         String sql = "UPDATE Users SET password = ? "
                 + "WHERE user_id = (SELECT user_id FROM password_reset_tokens "
                 + "WHERE token = ? AND is_used = 0 AND DATEDIFF(MINUTE, created_at, GETDATE()) <= 5)";
-        try (PreparedStatement ps = con.prepareStatement(sql)) {
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, newPassword);
             ps.setString(2, token);
             int updated = ps.executeUpdate();
@@ -226,7 +235,7 @@ public class UserDAO extends MyDAO {
 
     private void markTokenUsed(String token) {
         String sql = "UPDATE password_reset_tokens SET is_used = 1 WHERE token = ?";
-        try (PreparedStatement ps = con.prepareStatement(sql)) {
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, token);
             ps.executeUpdate();
         } catch (SQLException e) {
@@ -236,7 +245,7 @@ public class UserDAO extends MyDAO {
 
    public User getUserByEmail(String email) {
     String sql = "SELECT * FROM Users WHERE email = ?";
-    try (PreparedStatement ps = con.prepareStatement(sql)) {
+    try (PreparedStatement ps = conn.prepareStatement(sql)) {
         ps.setString(1, email);
         ResultSet rs = ps.executeQuery();
         if (rs.next()) {
@@ -257,7 +266,7 @@ public class UserDAO extends MyDAO {
 
 public User getUserByUsername(String username) {
     String sql = "SELECT * FROM Users WHERE username = ?";
-    try (PreparedStatement ps = con.prepareStatement(sql)) {
+    try (PreparedStatement ps = conn.prepareStatement(sql)) {
         ps.setString(1, username);
         ResultSet rs = ps.executeQuery();
         if (rs.next()) {
@@ -275,6 +284,27 @@ public User getUserByUsername(String username) {
     }
     return null;
 }
+private User extractUserFromResultSet(ResultSet rs) throws SQLException{
+        User user = new User();
+        user.setUser_Id(rs.getString("user_id"));
+        user.setUsername(rs.getString("username"));
+        user.setPassword(rs.getString("password"));
+        user.setEmail(rs.getString("email"));
+        user.setPhone_number(rs.getString("phone_number"));
+        user.setRole(rs.getString("role"));
+        user.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
+        return user;
+    }
+     public void updatePassword(User us) {
+        String sql = "update Users set password = ? where user_id = ?";
+        try {
+            PreparedStatement pre = conn.prepareStatement(sql);
+            pre.setString(1, us.getPassword());
+            pre.setString(2, us.getUser_Id());
+            pre.executeUpdate();
+        } catch (SQLException e) {
 
+        }
+    }
 
 }

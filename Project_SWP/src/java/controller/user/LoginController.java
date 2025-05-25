@@ -4,7 +4,7 @@
  */
 package controller.user;
 
-import dal.UserDAO;
+import DAO.UserDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -14,7 +14,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import model.User;
+import Model.User;
 
 @WebServlet(name = "LoginController", urlPatterns = {"/login"})
 public class LoginController extends HttpServlet {
@@ -113,8 +113,8 @@ public class LoginController extends HttpServlet {
             }
 
             // Điều hướng tuỳ theo role
-            if ("staff".equalsIgnoreCase(user.getRole())) {
-                response.sendRedirect("staff");
+            if ("manager".equalsIgnoreCase(user.getRole())) {
+                response.sendRedirect("view-region");
             } else {
                 response.sendRedirect("home");
             }
