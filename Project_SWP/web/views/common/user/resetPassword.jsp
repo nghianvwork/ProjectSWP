@@ -1,9 +1,11 @@
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ page contentType="text/html;charset=UTF-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Register</title>
+    <title>Reset Password</title>
     <style>
         body {
             display: flex;
@@ -14,7 +16,8 @@
             font-family: Arial, sans-serif;
             background: #f0f0f0;
         }
-        .register-container {
+
+        .reset-container {
             background: rgba(255, 255, 255, 0.9);
             padding: 20px;
             border-radius: 15px;
@@ -22,17 +25,20 @@
             width: 300px;
             text-align: center;
         }
+
         h2 {
             margin-bottom: 20px;
             color: #333;
             font-size: 24px;
         }
+
         .input-group {
             position: relative;
             margin-bottom: 15px;
             text-align: left;
         }
-        .input-field, select {
+
+        .input-field {
             width: 100%;
             padding: 10px 10px 10px 40px;
             border: 1px solid #ccc;
@@ -40,10 +46,12 @@
             box-sizing: border-box;
             font-size: 14px;
         }
-        .input-field:focus, select:focus {
+
+        .input-field:focus {
             outline: none;
             border-color: #1da1f2;
         }
+
         .input-icon {
             position: absolute;
             left: 10px;
@@ -52,6 +60,7 @@
             color: #666;
             font-size: 16px;
         }
+
         .btn {
             width: 100%;
             padding: 10px;
@@ -63,55 +72,44 @@
             font-size: 16px;
             font-weight: bold;
         }
+
         .btn:hover {
             background-color: #1a91da;
         }
-        .error-message {
-            color: red;
-            margin-bottom: 15px;
-            font-size: 14px;
-        }
+
         .login-link {
             margin-top: 15px;
             font-size: 14px;
             color: #1da1f2;
             text-decoration: none;
         }
+
         .login-link:hover {
             text-decoration: underline;
         }
     </style>
 </head>
 <body>
-    <div class="register-container">
-        <h2>Register</h2>
-        <% if(request.getAttribute("errorRegister") != null) { %>
-            <div class="error-message"><%= request.getAttribute("errorRegister") %></div>
-        <% } %>
-        <form action="RegisterServlet" method="post">
+
+    <div class="notification-wrapper" style="
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 9999;">
+        <c:import url="../../../notification.jsp" />
+    </div>
+
+    <div class="reset-container">
+        <h2>Reset Password</h2>
+        <form action="resetPassword" method="post">
+            <input type="hidden" name="token" value="${token}" />
             <div class="input-group">
-                <span class="input-icon">?</span>
-                <input type="text" class="input-field" name="username" placeholder="Username" required>
+                <span class="input-icon">&#128274;</span>
+                <input type="password" class="input-field" name="password" placeholder="New Password" required />
             </div>
-            
-            <div class="input-group">
-                <span class="input-icon">?</span>
-                <input type="password" class="input-field" name="password" placeholder="Password" required>
-            </div>
-            <div class="input-group">
-                <span class="input-icon">?</span>
-                <input type="email" class="input-field" name="email" placeholder="Email" required>
-            </div>
-            <div class="input-group" style="padding-left: 40px;">
-                <label for="role">Role:</label>
-                <select name="role" id="role" required style="border-radius: 25px; padding: 10px; width: 100%; font-size: 14px; margin-top: 5px;">
-                    <option value="user" selected>User</option>
-                    <option value="staff">Staff</option>
-                </select>
-            </div>
-            <button type="submit" class="btn">Register</button>
+            <button type="submit" class="btn">Update Password</button>
         </form>
-        <a href="login.jsp" class="login-link">Already have an account? Login here</a>
+        <a href="login" class="login-link">Back to Login</a>
     </div>
 </body>
 </html>

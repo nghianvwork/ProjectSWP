@@ -139,3 +139,29 @@ CREATE TABLE Revenue (
     created_at DATETIME DEFAULT GETDATE(),
     FOREIGN KEY (court_id) REFERENCES Courts(court_id)
 );
+CREATE TABLE [dbo].[password_reset_tokens](
+	[id] [int] IDENTITY(1,1) NOT NULL,
+	[user_id] [int] NOT NULL,
+	[token] [varchar](255) NOT NULL,
+	[created_at] [datetime] NULL,
+	[is_used] [bit] NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY],
+UNIQUE NONCLUSTERED 
+(
+	[token] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+ALTER TABLE [dbo].[password_reset_tokens] ADD  DEFAULT (getdate()) FOR [created_at]
+GO
+ALTER TABLE [dbo].[password_reset_tokens] ADD  DEFAULT ((0)) FOR [is_used]
+GO
+ALTER TABLE [dbo].[password_reset_tokens]  WITH CHECK ADD  CONSTRAINT [FK_password_reset_user] FOREIGN KEY([user_id])
+REFERENCES [dbo].[Users] ([user_id])
+ON DELETE CASCADE
+GO
+ALTER TABLE [dbo].[password_reset_tokens] CHECK CONSTRAINT [FK_password_reset_user]
+GO
