@@ -75,6 +75,7 @@ public class AddRegion extends HttpServlet {
         HttpSession session = request.getSession(false);
         if(session != null){
             User user = (User) session.getAttribute("user");
+            System.out.println(user.getUser_Id());
             if(user.getRole().equals("staff")){
                 AreaDAO dao = new AreaDAO();
                 String name = request.getParameter("regionName");
@@ -88,9 +89,10 @@ public class AddRegion extends HttpServlet {
                 Areas ar = new Areas();
                 ar.setName(name);
                 ar.setEmptyCourt(empty);
-                ar.setArea_id(user.getUser_Id());
+                ar.setManager_id(user.getUser_Id());
                 ar.setLocation(address);
                 dao.addRegion(ar);
+                System.out.println("add "+ar.getName());
                 response.sendRedirect("view-region");
                 
             }else{

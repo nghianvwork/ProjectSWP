@@ -97,16 +97,16 @@ public class AreaDAO extends DBContext {
        AreaDAO areaDAO = new AreaDAO();
 
     
-//    Areas newArea = new Areas();
-//    newArea.setName("Khu thể thao B ");
-//    newArea.setLocation("Hà Nội");
-//    newArea.setManager_id("001");
-//    newArea.setEmptyCourt(5);
-//
-//    
-//    areaDAO.addRegion(newArea);
-//    
-//    System.out.println("Đã thêm khu vực thành công!");
+    Areas newArea = new Areas();
+    newArea.setName("Khu thể thao B ");
+    newArea.setLocation("Hà Nội");
+    newArea.setManager_id(1);
+    newArea.setEmptyCourt(5);
+
+    
+    areaDAO.addRegion(newArea);
+    
+    System.out.println("Đã thêm khu vực thành công!");
      int managerId = 1;
         System.out.println(areaDAO.countAreasByManagerId(1));
      

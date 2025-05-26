@@ -78,7 +78,7 @@
                             <tr>
                                 <th>Name</th>
                                 <th>Address</th>
-                                <th>Empty Court</th>
+                                <th> Court</th>
                                 <th style="width: 220px;">Action</th>
                             </tr>
                         </thead>
@@ -169,7 +169,7 @@
                                         <input type="text" name="address" class="form-control">
                                     </div>
                                     <div class="form-group">
-                                        <label>Empty Court</label>
+                                        <label>Court</label>
                                         <input type="number" name="emptyCourt" class="form-control" value="0" min="0">
                                     </div>
                                 </div>
