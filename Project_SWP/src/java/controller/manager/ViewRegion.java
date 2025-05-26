@@ -76,14 +76,14 @@ public class ViewRegion extends HttpServlet {
             UserDAO dao = new UserDAO();
             User u = dao.getUserByUsername(username);
             HttpSession session = request.getSession();
-            if(u.getRole().equals("manager")){
+            if(u.getRole().equals("staff")){
                 session.setAttribute("user", u);
             }
         }
         HttpSession session = request.getSession(false);
         if(session != null){
             User user = (User) session.getAttribute("user");
-            if(user.getRole().equals("manager")){
+            if(user.getRole().equals("staff")){
                int page = 1 ;
                int recordsPerpage = 5;
                if(request.getParameter("page")!= null){

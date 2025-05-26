@@ -75,7 +75,7 @@ public class AddRegion extends HttpServlet {
         HttpSession session = request.getSession(false);
         if(session != null){
             User user = (User) session.getAttribute("user");
-            if(user.getRole().equals("manager")){
+            if(user.getRole().equals("staff")){
                 AreaDAO dao = new AreaDAO();
                 String name = request.getParameter("regionName");
                 String address = request.getParameter("address");
