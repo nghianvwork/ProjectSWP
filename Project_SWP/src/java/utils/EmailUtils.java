@@ -1,8 +1,5 @@
 package utils;
 
-import jakarta.websocket.Session;
-import java.net.Authenticator;
-import java.net.PasswordAuthentication;
 import javax.mail.*;
 import javax.mail.internet.*;
 import java.util.Properties;

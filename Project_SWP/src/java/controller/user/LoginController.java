@@ -57,7 +57,7 @@ public class LoginController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.getRequestDispatcher("views/common/user/login.jsp").forward(request, response);
+        request.getRequestDispatcher("login.jsp").forward(request, response);
     }
 
     /**
@@ -83,10 +83,10 @@ public class LoginController extends HttpServlet {
             HttpSession session = request.getSession();
             session.setAttribute("user", user);
 
-            // Gửi thông báo thành công
+          
             session.setAttribute("message", "Login successful!");
 
-            // Xử lý ghi nhớ đăng nhập nếu cần
+           
             if ("on".equals(remember)) {
                 Cookie cUser = new Cookie("username", username);
                 Cookie cPass = new Cookie("password", password);
@@ -100,7 +100,7 @@ public class LoginController extends HttpServlet {
                 response.addCookie(cPass);
                 response.addCookie(cRemember);
             } else {
-                // Xoá cookie nếu người dùng bỏ chọn
+              
                 Cookie cUser = new Cookie("username", null);
                 Cookie cPass = new Cookie("password", null);
                 Cookie cRemember = new Cookie("remember", null);
@@ -112,17 +112,16 @@ public class LoginController extends HttpServlet {
                 response.addCookie(cRemember);
             }
 
-            // Điều hướng tuỳ theo role
-            if ("manager".equalsIgnoreCase(user.getRole())) {
+                      if ("manager".equalsIgnoreCase(user.getRole())) {
                 response.sendRedirect("view-region");
             } else {
                 response.sendRedirect("home");
             }
 
         } else {
-            // Sai thông tin → hiện thông báo lỗi qua notification.jsp
+           
             request.setAttribute("error", "Invalid username or password!");
-            request.getRequestDispatcher("views/common/user/login.jsp").forward(request, response);
+            request.getRequestDispatcher("login.jsp").forward(request, response);
         }
     }
 

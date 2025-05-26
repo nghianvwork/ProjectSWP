@@ -91,7 +91,7 @@ public class AddRegion extends HttpServlet {
                 ar.setArea_id(user.getUser_Id());
                 ar.setLocation(address);
                 dao.addRegion(ar);
-                response.sendRedirect("manager-region");
+                response.sendRedirect("view-region");
                 
             }else{
                 response.sendError(403);

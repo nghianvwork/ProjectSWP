@@ -74,10 +74,10 @@
             </div>
             <ul>
                 <li class="nav-item">
-                    <a class="nav-link active" href="manage-region">REGION MANAGEMENT</a>
+                    <a class="nav-link " href="view-region">REGION MANAGEMENT</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="manage-court">COURT MANAGEMENT</a>
+                    <a class="nav-link" href="courts">COURT MANAGEMENT</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="manage-service">SERVICE MANAGEMENT</a>

@@ -89,7 +89,7 @@ public class ResetPasswordController extends HttpServlet {
         } else {
             request.setAttribute("error", "Token không hợp lệ hoặc đã hết hạn.");
             request.setAttribute("token", token);
-            request.getRequestDispatcher("views/common/user/resetPassword.jsp").forward(request, response);
+            request.getRequestDispatcher("resetPassword.jsp").forward(request, response);
         }
     }
 

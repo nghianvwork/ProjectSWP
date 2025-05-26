@@ -89,7 +89,7 @@ public class ChangePassword extends HttpServlet {
             response.sendRedirect("login");
         }else{
             request.setAttribute("error", "username");
-            request.getRequestDispatcher("forgot-password.jsp").forward(request, response);
+            request.getRequestDispatcher("forgotPassword.jsp").forward(request, response);
         }
         
 

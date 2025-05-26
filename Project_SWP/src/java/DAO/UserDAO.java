@@ -16,14 +16,14 @@ import Model.User;
 
 public class UserDAO extends DBContext {
     Connection conn;
-  public void finalize() {
-     try {
-        if(conn != null) conn.close();
-     }
-     catch(Exception e) {
-        e.printStackTrace();
-     }
-  }
+  public UserDAO(){
+        try {
+            conn = getConnection();
+        } catch (Exception e) {
+            System.out.println("Connect failed");
+        }
+    }
+
     
     public User login(String username, String password) {
         String sql = "SELECT * FROM Users WHERE username = ? AND password = ?";
@@ -264,26 +264,25 @@ public class UserDAO extends DBContext {
     return null;
 }
 
-public User getUserByUsername(String username) {
-    String sql = "SELECT * FROM Users WHERE username = ?";
-    try (PreparedStatement ps = conn.prepareStatement(sql)) {
-        ps.setString(1, username);
-        ResultSet rs = ps.executeQuery();
-        if (rs.next()) {
-            return new User(
-                    String.valueOf(rs.getInt("user_id")),
-                    rs.getString("username"),
-                    rs.getString("password"),
-                    rs.getString("email"),
-                    rs.getString("phone_number"),
-                    rs.getString("role")
-            );
+ private static final String SQL_SELECT_BY_USERNAME="SELECT *\n" +
+"  FROM [dbo].[Users]\n" +
+"  where username=?";
+    public User getUserByUsername(String username) {
+        User user =  null;
+        
+        try{
+            PreparedStatement stmt = conn.prepareStatement(SQL_SELECT_BY_USERNAME);
+            stmt.setString(1, username);
+            ResultSet rs = stmt.executeQuery();
+            if(rs.next()){
+                user = extractUserFromResultSet(rs);
+            }
+        }catch(SQLException e){
+            System.out.println("getUserByUsername: " + e.getMessage()); 
         }
-    } catch (SQLException e) {
-        System.err.println("Lỗi tìm user theo username: " + e.getMessage());
+        return user;
     }
-    return null;
-}
+
 private User extractUserFromResultSet(ResultSet rs) throws SQLException{
         User user = new User();
         user.setUser_Id(rs.getString("user_id"));
@@ -306,5 +305,16 @@ private User extractUserFromResultSet(ResultSet rs) throws SQLException{
 
         }
     }
+     public static void main(String[] args) {
+    UserDAO dao = new UserDAO();
+    String testUsername = "admin01"; 
+    User user = dao.getUserByUsername(testUsername);
+    
+    if (user != null) {
+        System.out.println(user.toString());
+    } else {
+        System.out.println("User not found!");
+    }
+}
 
 }
