@@ -42,43 +42,43 @@ public class AreaDAO extends DBContext {
             PreparedStatement pre = conn.prepareStatement(sql);
             pre.setString(1, re.getName());
             pre.setString(2, re.getLocation());
-            pre.setString(3, re.getManager_id());
+            pre.setInt(3, re.getManager_id());
             pre.setInt(4, re.getEmptyCourt());
             pre.executeUpdate();
         } catch (Exception e) {
              System.out.println(e.getMessage());
         }
     }
-    public int countAreasByManagerId(String id){
+    public int countAreasByManagerId(int id){
         String sql  ="SELECT count(*) as Total FROM Areas where manager_id = ?";
         try {
             PreparedStatement stmt = conn.prepareStatement(sql);
-            stmt.setString(1, id);
+            stmt.setInt(1, id);
             ResultSet rs = stmt.executeQuery();
             while(rs.next()){
-                return rs.getInt("Toltal");
+                return rs.getInt("Total");
             }
         } catch (Exception e) {
             System.out.println("getAllAreas: " + e.getMessage());
         }
         return 0;
     }
-   public List<Areas> getAllByManagerID(String id, int pageNum, int pageSize) {
+   public List<Areas> getAllByManagerID(int id, int pageNum, int pageSize) {
     List<Areas> list = new ArrayList<>();
     String sql = "SELECT * FROM Areas WHERE manager_id = ? ORDER BY area_id OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
 
     try {
         PreparedStatement stmt = conn.prepareStatement(sql);
-        stmt.setString(1, id);
+        stmt.setInt(1, id);
         stmt.setInt(2, pageNum * pageSize); // OFFSET = số dòng cần bỏ qua
         stmt.setInt(3, pageSize); // Số dòng cần lấy
         ResultSet rs = stmt.executeQuery();
 
         while (rs.next()) {
-            String areasID = rs.getString("area_id");
+            int areasID = rs.getInt("area_id");
             String areaName = rs.getString("name");
             String location = rs.getString("location");
-            String managerID = rs.getString("manager_id");
+            int managerID = rs.getInt("manager_id");
             int emptyCourt = rs.getInt("EmptyCourt");
 
             Areas ar = new Areas(areasID, areaName, location, managerID, emptyCourt);
@@ -97,17 +97,19 @@ public class AreaDAO extends DBContext {
        AreaDAO areaDAO = new AreaDAO();
 
     
-    Areas newArea = new Areas();
-    newArea.setName("Khu thể thao B ");
-    newArea.setLocation("Hà Nội");
-    newArea.setManager_id("001");
-    newArea.setEmptyCourt(5);
-
-    
-    areaDAO.addRegion(newArea);
-    
-    System.out.println("Đã thêm khu vực thành công!");
-     String managerId = "2";
+//    Areas newArea = new Areas();
+//    newArea.setName("Khu thể thao B ");
+//    newArea.setLocation("Hà Nội");
+//    newArea.setManager_id("001");
+//    newArea.setEmptyCourt(5);
+//
+//    
+//    areaDAO.addRegion(newArea);
+//    
+//    System.out.println("Đã thêm khu vực thành công!");
+     int managerId = 1;
+        System.out.println(areaDAO.countAreasByManagerId(1));
+     
     int pageNum = 0; // OFFSET sẽ là 0
     int pageSize = 5;
 

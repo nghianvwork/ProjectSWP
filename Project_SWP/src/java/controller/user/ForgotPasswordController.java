@@ -82,7 +82,7 @@ public class ForgotPasswordController extends HttpServlet {
             // Tạo token ngẫu nhiên và lưu vào DB
             String token = UUID.randomUUID().toString();
             UserDAO tokenDAO = new UserDAO();
-            tokenDAO.saveResetToken(Integer.parseInt(user.getUser_Id()), token);
+            tokenDAO.saveResetToken(user.getUser_Id(), token);
 
             // Tạo link đặt lại mật khẩu
             String resetLink = request.getRequestURL().toString().replace("forgotPassword", "resetPassword")

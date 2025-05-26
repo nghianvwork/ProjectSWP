@@ -9,13 +9,13 @@ package Model;
  * @author admin
  */
 public class Areas {
-    private String area_id;
+    private int area_id;
     private String name;
     private String location;
-    private String manager_id;
+    private int manager_id;
     private int  emptyCourt;
 
-    public Areas(String area_id, String name, String location, String manager_id, int emptyCourt) {
+    public Areas(int area_id, String name, String location, int manager_id, int emptyCourt) {
         this.area_id = area_id;
         this.name = name;
         this.location = location;
@@ -26,11 +26,11 @@ public class Areas {
     public Areas() {
     }
 
-    public String getArea_id() {
+    public int getArea_id() {
         return area_id;
     }
 
-    public void setArea_id(String area_id) {
+    public void setArea_id(int area_id) {
         this.area_id = area_id;
     }
 
@@ -50,11 +50,11 @@ public class Areas {
         this.location = location;
     }
 
-    public String getManager_id() {
+    public int getManager_id() {
         return manager_id;
     }
 
-    public void setManager_id(String manager_id) {
+    public void setManager_id(int manager_id) {
         this.manager_id = manager_id;
     }
 

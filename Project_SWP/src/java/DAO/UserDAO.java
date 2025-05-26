@@ -34,7 +34,7 @@ public class UserDAO extends DBContext {
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 return new User(
-                        String.valueOf(rs.getInt("user_id")),
+                        rs.getInt("user_id"),
                         rs.getString("username"),
                         rs.getString("password"),
                         rs.getString("email"),
@@ -58,7 +58,7 @@ public class UserDAO extends DBContext {
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 User u = new User(
-                        String.valueOf(rs.getInt("user_id")),
+                       rs.getInt("user_id"),
                         rs.getString("username"),
                         rs.getString("password"),
                         rs.getString("email"),
@@ -100,7 +100,7 @@ public class UserDAO extends DBContext {
             ps.setString(3, u.getEmail());
             ps.setString(4, u.getPhone_number());
             ps.setString(5, u.getRole());
-            ps.setString(6, u.getUser_Id()); // user_Id là String
+            ps.setInt(6, u.getUser_Id()); // user_Id là String
             ps.executeUpdate();
         } catch (SQLException e) {
             System.err.println("Lỗi cập nhật user: " + e);
@@ -128,7 +128,7 @@ public class UserDAO extends DBContext {
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 return new User(
-                        String.valueOf(rs.getInt("user_id")), // Ép kiểu sang String
+                        rs.getInt("user_id"), // Ép kiểu sang String
                         rs.getString("username"),
                         rs.getString("password"),
                         rs.getString("email"),
@@ -152,7 +152,7 @@ public class UserDAO extends DBContext {
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 User user = new User(
-                        String.valueOf(rs.getInt("user_id")),
+                       rs.getInt("user_id"),
                         rs.getString("username"),
                         rs.getString("password"),
                         rs.getString("email"),
@@ -250,7 +250,7 @@ public class UserDAO extends DBContext {
         ResultSet rs = ps.executeQuery();
         if (rs.next()) {
             return new User(
-                    String.valueOf(rs.getInt("user_id")),
+                    rs.getInt("user_id"),
                     rs.getString("username"),
                     rs.getString("password"),
                     rs.getString("email"),
@@ -285,7 +285,7 @@ public class UserDAO extends DBContext {
 
 private User extractUserFromResultSet(ResultSet rs) throws SQLException{
         User user = new User();
-        user.setUser_Id(rs.getString("user_id"));
+        user.setUser_Id(rs.getInt("user_id"));
         user.setUsername(rs.getString("username"));
         user.setPassword(rs.getString("password"));
         user.setEmail(rs.getString("email"));
@@ -299,7 +299,7 @@ private User extractUserFromResultSet(ResultSet rs) throws SQLException{
         try {
             PreparedStatement pre = conn.prepareStatement(sql);
             pre.setString(1, us.getPassword());
-            pre.setString(2, us.getUser_Id());
+            pre.setInt(2, us.getUser_Id());
             pre.executeUpdate();
         } catch (SQLException e) {
 
