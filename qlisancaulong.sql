@@ -69,8 +69,8 @@ CREATE TABLE Bookings (
 -- BẢNG THIẾT BỊ
 -- ==========================
 CREATE TABLE Equipments (
-    equipment_id INT PRIMARY KEY IDENTITY(1,1),
-    name VARCHAR(100) NOT NULL,
+    equipment_id INT PRIMARY KEY,
+    name NVARCHAR(100) NOT NULL UNIQUE,
     price DECIMAL(10, 2) NOT NULL CHECK (price >= 0),
     quantity INT NOT NULL CHECK (quantity >= 0)
 );

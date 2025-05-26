@@ -80,7 +80,7 @@
                     <a class="nav-link" href="courts">COURT MANAGEMENT</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="manage-service">SERVICE MANAGEMENT</a>
+                    <a class="nav-link" href="ViewEquipments">SERVICE MANAGEMENT</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="manage-request">COURT REQUEST</a>
