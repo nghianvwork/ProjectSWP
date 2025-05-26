@@ -83,7 +83,7 @@ public class UserDAO extends DBContext {
             ps.setString(3, u.getEmail());
             ps.setString(4, u.getPhone_number());
             ps.setString(5, u.getRole());
-            ps.setString(6, u.getUser_Id());
+            ps.setInt(6, u.getUser_Id());
             ps.executeUpdate();
         } catch (SQLException e) {
             System.err.println("Lỗi cập nhật user: " + e);
@@ -208,7 +208,7 @@ public class UserDAO extends DBContext {
         String sql = "UPDATE Users SET password = ? WHERE user_id = ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, us.getPassword());
-            ps.setString(2, us.getUser_Id());
+            ps.setInt(2, us.getUser_Id());
             ps.executeUpdate();
         } catch (SQLException e) {
             System.err.println("Lỗi cập nhật mật khẩu: " + e.getMessage());
@@ -245,7 +245,7 @@ public class UserDAO extends DBContext {
 
     private User extractUserFromResultSet(ResultSet rs) throws SQLException {
         User user = new User();
-        user.setUser_Id(String.valueOf(rs.getInt("user_id")));
+        user.setUser_Id((rs.getInt("user_id")));
         user.setUsername(rs.getString("username"));
         user.setPassword(rs.getString("password"));
         user.setEmail(rs.getString("email"));

@@ -94,7 +94,7 @@
              right: 20px;
              z-index: 9999;
              ">
-            <c:import url="../../../notification.jsp" />
+            <c:import url="notification.jsp" />
         </div>
 
         <div class="register-container">

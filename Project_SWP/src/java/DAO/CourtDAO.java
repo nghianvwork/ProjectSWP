@@ -113,19 +113,5 @@ public class CourtDAO extends DBContext{
         }
     }
     
-    public static void main(String[] args) throws Exception {
-       CourtDAO courtDAO = new CourtDAO();
-
     
-    Courts newCourt = new Courts();
-
-    newCourt.setCourt_number("san3");
-    newCourt.setStatus("Available");
-    newCourt.setArea_id(4);
-
-    
-    courtDAO.getAllCourts();
-    System.out.println("Đã thêm sân thành công!");
-    
-    }
 }

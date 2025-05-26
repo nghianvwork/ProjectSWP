@@ -112,7 +112,7 @@ public class LoginController extends HttpServlet {
                 response.addCookie(cRemember);
             }
 
-                      if ("manager".equalsIgnoreCase(user.getRole())) {
+                      if ("staff".equalsIgnoreCase(user.getRole())) {
                 response.sendRedirect("view-region");
             } else {
                 response.sendRedirect("home");

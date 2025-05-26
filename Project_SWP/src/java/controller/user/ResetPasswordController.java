@@ -59,10 +59,10 @@ public class ResetPasswordController extends HttpServlet {
         UserDAO dao = new UserDAO();
         if (dao.isValidToken(token)) {
             request.setAttribute("token", token);
-            request.getRequestDispatcher("views/common/user/resetPassword.jsp").forward(request, response);
+            request.getRequestDispatcher("resetPassword.jsp").forward(request, response);
         } else {
             request.setAttribute("error", "Link đặt lại mật khẩu không hợp lệ hoặc đã hết hạn.");
-            request.getRequestDispatcher("views/common/user/resetPassword.jsp").forward(request, response);
+            request.getRequestDispatcher("resetPassword.jsp").forward(request, response);
         }
     }
 
