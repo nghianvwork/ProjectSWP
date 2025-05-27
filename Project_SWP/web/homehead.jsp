@@ -85,8 +85,9 @@
             </div>
             <div class="auth-links">
                 <img src="./images/avt/avt.jpg" alt="avt" />
-<!--                <span><b><%=user.getUsername()%></b></span>-->
-                <a href="viewprofile.jsp">User</a> 
+                <span>
+                    <a href="viewprofile.jsp"><%=user.getUsername()%></a>
+                </span>
                 <a href="homepage.jsp">Thoát</a>
             </div>
         </div>
