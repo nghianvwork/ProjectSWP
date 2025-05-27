@@ -160,7 +160,7 @@
             </div>
             <div class="auth-links">
                 <a href="login.jsp">Đăng Nhập</a> 
-                <a href="#">Đăng Ký</a>
+                <a href="register.jsp">Đăng Ký</a>
             </div>
         </div>
 

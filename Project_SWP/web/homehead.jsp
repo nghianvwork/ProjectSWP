@@ -5,6 +5,7 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page import="Model.User"%>
 <!DOCTYPE html>
 <html>
     <head>
@@ -75,19 +76,23 @@
         </style>
     </head>
     <body>
+        <%
+            User user = (User) session.getAttribute("user");
+        %>
         <div class="header">
             <div class="logo">
                 <img src="./images/logo/Badminton.jpg" alt="Logo" />
             </div>
             <div class="auth-links">
                 <img src="./images/avt/avt.jpg" alt="avt" />
+<!--                <span><b><%=user.getUsername()%></b></span>-->
                 <a href="viewprofile.jsp">User</a> 
                 <a href="homepage.jsp">Thoát</a>
             </div>
         </div>
 
         <div class="nav-bar">
-            <a href="homepage.jsp">Trang Chủ</a>
+            <a href="homepageUser.jsp">Trang Chủ</a>
             <a href="#">Danh Sách Sân Bãi</a>
             <a href="#">Giới Thiệu</a>
             <a href="#">Điều Khoản</a>
