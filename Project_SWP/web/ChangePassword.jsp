@@ -36,7 +36,7 @@
                         </div>
                     </c:if>
 
-                    <form action="update-pass" method="post" id="changePassForm">
+                    <form action="change-pass" method="post" id="changePassForm">
                         <div class="form-group">
                             <label for="username">Username</label>
                             <input type="text" name="username" class="form-control" id="username" required>

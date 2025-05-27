@@ -82,7 +82,7 @@ public class AddRegion extends HttpServlet {
                 String address = request.getParameter("address");
                 int empty = 0;
                 try {
-                   Integer.parseInt(request.getParameter("emptyCourt"));
+                   empty = Integer.parseInt(request.getParameter("emptyCourt"));
                 } catch (Exception e) {
                     System.out.println(e);
                 }

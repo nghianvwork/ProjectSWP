@@ -126,7 +126,7 @@
                 <ul class="menu">
                     <li><strong>Tài khoản của tôi</strong></li>
                     <li><a href="viewprofile.jsp">Thông tin tài khoản</a></li>
-                    <li><a href="forgotPassword.jsp">Đổi mật khẩu</a></li>
+                    <li><a href="change-pass">Đổi mật khẩu</a></li>
                     <li><strong>Danh sách lịch của tôi</strong></li>
                     <li><a href="#">Lịch đã đặt</a></li>
                 </ul>

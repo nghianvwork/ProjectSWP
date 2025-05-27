@@ -9,6 +9,7 @@ import Model.User;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -17,6 +18,7 @@ import jakarta.servlet.http.HttpServletResponse;
  *
  * @author admin
  */
+@WebServlet(name = "Change_pass", urlPatterns = {"/change-pass"})
 public class ChangePassword extends HttpServlet {
 
     /**
@@ -57,7 +59,7 @@ public class ChangePassword extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+       request.getRequestDispatcher("ChangePassword.jsp").forward(request, response);
     }
 
     /**
