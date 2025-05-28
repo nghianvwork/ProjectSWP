@@ -26,12 +26,12 @@ public class CourtServlet extends HttpServlet {
         if (action == null) {
             List<Courts> courts = courtDAO.getAllCourts();
             request.setAttribute("courts", courts);
-            request.getRequestDispatcher("/Manager/court_manager.jsp").forward(request, response);
+            request.getRequestDispatcher("/court_manager.jsp").forward(request, response);
         } else if (action.equals("edit")) {
             String courtId = request.getParameter("courtId");
             Courts court = courtDAO.getCourtById(courtId);
             request.setAttribute("court", court);
-            request.getRequestDispatcher("/Manager/court_manager.jsp").forward(request, response);
+            request.getRequestDispatcher("/court_manager.jsp").forward(request, response);
         }
     }
 

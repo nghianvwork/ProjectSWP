@@ -67,7 +67,7 @@ public class ViewEquipments extends HttpServlet {
         String status = request.getParameter("status"); // lấy trạng thái nếu có (thêm thành công, lỗi, v.v.)
         request.setAttribute("status", status);
 
-        request.getRequestDispatcher("/Manager/EquipmentsView.jsp").forward(request, response);
+        request.getRequestDispatcher("EquipmentsView.jsp").forward(request, response);
     }
 
     /**
