@@ -284,7 +284,7 @@
         });
     }
 
-    document.querySelectorAll('.edit-btn').forEach(button => {
+    <%-- document.querySelectorAll('.edit-btn').forEach(button => {
         button.addEventListener('click', function () {
             document.getElementById('updateCourtId').value = this.dataset.id;
             document.getElementById('updateCourtNumber').value = this.dataset.number;
@@ -292,7 +292,7 @@
             document.getElementById('updateAreaId').value = this.dataset.area;
             $('#updateCourtModal').modal('show');
         });
-    });
+    }); --%>
 </script>
 </body>
 </html>
