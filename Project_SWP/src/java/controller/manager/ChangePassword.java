@@ -81,7 +81,7 @@ public class ChangePassword extends HttpServlet {
 
         if (!newPass.equals(confirmPass)) {
             request.setAttribute("error", "mismatch");
-            request.getRequestDispatcher("ChangePassword.jsp").forward(request, response);
+            request.getRequestDispatcher("/Login/ChangePassword.jsp").forward(request, response);
             return;
         }
         User user = new UserDAO().getUserByUsername(username);
@@ -91,7 +91,7 @@ public class ChangePassword extends HttpServlet {
             response.sendRedirect("login");
         }else{
             request.setAttribute("error", "username");
-            request.getRequestDispatcher("forgotPassword.jsp").forward(request, response);
+            request.getRequestDispatcher("/Login/forgotPassword.jsp").forward(request, response);
         }
         
 

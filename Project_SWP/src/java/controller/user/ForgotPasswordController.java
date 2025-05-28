@@ -57,7 +57,7 @@ public class ForgotPasswordController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.getRequestDispatcher("forgotPassword.jsp").forward(request, response);
+        request.getRequestDispatcher("/Login/forgotPassword.jsp").forward(request, response);
     }
 
     /**
@@ -104,7 +104,7 @@ public class ForgotPasswordController extends HttpServlet {
             request.setAttribute("error", "Không tìm thấy tài khoản với tên đăng nhập hoặc email đã cung cấp.");
         }
 
-        request.getRequestDispatcher("forgotPassword.jsp").forward(request, response);
+        request.getRequestDispatcher("/Login/forgotPassword.jsp").forward(request, response);
     }
 
     /**

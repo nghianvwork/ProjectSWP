@@ -29,7 +29,7 @@ public class AddEquipments extends HttpServlet {
             List<Equipments> equipments = EquipmentsDAO.getAllEquipments();
             request.setAttribute("equipments", equipments);
             request.setAttribute("status", "duplicate");
-            request.getRequestDispatcher("EquipmentsView.jsp").forward(request, response);
+            request.getRequestDispatcher("/Manager/EquipmentsView.jsp").forward(request, response);
             return;
         }
 
@@ -42,7 +42,7 @@ public class AddEquipments extends HttpServlet {
             request.setAttribute("equipments", equipments);
             request.setAttribute("status", "success");
 
-            request.getRequestDispatcher("EquipmentsView.jsp").forward(request, response);
+            request.getRequestDispatcher("/Manager/EquipmentsView.jsp").forward(request, response);
         } catch (Exception e) {
             e.printStackTrace();
 
@@ -50,7 +50,7 @@ public class AddEquipments extends HttpServlet {
             request.setAttribute("equipments", equipments);
             request.setAttribute("status", "fail");
 
-            request.getRequestDispatcher("EquipmentsView.jsp").forward(request, response);
+            request.getRequestDispatcher("/Manager/EquipmentsView.jsp").forward(request, response);
         }
 
     }

@@ -71,7 +71,7 @@ public class UpdateProfileController extends HttpServlet {
         User newUser = new User(user.getUser_Id(), username, user.getPassword(), email, phoneNumber, user.getRole());
         userDao.updateUser(newUser);
         session.setAttribute("user", newUser);
-        request.getRequestDispatcher("/viewprofile.jsp").forward(request, response);
+        request.getRequestDispatcher("/User/viewprofile.jsp").forward(request, response);
     }
 
     /**

@@ -17,7 +17,7 @@ import java.util.List;
  *
  * @author admin
  */
-public class AreaDAO extends DBContext {
+public class AreaDAO   extends DBContext {
 
     Connection conn;
 

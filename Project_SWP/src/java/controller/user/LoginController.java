@@ -115,13 +115,13 @@ public class LoginController extends HttpServlet {
                       if ("staff".equalsIgnoreCase(user.getRole())) {
                 response.sendRedirect("view-region");
             } else {
-                response.sendRedirect("homepageUser.jsp");
+                response.sendRedirect("/User/homepageUser.jsp");
             }
 
         } else {
            
             request.setAttribute("error", "Invalid username or password!");
-            request.getRequestDispatcher("login.jsp").forward(request, response);
+            request.getRequestDispatcher("/Login/login.jsp").forward(request, response);
         }
     }
 

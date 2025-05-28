@@ -101,7 +101,7 @@ public class ViewRegion extends HttpServlet {
                 request.setAttribute("area", area );
                 request.setAttribute("numberOfPages", numberofPage);
                 request.setAttribute("currentPage", page);
-                request.getRequestDispatcher("manager-region.jsp").forward(request, response);
+                request.getRequestDispatcher("/Manager/manager-region.jsp").forward(request, response);
                 
             }
             else{
