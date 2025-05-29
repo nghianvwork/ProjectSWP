@@ -81,7 +81,7 @@ public class UpdateArea extends HttpServlet {
         int empty = Integer.parseInt(request.getParameter("empty"));
 
         AreaDAO dao = new AreaDAO();
-        dao.UpdateArea(id, name, name, empty);
+        dao.UpdateArea(id, name, address, empty);
 
         response.sendRedirect("view-region");
     }

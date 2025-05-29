@@ -1,6 +1,7 @@
 package controller.manager;
 
 
+import DAO.AreaDAO;
 import DAO.CourtDAO;
 import Model.Courts;
 import jakarta.servlet.ServletException;
@@ -49,8 +50,11 @@ public class CourtServlet extends HttpServlet {
             court.setCourt_id(Integer.parseInt(request.getParameter("courtId")));
             court.setCourt_number(request.getParameter("courtNumber"));
             court.setStatus(request.getParameter("status"));
+            int areaId = Integer.parseInt(request.getParameter("areaId"));
             court.setArea_id(Integer.parseInt(request.getParameter("areaId")));
             courtDAO.updateCourt(court);
+              AreaDAO areaDAO = new AreaDAO();
+            areaDAO.updateEmptyCourtByAreaId(areaId, 1);
         } else if (action.equals("delete")) {
             String courtId = request.getParameter("courtId");
             courtDAO.deleteCourt(courtId);

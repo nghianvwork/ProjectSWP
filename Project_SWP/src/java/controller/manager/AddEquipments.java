@@ -33,7 +33,7 @@ public class AddEquipments extends HttpServlet {
             return;
         }
 
-        Equipments s = new Equipments(0, name, price, 0);
+        Equipments s = new Equipments(0, name, price);
         try {
             EquipmentsDAO.addService(s);
 

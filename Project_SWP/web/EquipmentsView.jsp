@@ -5,7 +5,7 @@
 
 <html>
     <head>
-        <title>Danh sách thiết bị</title>
+        <title> 🏙 Danh sách thiết bị</title>
         <style>
             body {
                 margin: 0;

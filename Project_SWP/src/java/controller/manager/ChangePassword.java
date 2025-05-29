@@ -71,31 +71,41 @@ public class ChangePassword extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        String username = request.getParameter("username");
-        String oldPass = request.getParameter("old-password");
-        String newPass = request.getParameter("new-password");
-        String confirmPass = request.getParameter("confirm-password");
+protected void doPost(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException {
+    String username = request.getParameter("username");
+    String oldPass = request.getParameter("old-password");
+    String newPass = request.getParameter("new-password");
+    String confirmPass = request.getParameter("confirm-password");
 
+    User user = new UserDAO().getUserByUsername(username);
 
-        if (!newPass.equals(confirmPass)) {
-            request.setAttribute("error", "mismatch");
-            request.getRequestDispatcher("hangePassword.jsp").forward(request, response);
-            return;
-        }
-        User user = new UserDAO().getUserByUsername(username);
-        if(user != null){
-            user.setPassword(newPass);
-            new UserDAO().updatePassword(user);
-            response.sendRedirect("login");
-        }else{
-            request.setAttribute("error", "username");
-            request.getRequestDispatcher("forgotPassword.jsp").forward(request, response);
-        }
-        
-
+    if (user == null) {
+        request.setAttribute("error", "username"); 
+        request.getRequestDispatcher("forgotPassword.jsp").forward(request, response);
+        return;
     }
+
+    
+    if (!user.getPassword().equals(oldPass)) {
+        request.setAttribute("error", "wrong old password"); 
+        request.getRequestDispatcher("ChangePassword.jsp").forward(request, response);
+        return;
+    }
+
+   
+    if (!newPass.equals(confirmPass)) {
+        request.setAttribute("error", "mismatch"); 
+        request.getRequestDispatcher("ChangePassword.jsp").forward(request, response);
+        return;
+    }
+
+    
+    user.setPassword(newPass);
+    new UserDAO().updatePassword(user);
+    response.sendRedirect("login");
+}
+
 
     /**
      * Returns a short description of the servlet.

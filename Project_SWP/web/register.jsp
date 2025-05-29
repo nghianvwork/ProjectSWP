@@ -98,10 +98,10 @@
         </div>
 
         <div class="register-container">
-            <h2>Đăng Kí</h2>
+            <h2>Register</h2>
 
             <form action="register" method="post">
-              <div class="input-group">
+                <div class="input-group">
                     <span class="input-icon">&#128100;</span>
                     <input type="text" class="input-field" name="username" placeholder="Username" >
                 </div>
@@ -115,23 +115,22 @@
                     <input type="email" class="input-field" name="email" placeholder="Email" required>
                 </div>
                 <div class="input-group" style="padding-left: 40px;">
-                    <label for="role">Vai trò:</label>
+                    <label for="role">Role:</label>
                     <div style="margin-top: 5px; font-size: 14px;">
                         <label style="margin-right: 15px;">
                             <input type="radio" name="role" value="user" required checked style="margin-right: 5px;">
-                            Người dùng
+                            User
                         </label>
                         <label>
                             <input type="radio" name="role" value="staff" required style="margin-right: 5px;">
-                            Chủ sân
+                            Staff
                         </label>
                     </div>
 
                 </div>
-                <button type="submit" class="btn">Đăng kí</button>
-
+                <button type="submit" class="btn">Register</button>
             </form>
-            <a href="login" class="login-link">Đăng nhập</a>
+            <a href="login" class="login-link">Login here</a>
         </div>
     </body>
 </html>

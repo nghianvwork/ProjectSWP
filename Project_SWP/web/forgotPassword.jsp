@@ -39,7 +39,7 @@
 </head>
 <body>
     <div class="notification-wrapper" style="position: fixed; top: 20px; right: 20px; z-index: 9999;">
-        <c:import url="notification.jsp" />
+        <jsp:include page="notification.jsp"/>
     </div>
 
     <div class="forgot-container">

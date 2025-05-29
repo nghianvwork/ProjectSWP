@@ -18,8 +18,8 @@ public class EquipmentsDAO {
                 list.add(new Equipments(
                         rs.getInt("equipment_id"),
                         rs.getString("name"),
-                        rs.getDouble("price"),
-                        rs.getInt("quantity") // quantity là String
+                        rs.getDouble("price")
+                        //rs.getInt("quantity") // quantity là String
                 ));
             }
             con.close();
@@ -38,11 +38,11 @@ public class EquipmentsDAO {
             int nextId = getNextEquipmentId();
 
             Connection con = new DBContext().getConnection();
-            PreparedStatement ps = con.prepareStatement("INSERT INTO Equipments(equipment_id, name, price, quantity) VALUES (?, ?, ?, ?)");
+            PreparedStatement ps = con.prepareStatement("INSERT INTO Equipments(equipment_id, name, price) VALUES (?, ?, ?, ?)");
             ps.setInt(1, nextId);
             ps.setString(2, s.getName());
             ps.setDouble(3, s.getPrice());
-            ps.setInt(4, s.getQuantity()); 
+            //ps.setInt(4, s.getQuantity()); 
             ps.executeUpdate();
             con.close();
         } catch (SQLException e) {

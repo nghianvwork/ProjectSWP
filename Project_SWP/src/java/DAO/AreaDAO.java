@@ -115,12 +115,26 @@ public void updateEmptyCourtByAreaId(int areaId, int change) {
         ps.setInt(2, areaId);
         ps.executeUpdate();
         ps.close();
-        conn.close();
+        
     } catch (Exception e) {
         e.printStackTrace();
     }
 }
-
+public boolean isRegionNameExist(String name, int managerId) {
+    String sql = "SELECT COUNT(*) FROM Areas WHERE name = ? AND manager_id = ?";
+    try (
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+        ps.setString(1, name);
+        ps.setInt(2, managerId);
+        ResultSet rs = ps.executeQuery();
+        if (rs.next()) {
+            return rs.getInt(1) > 0; // Nếu COUNT > 0 => đã tồn tại
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return false;
+}
     
     public static void main(String[] args) {
        AreaDAO areaDAO = new AreaDAO();
