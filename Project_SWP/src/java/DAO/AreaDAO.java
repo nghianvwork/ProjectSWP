@@ -106,6 +106,20 @@ public class AreaDAO   extends DBContext {
 
     return list;
 }
+public void updateEmptyCourtByAreaId(int areaId, int change) {
+    try {
+       
+        String sql = "UPDATE Areas SET EmptyCourt = ISNULL(EmptyCourt, 0) + ? WHERE area_id = ?";
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setInt(1, change);
+        ps.setInt(2, areaId);
+        ps.executeUpdate();
+        ps.close();
+        conn.close();
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+}
 
     
     public static void main(String[] args) {

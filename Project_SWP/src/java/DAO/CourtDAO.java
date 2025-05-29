@@ -29,7 +29,7 @@ public class CourtDAO extends DBContext{
             System.out.println("Connect failed");
         }
     }
-
+    AreaDAO dao = new AreaDAO();
     public void addCourt(Courts court) {
         String sql = "INSERT INTO Courts (court_number, status, area_id) VALUES (?, ?, ?)";
         try {
@@ -38,6 +38,7 @@ public class CourtDAO extends DBContext{
             ps.setString(2, court.getStatus());
             ps.setInt(3, court.getArea_id());
             ps.executeUpdate();
+            dao.updateEmptyCourtByAreaId(court.getArea_id(), 1);
         } catch (SQLException e) {
             e.printStackTrace();
         }
