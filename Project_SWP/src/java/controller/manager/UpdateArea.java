@@ -4,8 +4,7 @@
  */
 package controller.manager;
 
-import DAO.EquipmentsDAO;
-import Model.Equipments;
+import DAO.AreaDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -13,14 +12,13 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.List;
 
 /**
  *
  * @author admin
  */
-@WebServlet(name = "ViewEquipments", urlPatterns = {"/ViewEquipments"})
-public class ViewEquipments extends HttpServlet {
+@WebServlet(name = "UpdateArea", urlPatterns = {"/UpdateArea"})
+public class UpdateArea extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -39,10 +37,10 @@ public class ViewEquipments extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet ViewEquipments</title>");
+            out.println("<title>Servlet UpdateArea</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet ViewEquipments at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet UpdateArea at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -60,14 +58,7 @@ public class ViewEquipments extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        EquipmentsDAO dao = new EquipmentsDAO();
-        List<Equipments> equipments = dao.getAllEquipments();  
-        request.setAttribute("equipments", equipments);
-
-        String status = request.getParameter("status"); 
-        request.setAttribute("status", status);
-
-        request.getRequestDispatcher("EquipmentsView.jsp").forward(request, response);
+        processRequest(request, response);
     }
 
     /**
@@ -81,7 +72,18 @@ public class ViewEquipments extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        request.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding("UTF-8");
+
+        int id = Integer.parseInt(request.getParameter("regionID"));
+        String name = request.getParameter("RegionName");
+        String address = request.getParameter("address");
+        int empty = Integer.parseInt(request.getParameter("empty"));
+
+        AreaDAO dao = new AreaDAO();
+        dao.UpdateArea(id, name, name, empty);
+
+        response.sendRedirect("view-region");
     }
 
     /**

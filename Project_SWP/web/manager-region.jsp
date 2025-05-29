@@ -97,7 +97,7 @@
                                         <div class="modal fade" id="updateModal${loop.index}" tabindex="-1" role="dialog">
                                             <div class="modal-dialog">
                                                 <div class="modal-content">
-                                                    <form action="update-region" method="POST">
+                                                    <form action="UpdateArea" method="POST">
                                                         <div class="modal-header">
                                                             <h5 class="modal-title">Update Region</h5>
                                                             <button type="button" class="close text-white" data-dismiss="modal">&times;</button>

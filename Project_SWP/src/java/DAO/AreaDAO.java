@@ -49,6 +49,21 @@ public class AreaDAO   extends DBContext {
              System.out.println(e.getMessage());
         }
     }
+    
+    public void UpdateArea(int id, String name, String location, int emptyCourt) {
+    String sql = "UPDATE Areas SET name = ?, location = ?, EmptyCourt = ? WHERE area_id = ?";
+    try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+        stmt.setString(1, name);
+        stmt.setString(2, location);
+        stmt.setInt(3, emptyCourt);
+        stmt.setInt(4, id);
+        stmt.executeUpdate();
+    } catch (SQLException e) {
+        System.out.println("UpdateArea: " + e.getMessage());
+    }
+}
+
+    
     public int countAreasByManagerId(int id){
         String sql  ="SELECT count(*) as Total FROM Areas where manager_id = ?";
         try {
