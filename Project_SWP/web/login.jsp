@@ -139,10 +139,10 @@
 
             <!-- Google Sign-In Button -->
             <div id="g_id_onload"
-                 data-client_id="20495276859-asgm8cn4636ehlrsktoc6klk7ldujrp5.apps.googleusercontent.com"
+                 data-client_id="857502113791-0i40c794o3g4h9hped4lhjb77t7h7mn3.apps.googleusercontent.com"
                  data-context="signin"
                  data-ux_mode="redirect"
-                 data-login_uri="http://localhost:9999/badminton_app/oauth2handler"
+                 data-login_uri="http://localhost:8080/Project_SWP_2/oauth2handler"
                  data-auto_prompt="false">
             </div>
 

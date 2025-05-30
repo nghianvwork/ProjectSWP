@@ -25,7 +25,7 @@ public class EmailUtils {
 
         try {
             Message message = new MimeMessage(session);
-            message.setFrom(new InternetAddress(fromEmail, "Badminton_app"));
+            message.setFrom(new InternetAddress(fromEmail, "Support Team"));
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to));
             message.setSubject(MimeUtility.encodeText(subject, "UTF-8", "B"));
             message.setContent(content, "text/html; charset=UTF-8");

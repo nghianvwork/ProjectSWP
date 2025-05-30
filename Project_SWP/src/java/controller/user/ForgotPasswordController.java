@@ -69,7 +69,7 @@ public class ForgotPasswordController extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
-   protected void doPost(HttpServletRequest request, HttpServletResponse response)
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         String username = request.getParameter("username");
@@ -79,16 +79,16 @@ public class ForgotPasswordController extends HttpServlet {
         User user = userDAO.getUserByUsernameOrEmail(username, email);
 
         if (user != null) {
-            
+            // Tạo token ngẫu nhiên và lưu vào DB
             String token = UUID.randomUUID().toString();
             UserDAO tokenDAO = new UserDAO();
             tokenDAO.saveResetToken(user.getUser_Id(), token);
 
-            
+            // Tạo link đặt lại mật khẩu
             String resetLink = request.getRequestURL().toString().replace("forgotPassword", "resetPassword")
                     + "?token=" + token;
 
-           
+            // Gửi email chứa link đặt lại
             String content = "<h3>Xin chào " + user.getUsername() + ",</h3>"
                     + "<p>Click vào liên kết dưới đây để đặt lại mật khẩu. Link có hiệu lực trong 5 phút:</p>"
                     + "<p><a href='" + resetLink + "'>Đặt lại mật khẩu</a></p>";
