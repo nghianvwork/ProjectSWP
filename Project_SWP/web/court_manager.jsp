@@ -6,11 +6,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quản Lý Sân Cầu Lông</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
-          integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+    <!-- Bootstrap + Font -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <style>
         body {
-            background-color: #f4f6f9;
+            background-color: #eef1f7;
             font-family: 'Roboto', sans-serif;
         }
 
@@ -24,7 +27,7 @@
             left: 0;
             display: flex;
             flex-direction: column;
-            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+            box-shadow: 2px 0 8px rgba(0,0,0,0.2);
             z-index: 1000;
         }
 
@@ -36,7 +39,6 @@
 
         .sidebar-logo img {
             width: 100px;
-            height: auto;
             border-radius: 50%;
         }
 
@@ -66,23 +68,24 @@
 
         .main-content {
             margin-left: 270px;
-            padding: 20px;
-            background-color: #ffffff;
-            border-radius: 10px;
+            padding: 30px;
+            background-color: #fff;
             margin-top: 20px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 15px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
         }
 
         .search-bar {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
         }
 
         .table th, .table td {
             vertical-align: middle;
-            font-size: 0.95rem;
+            text-align: center;
             padding: 12px;
         }
 
@@ -103,40 +106,49 @@
 
         @media (max-width: 768px) {
             .sidebar {
-                position: static;
                 width: 100%;
                 height: auto;
+                position: relative;
             }
             .main-content {
                 margin-left: 0;
-                margin-top: 20px;
+                padding: 15px;
+            }
+            .search-bar {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .search-bar .form-inline {
+                width: 100%;
+                margin-bottom: 10px;
             }
         }
     </style>
 </head>
 <body>
 <jsp:include page="navigation_court.jsp" />
+
 <div class="sidebar">
     <div class="sidebar-logo">
         <img src="badminton.jpg" alt="Logo">
     </div>
     <ul>
         <li class="nav-item"><a class="nav-link" href="view-region">REGION MANAGEMENT</a></li>
-        <li class="nav-item"><a class="nav-link" href="courts">COURT MANAGEMENT</a></li>
+        <li class="nav-item"><a class="nav-link active" href="courts">COURT MANAGEMENT</a></li>
         <li class="nav-item"><a class="nav-link" href="ViewEquipments">SERVICE MANAGEMENT</a></li>
         <li class="nav-item"><a class="nav-link" href="manage-request">COURT REQUEST</a></li>
     </ul>
 </div>
 
 <div class="main-content">
-    <h1 class="text-center mb-4">🏙 Quản Lý Sân Cầu Lông</h1>
+    <h1 class="text-center mb-4"><i class="fas fa-building"></i> Quản Lý Sân Cầu Lông</h1>
 
     <div class="search-bar">
         <div class="form-inline">
             <input type="text" id="searchInput" class="form-control mr-2" placeholder="Tìm kiếm theo số sân">
-            <button class="btn btn-primary" onclick="searchCourts()">Tìm kiếm</button>
+            <button class="btn btn-outline-primary" onclick="searchCourts()"><i class="fas fa-search"></i> Tìm kiếm</button>
         </div>
-        <button class="btn btn-primary" data-toggle="modal" data-target="#addCourtModal">Thêm Sân</button>
+        <button class="btn btn-success" data-toggle="modal" data-target="#addCourtModal"><i class="fas fa-plus"></i> Thêm Sân</button>
     </div>
 
     <!-- Modal thêm sân -->
@@ -144,11 +156,11 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="addCourtModalLabel">Thêm Sân</h5>
+                    <h5 class="modal-title"><i class="fas fa-plus-circle"></i> Thêm Sân</h5>
                     <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
                 </div>
                 <div class="modal-body">
-                    <form action="courts" method="post" autocomplete="off">
+                    <form action="courts" method="post">
                         <input type="hidden" name="action" value="add">
                         <div class="form-group">
                             <label>Tên Sân</label>
@@ -181,7 +193,7 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Sửa Sân</h5>
+                    <h5 class="modal-title"><i class="fas fa-edit"></i> Sửa Sân</h5>
                     <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
                 </div>
                 <div class="modal-body">
@@ -241,8 +253,8 @@
                                         data-id="${court.court_id}"
                                         data-number="${court.court_number}"
                                         data-status="${court.status}"
-                                        data-area="${court.area_id}">Sửa</button>
-                                <button class="btn btn-sm btn-danger delete-btn" data-id="${court.court_id}">Xóa</button>
+                                        data-area="${court.area_id}"><i class="fas fa-edit"></i> Sửa</button>
+                                <button class="btn btn-sm btn-danger delete-btn" data-id="${court.court_id}"><i class="fas fa-trash-alt"></i> Xóa</button>
                             </td>
                         </tr>
                     </c:forEach>
@@ -292,7 +304,7 @@
             document.getElementById('updateAreaId').value = this.dataset.area;
             $('#updateCourtModal').modal('show');
         });
-    }); 
+    });
 </script>
 </body>
 </html>

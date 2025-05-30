@@ -81,14 +81,15 @@ public class AreaDAO   extends DBContext {
    public List<Areas> getAllByManagerID(int id, int pageNum, int pageSize) {
     List<Areas> list = new ArrayList<>();
     String sql = "SELECT * FROM Areas WHERE manager_id = ? ORDER BY area_id OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
-
+    
     try {
         PreparedStatement stmt = conn.prepareStatement(sql);
+        
         stmt.setInt(1, id);
-        stmt.setInt(2, pageNum * pageSize); // OFFSET = số dòng cần bỏ qua
+        stmt.setInt(2, pageNum ); // OFFSET = số dòng cần bỏ qua
         stmt.setInt(3, pageSize); // Số dòng cần lấy
+       
         ResultSet rs = stmt.executeQuery();
-
         while (rs.next()) {
             int areasID = rs.getInt("area_id");
             String areaName = rs.getString("name");
@@ -128,7 +129,7 @@ public boolean isRegionNameExist(String name, int managerId) {
         ps.setInt(2, managerId);
         ResultSet rs = ps.executeQuery();
         if (rs.next()) {
-            return rs.getInt(1) > 0; // Nếu COUNT > 0 => đã tồn tại
+            return rs.getInt(1) > 0; 
         }
     } catch (Exception e) {
         e.printStackTrace();

@@ -92,7 +92,7 @@ public class LoginController extends HttpServlet {
                 Cookie cPass = new Cookie("password", password);
                 Cookie cRemember = new Cookie("remember", "on");
 
-                cUser.setMaxAge(7 * 24 * 60 * 60);    // 7 ngày
+                cUser.setMaxAge(7 * 24 * 60 * 60);   
                 cPass.setMaxAge(7 * 24 * 60 * 60);
                 cRemember.setMaxAge(7 * 24 * 60 * 60);
 

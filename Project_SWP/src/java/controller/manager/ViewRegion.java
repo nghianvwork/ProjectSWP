@@ -99,7 +99,10 @@ public class ViewRegion extends HttpServlet {
                 AreaDAO dao = new AreaDAO();
                 int numberofRegion = dao.countAreasByManagerId(user.getUser_Id());
                 int numberofPage = (int) Math.ceil((double) numberofRegion / recordsPerpage);
+                
                 List<Areas> area = new AreaDAO().getAllByManagerID(user.getUser_Id(), (page - 1) * recordsPerpage, recordsPerpage);
+                System.out.println("areas page "+page+": "+area);
+                System.out.println("rcpp: "+recordsPerpage);
                 request.setAttribute("area", area);
                 request.setAttribute("numberOfPages", numberofPage);
                 request.setAttribute("currentPage", page);

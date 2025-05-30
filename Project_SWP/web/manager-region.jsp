@@ -6,6 +6,8 @@
         <meta charset="UTF-8">
         <title>Region Management</title>
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <style>
             body {
                 background-color: #f4f6f9;
@@ -147,10 +149,10 @@
                             </li>
                         </ul>
 
-                       
+
                         <button class="btn btn-success mt-4" data-toggle="modal" data-target="#addModal">+ Thêm địa điểm</button>
 
-                      
+
                         <div class="modal fade" id="addModal" tabindex="-1" role="dialog">
                             <div class="modal-dialog">
                                 <div class="modal-content">
@@ -160,9 +162,7 @@
                                             <button type="button" class="close text-white" data-dismiss="modal">&times;</button>
                                         </div>
                                         <div class="modal-body">
-                                            <c:if test="${not empty error}">
-                                                <div class="">${error}</div>
-                                            </c:if>
+
                                             <div class="form-group">
                                                 <label>Tên địa điểm</label>
                                                 <input type="text" name="regionName" class="form-control" required>
@@ -190,7 +190,14 @@
             </div>
         </div>
 
-        <!-- Scripts -->
+        <script>
+            $(document).ready(function () {
+            <% if (request.getAttribute("error") != null) { %>
+                $('#addModal').modal('show');
+            <% } %>
+            });
+        </script>
+
         <script>
             function searchDorms() {
                 let input = document.getElementById("searchInput").value.toUpperCase();
@@ -205,6 +212,15 @@
                 return confirm("Do you want to delete this?");
             }
         </script>
+        <c:if test="${not empty error}">
+            <script>
+            Swal.fire({
+                title: "Tồn tại !",
+                text: "Tồn tại địa điểm rồi!",
+                icon: "warning"
+            });
+            </script>
+        </c:if>
         <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
     </body>

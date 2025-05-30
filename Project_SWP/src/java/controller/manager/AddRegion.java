@@ -102,7 +102,7 @@ public class AddRegion extends HttpServlet {
                 ar.setManager_id(user.getUser_Id());
                 ar.setLocation(address);
                 dao.addRegion(ar);
-                System.out.println("add " + ar.getName());
+              
                 response.sendRedirect("view-region");
 
             } else {
@@ -124,3 +124,4 @@ public class AddRegion extends HttpServlet {
     }// </editor-fold>
 
 }
+

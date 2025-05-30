@@ -91,7 +91,7 @@ public class ForgotPasswordController extends HttpServlet {
            
             String content = "<h3>Xin chào " + user.getUsername() + ",</h3>"
                     + "<p>Click vào liên kết dưới đây để đặt lại mật khẩu. Link có hiệu lực trong 5 phút:</p>"
-                    + "<p><a href='resetPassword'" + resetLink + "'>Đặt lại mật khẩu</a></p>";
+                    + "<p><a href='" + resetLink + "'>Đặt lại mật khẩu</a></p>";
 
             boolean sent = EmailUtils.sendEmail(user.getEmail(), "Đặt lại mật khẩu", content);
 

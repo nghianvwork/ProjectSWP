@@ -82,8 +82,6 @@
             .login-link:hover {
                 text-decoration: underline;
             }
-
-
         </style>
     </head>
     <body>
@@ -98,10 +96,10 @@
         </div>
 
         <div class="register-container">
-            <h2>Register</h2>
+            <h2>Đăng Kí</h2>
 
             <form action="register" method="post">
-                <div class="input-group">
+<div class="input-group">
                     <span class="input-icon">&#128100;</span>
                     <input type="text" class="input-field" name="username" placeholder="Username" >
                 </div>
@@ -110,27 +108,35 @@
                     <span class="input-icon">&#128274;</span>
                     <input type="password" class="input-field" name="password" placeholder="Password">
                 </div>
+                
+                <div class="input-group">
+                    <span class="input-icon">&#9742;</span> <!-- Icon điện thoại -->
+                    <input type="tel" class="input-field" name="phone" placeholder="Phone" pattern="[0-9]{9,15}" title="Nhập số điện thoại từ 9 đến 15 chữ số" required>
+                </div>
+                
                 <div class="input-group">
                     <span class="input-icon">&#9993;</span>
                     <input type="email" class="input-field" name="email" placeholder="Email" required>
                 </div>
+                
                 <div class="input-group" style="padding-left: 40px;">
-                    <label for="role">Role:</label>
+                    <label for="role">Vai trò:</label>
                     <div style="margin-top: 5px; font-size: 14px;">
                         <label style="margin-right: 15px;">
                             <input type="radio" name="role" value="user" required checked style="margin-right: 5px;">
-                            User
+                            Người dùng
                         </label>
                         <label>
                             <input type="radio" name="role" value="staff" required style="margin-right: 5px;">
-                            Staff
+                            Chủ sân
                         </label>
                     </div>
-
                 </div>
-                <button type="submit" class="btn">Register</button>
+                
+                <button type="submit" class="btn">Đăng kí</button>
+
             </form>
-            <a href="login" class="login-link">Login here</a>
+            <a href="login" class="login-link">Đăng nhập</a>
         </div>
     </body>
 </html>
