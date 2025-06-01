@@ -114,6 +114,14 @@ if (password == null || !password.matches(passwordPattern)) {
             return;
         }
 
+
+        
+        UserDAO udd = new UserDAO();
+        if (udd.isPhoneExists(phoneNumber)) {
+            request.setAttribute("error", "Phone number already exists! Please use another phone number.");
+            request.getRequestDispatcher("register.jsp").forward(request, response);
+            return;
+        }
 // Chỉ chấp nhận đầu 09 hoặc 03 và có đúng 10 số
         if (!phoneNumber.matches("^(09|03)\\d{8}$")) {
             request.setAttribute("error", "Invalid phone number! Only numbers starting with 09 or 03 and exactly 10 digits are allowed.");

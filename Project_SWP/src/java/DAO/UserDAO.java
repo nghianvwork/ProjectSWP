@@ -277,6 +277,20 @@ public Object[] checkUserByUsernameOrEmail(String username, String email) {
         return null;
     }
 
+   public boolean isPhoneExists(String phoneNumber) {
+        String sql = "SELECT COUNT(*) FROM Users WHERE phone_number = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, phoneNumber);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                int count = rs.getInt(1);
+                return count > 0;
+            }
+        } catch (SQLException e) {
+            System.err.println("Lỗi kiểm tra trùng số điện thoại: " + e.getMessage());
+        }
+        return false;
+    }
     public User getUserByUsername(String username) {
         String sql = "SELECT * FROM Users WHERE username = ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
