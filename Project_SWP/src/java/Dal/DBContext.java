@@ -9,6 +9,7 @@ public class DBContext {
     public Connection getConnection() throws ClassNotFoundException, SQLException {
         // Gắn toàn bộ thông tin kết nối vào URL
         String url = "jdbc:sqlserver://localhost:1433;"
+
                    + "databaseName=SWP;"
                    + "user=sa;"
                    + "password=123;"

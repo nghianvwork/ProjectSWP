@@ -68,7 +68,6 @@
             .search-area {
                 text-align: center;
                 padding: 30px;
-                background-color: #ccc;
             }
 
             .search-title {
@@ -101,60 +100,124 @@
             .featured {
                 display: flex;
                 justify-content: center;
-                gap: 20px;
+                flex-wrap: wrap;
+                gap: 30px;
+                padding: 30px 20px;
             }
 
-            /*            .logo-san {
-                            text-align: center;
-                            width: 200px;
-                            height: 150px;
-                        }*/
+            .featured-box {
+                width: 300px;
+                border-radius: 12px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+                overflow: hidden;
+                background-color: white;
+                transition: transform 0.3s;
+            }
 
-            .logo-san img{
+            .featured-box:hover {
+                transform: translateY(-5px);
+            }
+
+            .logo-san img {
                 width: 100%;
-                height: 150px;
+                height: 180px;
                 object-fit: cover;
             }
 
             .san-title {
-                /*                text-align: center;*/
                 padding: 15px;
+                text-align: center;
             }
 
             .san-title h3 {
-                text-align: center;
-                margin: 10px 0;
+                margin-bottom: 10px;
+                color: #2d6db6;
             }
 
+            .san-title h5 {
+                margin: 5px 0;
+                font-weight: normal;
+                color: #555;
+            }
 
             .san-button {
                 text-align: center;
-                padding-bottom: 20px;
+                padding: 15px;
             }
+
             .san-button-s {
-                margin-top: 15px;
-                padding: 10px 20px;
                 background-color: #003366;
                 color: white;
-                text-decoration: none;
-                border-radius: 5px;
-                text-align: center;
+                padding: 10px 25px;
+                border: none;
+                border-radius: 6px;
+                font-weight: bold;
+                cursor: pointer;
+                transition: background-color 0.3s;
             }
 
+            .san-button-s:hover {
+                background-color: #0055aa;
+            }
 
-            .featured-box {
-                width: 300px;
-                border-radius: 15px;
-                box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-                overflow: hidden;
-                font-family: Arial, sans-serif;
-                margin: 20px;
+            .single_slider {
+                background-image: url('./images/logo/hinh_nen.jpg');
+                background-size: cover;
+                background-position: center;
+                background-repeat: no-repeat;
+                height: 100vh;
+                position: relative;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: white;
+            }
+
+            .slider_content {
+                text-align: center;
+                color: white;
+                /*background-color: rgba(0, 0, 0, 0.5);  nền đen mờ */
+                padding: 20px 30px;
+                border-radius: 12px;
+            }
+
+            .slider_content h1 {
+                font-size: 40px;
+                margin-bottom: 20px;
+            }
+
+            .slider_content p {
+                font-size: 18px;
+                margin-bottom: 30px;
+            }
+
+            .slider_content a {
+                display: inline-block;
+                padding: 12px 30px;
                 background-color: white;
+                color: black;
+                text-decoration: none;
+                font-weight: bold;
+                border-radius: 30px;
+                transition: background 0.3s;
+            }
+
+            .slider_content a:hover {
+                background-color: #ddd;
             }
         </style>
     </head>
     <body>
         <jsp:include page="homehead.jsp" />
+
+        <div class="single_slider" style="background-image: url('./images/logo/san.jpg');">
+            <div class="slider_content">
+                <div class="slider_content_inner">  
+                    <!--                    <h1>Badminton</h1>
+                                        <p>Sự lựa chọn hàng đầu</p>-->
+                </div>     
+            </div>    
+        </div>
 
         <div class="search-area">
             <div class="search-title">HỆ THỐNG HỖ TRỢ TÌM KIẾM SÂN BÃI NHANH</div>
