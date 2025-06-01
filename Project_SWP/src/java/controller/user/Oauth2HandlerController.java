@@ -15,6 +15,7 @@ import jakarta.servlet.http.*;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.Collections;
+import utils.PasswordUtil;
 
 @WebServlet(name = "Oauth2HandlerController", urlPatterns = {"/oauth2handler"})
 public class Oauth2HandlerController extends HttpServlet {
@@ -63,7 +64,10 @@ public class Oauth2HandlerController extends HttpServlet {
 
                 User newUser = new User();
                 newUser.setUsername(username);
-                newUser.setPassword("GOOGLE_AUTH"); // password placeholder
+                
+                String hashedPassword = PasswordUtil.hashPassword("GOOGLE_AUTH");
+        
+                newUser.setPassword(hashedPassword); 
                 newUser.setEmail(email);
                 newUser.setPhone_number(""); // chưa có
                 newUser.setRole("user");
@@ -93,7 +97,7 @@ public class Oauth2HandlerController extends HttpServlet {
             User user = dao.getUserByEmail(email);
             HttpSession session = request.getSession();
             session.setAttribute("user", user);
-            session.setAttribute("message", "Đăng nhập Google thành công!");
+            
 
             response.sendRedirect("homepageUser.jsp");
 

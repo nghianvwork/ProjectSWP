@@ -101,14 +101,22 @@
 
     <div class="reset-container">
         <h2>Reset Password</h2>
-        <form action="resetPassword" method="post">
-            <input type="hidden" name="token" value="${token}" />
-            <div class="input-group">
-                <span class="input-icon">&#128274;</span>
-                <input type="password" class="input-field" name="password" placeholder="New Password" required />
-            </div>
-            <button type="submit" class="btn">Update Password</button>
-        </form>
+       <form action="resetPassword" method="post">
+    <input type="hidden" name="token" value="${token}" />
+
+    <div class="input-group">
+        <span class="input-icon">&#128274;</span>
+        <input type="password" class="input-field" name="password" placeholder="New Password" required />
+    </div>
+
+    <div class="input-group">
+        <span class="input-icon">&#128274;</span>
+        <input type="password" class="input-field" name="confirm_password" placeholder="Confirm New Password" required />
+    </div>
+
+    <button type="submit" class="btn">Update Password</button>
+</form>
+
         <a href="login" class="login-link">Back to Login</a>
     </div>
 </body>

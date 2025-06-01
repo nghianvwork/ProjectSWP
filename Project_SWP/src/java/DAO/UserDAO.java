@@ -151,6 +151,54 @@ public class UserDAO extends DBContext {
         }
         return false;
     }
+    
+public Object[] checkUserByUsernameOrEmail(String username, String email) {
+    boolean usernameExists = false;
+    boolean emailExists = false;
+    User foundUser = null;
+
+    try {
+        // 1. Check username
+        String sqlUsername = "SELECT * FROM Users WHERE username = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sqlUsername)) {
+            ps.setString(1, username);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                usernameExists = true;
+                foundUser = extractUserFromResultSet(rs);
+            }
+        }
+
+        // 2. Check email
+        String sqlEmail = "SELECT * FROM Users WHERE email = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sqlEmail)) {
+            ps.setString(1, email);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                emailExists = true;
+                // Nếu trước đó chưa có User (username chưa trùng), thì lấy User từ email
+                if (foundUser == null) {
+                    foundUser = extractUserFromResultSet(rs);
+                }
+            }
+        }
+
+        // 3. Trả mã kết quả
+        if (usernameExists && emailExists) {
+            return new Object[] { 4, foundUser };
+        } else if (usernameExists) {
+            return new Object[] { 1, foundUser };
+        } else if (emailExists) {
+            return new Object[] { 2, foundUser };
+        } else {
+            return new Object[] { 3, null };
+        }
+
+    } catch (SQLException e) {
+        System.err.println("Lỗi kiểm tra username/email: " + e);
+        return new Object[] { 0, null }; // 0 → lỗi DB
+    }
+}
 
     // Lưu token quên mật khẩu
     public void saveResetToken(int userId, String token) {

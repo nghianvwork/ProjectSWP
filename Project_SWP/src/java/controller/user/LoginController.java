@@ -15,6 +15,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import Model.User;
+import utils.PasswordUtil;
 
 @WebServlet(name = "LoginController", urlPatterns = {"/login"})
 public class LoginController extends HttpServlet {
@@ -77,14 +78,16 @@ public class LoginController extends HttpServlet {
         String remember = request.getParameter("rememberMe");
 
         UserDAO userDAO = new UserDAO();
-        User user = userDAO.login(username, password);
+        
+        String hashedPassword = PasswordUtil.hashPassword(password);
+        
+        User user = userDAO.login(username, hashedPassword);
 
         if (user != null) {
             HttpSession session = request.getSession();
             session.setAttribute("user", user);
 
           
-            session.setAttribute("message", "Login successful!");
 
            
             if ("on".equals(remember)) {
@@ -92,7 +95,7 @@ public class LoginController extends HttpServlet {
                 Cookie cPass = new Cookie("password", password);
                 Cookie cRemember = new Cookie("remember", "on");
 
-                cUser.setMaxAge(7 * 24 * 60 * 60);   
+                cUser.setMaxAge(7 * 24 * 60 * 60);    // 7 ngày
                 cPass.setMaxAge(7 * 24 * 60 * 60);
                 cRemember.setMaxAge(7 * 24 * 60 * 60);
 
