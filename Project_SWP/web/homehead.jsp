@@ -12,86 +12,142 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>JSP Page</title>
         <style>
-            body {
-                font-family: Arial, sans-serif;
+            * {
                 margin: 0;
                 padding: 0;
-                background-color: #e9e9e9;
-            }
-            /* Main header styling */
-            .badminton-header {
-                font-family: 'Segoe UI', sans-serif;
-                background-color: #f7f7f7;
-                box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+                box-sizing: border-box;
             }
 
-            /* Top logo and auth area */
-            .header-top {
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                background-color: #f5f5f5;
+            }
+
+            /* Header */
+            .header {
+                background: linear-gradient(135deg, #ff4757, #ff3838);
+                color: white;
+                padding: 1rem 0;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            }
+
+            .header-container {
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 0 2rem;
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
-                padding: 12px 24px;
             }
 
             .logo {
-                font-weight: bold;
-                color: red;
-            }
-
-            .logo img{
-                width: 50px;
-                height: 50px;
-            }
-
-            .site-name {
-                font-size: 20px;
-                font-weight: bold;
-                color: #0b3b8c;
-            }
-
-            /* Auth links */
-            .auth-links {
                 display: flex;
-                justify-content: space-between;
                 align-items: center;
-                gap: 10px;
-                font-size: 14px;
-            }
-            
-            .auth-links img {
-                width: 50px;
-                height:50px;
-                border-radius: 50%;
-            }
-            
-            .auth-links a {
-                text-decoration: none;
-                color: black;
-                font-weight: 700;
-            }
-            
-            /* Navigation bar */
-            .nav-bar {
-                display: flex;
-                justify-content: center;
-                background-color: #2b6cb0;
-                padding: 10px 0;
-                gap: 28px;
+                font-size: 1.5rem;
+                font-weight: bold;
             }
 
-            .nav-bar a {
+            .logo::before {
+                content: "🏸";
+                margin-right: 0.5rem;
+                font-size: 2rem;
+            }
+
+            .search-bar {
+                flex: 1;
+                max-width: 400px;
+                margin: 0 2rem;
+                position: relative;
+            }
+
+            .search-bar input {
+                width: 100%;
+                padding: 0.75rem 1rem;
+                border: none;
+                border-radius: 25px;
+                font-size: 1rem;
+                outline: none;
+            }
+
+            .search-btn {
+                position: absolute;
+                right: 5px;
+                top: 50%;
+                transform: translateY(-50%);
+                background: #ff4757;
+                border: none;
                 color: white;
-                text-decoration: none;
-                font-weight: 500;
-                font-size: 15px;
-                transition: color 0.2s, transform 0.2s;
+                padding: 0.5rem 1rem;
+                border-radius: 20px;
+                cursor: pointer;
             }
 
-            .nav-bar a:hover {
-                color: #ffe066;
-                transform: scale(1.05);
+            .header-actions {
+                display: flex;
+                gap: 1rem;
+                align-items: center;
             }
             
+            
+            .header-btn {
+                background: rgba(255,255,255,0.2);
+                border: 1px solid rgba(255,255,255,0.3);
+                color: white;
+                padding: 0.5rem 1rem;
+                border-radius: 20px;
+                cursor: pointer;
+                transition: all 0.3s;
+                text-decoration: none;
+            }
+
+            .header-btn:hover {
+                background: rgba(255,255,255,0.3);
+            }
+
+            /* Navigation */
+            .nav {
+                background: white;
+                padding: 1rem 0;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            }
+
+            .nav-container {
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 0 2rem;
+                display: flex;
+                gap: 2rem;
+            }
+
+            .nav-item {
+                padding: 0.5rem 1.5rem;
+                border-radius: 25px;
+                cursor: pointer;
+                transition: all 0.3s;
+                background: #f8f9fa;
+                color: #333;
+
+            }
+
+            .nav-item.active {
+                background: #ff4757;
+            }
+
+            .nav-item.active a {
+                text-decoration: none;
+                color: white;
+            }
+
+            .nav-item:hover {
+                background: #ff6b7a;
+                color: white;
+            }
+
+            .nav-item a{
+                color: black;
+                text-decoration: none;
+            }
+
         </style>
     </head>
 
@@ -99,29 +155,33 @@
         <%
         User user = (User) session.getAttribute("user");
         %>
-        <!-- Header -->
-        <header class="badminton-header">
-            <div class="header-top">
-                <div class="logo">
-                    <img src="./images/logo/Badminton.jpg" alt="Logo" />
+        <header class="header">
+            <div class="header-container">
+                <div class="logo">BadmintonCourt</div>
+                <div class="search-bar">
+                    <input type="text" placeholder="Tìm sân cầu lông...">
+                    <button class="search-btn">Tìm</button>
                 </div>
-                <div class="auth-links">
-                    <img src="./images/avt/avt.jpg" alt="avt" />
+                <div class="header-actions">
+                    <!--<img src="./images/avt/avt.jpg" alt="avt" />-->
                     <span>
-                        <a href="viewprofile.jsp"><%=user.getUsername()%></a>
+                        <a href="viewprofile.jsp" class="header-btn"><%=user.getUsername()%></a>
                     </span>
-                    <a href="homepage.jsp">Thoát</a>
+                    <a href="homepage.jsp" class="header-btn">Thoát</a>
                 </div>
             </div>
+        </header>
 
-            <nav class="nav-bar">
-                <a href="homepageUser.jsp">Trang Chủ</a>
-                <a href="#">Danh Sách Sân Bãi</a>
-                <a href="GioiThieu.jsp">Giới Thiệu</a>
-                <a href="#">Điều Khoản</a>
-                <a href="#">Danh Sách Chủ Sân</a>
-                <a href="#">Liên Hệ</a>
-            </nav>              
-        </header>              
+        <!-- Navigation -->
+        <nav class="nav">
+            <div class="nav-container">
+                <div class="nav-item active"><a href="homepageUser.jsp">Trang Chủ</a></div>
+                <div class="nav-item"><a href="#">Danh Sách Sân Bãi</a></div>
+                <div class="nav-item"><a href="GioiThieu.jsp">Giới Thiệu</a></div>
+                <div class="nav-item"><a href="#">Điều Khoản</a></div>
+                <div class="nav-item"><a href="#">Danh Sách Chủ Sân</a></div>
+                <div class="nav-item">Liên Hệ</div>
+            </div>
+        </nav>
     </body>
 </html>
