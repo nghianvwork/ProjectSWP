@@ -14,7 +14,7 @@
                 height: 100vh;
                 margin: 0;
                 font-family: Arial, sans-serif;
-                background: #f0f0f0;
+               background: #1da1f2;
             }
             .register-container {
                 background: rgba(255, 255, 255, 0.9);

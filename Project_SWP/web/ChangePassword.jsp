@@ -5,71 +5,125 @@
 <head>
     <meta charset="UTF-8">
     <title>Change Password</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #1da1f2;
+        }
+        .change-pass-container {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            width: 320px;
+            text-align: center;
+        }
+        h2 {
+            margin-bottom: 20px;
+            color: #333;
+            font-size: 24px;
+        }
+        .input-group {
+            position: relative;
+            margin-bottom: 15px;
+            text-align: left;
+        }
+        .input-field {
+            width: 100%;
+            padding: 10px 10px 10px 40px;
+            border: 1px solid #ccc;
+            border-radius: 25px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+        .input-field:focus {
+            outline: none;
+            border-color: #1da1f2;
+        }
+        .input-icon {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+            font-size: 16px;
+        }
+        .btn {
+            width: 100%;
+            padding: 10px;
+            background-color: #1da1f2;
+            color: #fff;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        .btn:hover {
+            background-color: #1a91da;
+        }
+        .error-message {
+            color: red;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+    </style>
 </head>
 <body>
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card shadow">
-                <div class="card-header bg-success text-white text-center">
-                    <h4>Change Password</h4>
-                </div>
-                <div class="card-body">
 
-                    <c:if test="${not empty error}">
-                        <div class="alert alert-danger" role="alert">
-                            <c:choose>
-                                <c:when test="${error == 'username'}">
-                                    Username not found. Please try again!
-                                </c:when>
-                                <c:when test="${error == 'incorrect'}">
-                                    Old password is incorrect!
-                                </c:when>
-                                <c:when test="${error == 'mismatch'}">
-                                    New passwords do not match!
-                                </c:when>
-                                <c:otherwise>
-                                    ${error}
-                                </c:otherwise>
-                            </c:choose>
-                        </div>
-                    </c:if>
+<div class="change-pass-container">
+    <h2>Change Password</h2>
 
-                    <form action="change-pass" method="post" id="changePassForm">
-                        <div class="form-group">
-                            <label for="username">Username</label>
-                            <input type="text" name="username" class="form-control" id="username" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="oldPassword">Old Password</label>
-                            <input type="password" name="old-password" class="form-control" id="oldPassword" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="newPassword">New Password</label>
-                            <input type="password" name="new-password" class="form-control" id="newPassword" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="confirmPassword">Confirm New Password</label>
-                            <input type="password" name="confirm-password" class="form-control" id="confirmPassword" required>
-                        </div>
-                        <div class="text-center">
-                            <button type="submit" class="btn btn-success">Change Password</button>
-                        </div>
-                    </form>
-
-                </div>
-            </div>
+    <c:if test="${not empty error}">
+        <div class="error-message">
+            <c:choose>
+                <c:when test="${error == 'username'}">
+                    Username not found. Please try again!
+                </c:when>
+                <c:when test="${error == 'incorrect'}">
+                    Old password is incorrect!
+                </c:when>
+                <c:when test="${error == 'mismatch'}">
+                    New passwords do not match!
+                </c:when>
+                <c:otherwise>
+                    ${error}
+                </c:otherwise>
+            </c:choose>
         </div>
-    </div>
+    </c:if>
+
+    <form action="change-pass" method="post" id="changePassForm">
+        <div class="input-group">
+            <span class="input-icon">&#128100;</span>
+            <input type="text" name="username" class="input-field" placeholder="Username" required>
+        </div>
+        <div class="input-group">
+            <span class="input-icon">&#128274;</span>
+            <input type="password" name="old-password" class="input-field" placeholder="Old Password" required>
+        </div>
+        <div class="input-group">
+            <span class="input-icon">&#128274;</span>
+            <input type="password" name="new-password" class="input-field" placeholder="New Password" required>
+        </div>
+        <div class="input-group">
+            <span class="input-icon">&#128274;</span>
+            <input type="password" name="confirm-password" class="input-field" placeholder="Confirm New Password" required>
+        </div>
+        <button type="submit" class="btn">Change Password</button>
+    </form>
 </div>
 
-<!-- JavaScript -->
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const form = document.getElementById('changePassForm');
-        const newPassword = document.getElementById('newPassword');
-        const confirmPassword = document.getElementById('confirmPassword');
+        const newPassword = document.querySelector('input[name="new-password"]');
+        const confirmPassword = document.querySelector('input[name="confirm-password"]');
 
         form.addEventListener('submit', function (e) {
             if (newPassword.value !== confirmPassword.value) {
@@ -79,5 +133,6 @@
         });
     });
 </script>
+
 </body>
 </html>
