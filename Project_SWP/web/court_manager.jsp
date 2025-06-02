@@ -103,6 +103,64 @@
             border-top-left-radius: 10px;
             border-top-right-radius: 10px;
         }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            min-width: 300px;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            display: none;
+            animation: slideInRight 0.3s ease-out;
+        }
+
+        .notification.success {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+
+        .notification.error {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+
+        .notification .close-btn {
+            float: right;
+            background: none;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            color: inherit;
+            padding: 0;
+            margin-left: 10px;
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOutRight {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
 
         @media (max-width: 768px) {
             .sidebar {
@@ -122,11 +180,31 @@
                 width: 100%;
                 margin-bottom: 10px;
             }
+            .notification {
+                right: 10px;
+                left: 10px;
+                min-width: auto;
+            }
         }
     </style>
 </head>
 <body>
 <jsp:include page="navigation_court.jsp" />
+
+<!-- Thông báo -->
+<c:if test="${not empty sessionScope.successMessage}">
+    <div id="notification" class="notification success">
+        <i class="fas fa-check-circle"></i> ${sessionScope.successMessage}
+        <button class="close-btn" onclick="closeNotification()">&times;</button>
+    </div>
+</c:if>
+
+<c:if test="${not empty sessionScope.errorMessage}">
+    <div id="notification" class="notification error">
+        <i class="fas fa-exclamation-circle"></i> ${sessionScope.errorMessage}
+        <button class="close-btn" onclick="closeNotification()">&times;</button>
+    </div>
+</c:if>
 
 <div class="sidebar">
     <div class="sidebar-logo">
@@ -176,7 +254,8 @@
                         </div>
                         <div class="form-group">
                             <label>Khu Vực ID</label>
-                            <input type="number" class="form-control" name="areaId" required>
+                            <input type="number" class="form-control" id="addAreaId" name="areaId" required min="1">
+                            <small class="form-text text-muted">Nhập ID khu vực hợp lệ</small>
                         </div>
                         <div class="modal-footer">
                             <button type="submit" class="btn btn-success">Lưu</button>
@@ -214,7 +293,8 @@
                         </div>
                         <div class="form-group">
                             <label>Khu Vực ID</label>
-                            <input type="number" class="form-control" id="updateAreaId" name="areaId" required>
+                            <input type="number" class="form-control" id="updateAreaId" name="areaId" required min="1">
+                            <small class="form-text text-muted">Nhập ID khu vực hợp lệ</small>
                         </div>
                         <div class="modal-footer">
                             <button type="submit" class="btn btn-success">Cập Nhật</button>
@@ -254,7 +334,14 @@
                                         data-number="${court.court_number}"
                                         data-status="${court.status}"
                                         data-area="${court.area_id}"><i class="fas fa-edit"></i> Sửa</button>
-                                <button class="btn btn-sm btn-danger delete-btn" data-id="${court.court_id}"><i class="fas fa-trash-alt"></i> Xóa</button>
+                                <form action="courts" method="post" style="display: inline;">
+                                    <input type="hidden" name="action" value="delete">
+                                    <input type="hidden" name="courtId" value="${court.court_id}">
+                                    <button type="submit" class="btn btn-sm btn-danger" 
+                                            onclick="return confirm('Bạn có chắc muốn xóa sân này?')">
+                                        <i class="fas fa-trash-alt"></i> Xóa
+                                    </button>
+                                </form>
                             </td>
                         </tr>
                     </c:forEach>
@@ -269,23 +356,30 @@
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    document.querySelectorAll('.delete-btn').forEach(button => {
-        button.addEventListener('click', function () {
-            if (confirm('Bạn có chắc muốn xóa sân này?')) {
-                const courtId = this.getAttribute('data-id');
-                fetch('courts', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: `action=delete&courtId=${courtId}`
-                })
-                .then(response => {
-                    if (!response.ok) throw new Error('Xóa thất bại');
-                    location.reload();
-                })
-                .catch(error => alert('Lỗi: ' + error.message));
-            }
-        });
-    });
+    window.onload = function() {
+        const notification = document.getElementById('notification');
+        if (notification) {
+            notification.style.display = 'block';
+            // Tự động ẩn sau 5 giây
+            setTimeout(() => {
+                closeNotification();
+            }, 5000);
+        }
+    };
+
+    // Đóng thông báo
+    function closeNotification() {
+        const notification = document.getElementById('notification');
+        if (notification) {
+            notification.style.animation = 'slideOutRight 0.3s ease-out';
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 300);
+        }
+    }
+    
+    
+    
 
     function searchCourts() {
         let input = document.getElementById("searchInput").value.toUpperCase();
