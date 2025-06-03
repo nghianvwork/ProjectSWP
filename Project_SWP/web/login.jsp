@@ -13,7 +13,7 @@
                 height: 100vh;
                 margin: 0;
                 font-family: Arial, sans-serif;
-                background: url('') no-repeat center center fixed;
+                background: #1da1f2;
                 background-size: cover;
                 backdrop-filter: blur(5px);
                 -webkit-backdrop-filter: blur(5px);

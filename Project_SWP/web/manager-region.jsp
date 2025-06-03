@@ -190,13 +190,13 @@
             </div>
         </div>
 
-        <script>
+<!--        <script>
             $(document).ready(function () {
             <% if (request.getAttribute("error") != null) { %>
                 $('#addModal').modal('show');
             <% } %>
             });
-        </script>
+        </script>-->
 
         <script>
             function searchDorms() {
