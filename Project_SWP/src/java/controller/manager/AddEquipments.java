@@ -22,8 +22,8 @@ public class AddEquipments extends HttpServlet {
         String name = request.getParameter("name");
         double price = Double.parseDouble(request.getParameter("price"));
 
-        // Có thể thêm lấy từ form nếu cần
-        String quantity = "Chưa kiểm tra"; // Mặc định nếu không có input từ người dùng
+        
+        String quantity = "Chưa kiểm tra"; 
 
         if (EquipmentsDAO.isDuplicateService(name)) {
             List<Equipments> equipments = EquipmentsDAO.getAllEquipments();
@@ -37,7 +37,7 @@ public class AddEquipments extends HttpServlet {
         try {
             EquipmentsDAO.addService(s);
 
-            // Load lại danh sách thiết bị
+           
             List<Equipments> equipments = EquipmentsDAO.getAllEquipments();
             request.setAttribute("equipments", equipments);
             request.setAttribute("status", "success");

@@ -15,6 +15,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.sql.Time;
 
 /**
  *
@@ -72,46 +73,51 @@ public class AddRegion extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
+
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
         HttpSession session = request.getSession(false);
-        if (session != null) {
-            User user = (User) session.getAttribute("user");
-            System.out.println(user.getUser_Id());
-            if (user.getRole().equals("staff")) {
-                AreaDAO dao = new AreaDAO();
-                String name = request.getParameter("regionName");
-                String address = request.getParameter("address");
-                int empty = 0;
+        User user = (User) session.getAttribute("user");
+        if (user == null || !user.getRole().equals("staff")) {
+            response.sendRedirect("login");
+            return;
+        }
+
+        String name = request.getParameter("regionName");
+        String address = request.getParameter("address");
+        
+        Time openTime = Time.valueOf(request.getParameter("openTime") + ":00");
+        Time closeTime = Time.valueOf(request.getParameter("closeTime") + ":00");
+
+        int empty = 0;
+
                 try {
                     empty = Integer.parseInt(request.getParameter("emptyCourt"));
-                } catch (Exception e) {
-                    System.out.println(e);
+                } catch (NumberFormatException e) {
+                    System.out.println("Lỗi chuyển đổi số lượng sân: " + e.getMessage());
                 }
-                boolean exists = dao.isRegionNameExist(name, user.getUser_Id());
-                if (exists) {
-                    session.setAttribute("error", "Tên địa điểm đã tồn tại!");
-                    response.sendRedirect("view-region");
-                    return;
-                }
+        Areas area = new Areas();
+        area.setName(name);
+        area.setLocation(address);
+        area.setEmptyCourt(empty);
+        area.setOpenTime(openTime);
+        area.setCloseTime(closeTime);
+        area.setManager_id(user.getUser_Id()); // 
 
-                Areas ar = new Areas();
-                ar.setName(name);
-                ar.setEmptyCourt(empty);
-                ar.setManager_id(user.getUser_Id());
-                ar.setLocation(address);
-                dao.addRegion(ar);
-              
-                response.sendRedirect("view-region");
-
-            } else {
-                response.sendError(403);
-            }
+        AreaDAO dao = new AreaDAO();
+        boolean exists = dao.isRegionNameExist(name, user.getUser_Id());
+        if (exists) {
+            session.setAttribute("error", "Tồn tại địa điểm rồi!");
         } else {
-            response.sendRedirect("login");
+            dao.addRegion(area);
         }
+
+        response.sendRedirect("view-region");
     }
+
+
 
     /**
      * Returns a short description of the servlet.
@@ -124,4 +130,3 @@ public class AddRegion extends HttpServlet {
     }// </editor-fold>
 
 }
-

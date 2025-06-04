@@ -38,7 +38,7 @@ public class EquipmentsDAO {
             int nextId = getNextEquipmentId();
 
             Connection con = new DBContext().getConnection();
-            PreparedStatement ps = con.prepareStatement("INSERT INTO Equipments(equipment_id, name, price) VALUES (?, ?, ?, ?)");
+            PreparedStatement ps = con.prepareStatement("INSERT INTO Equipments(equipment_id, name, price) VALUES (?, ?, ?)");
             ps.setInt(1, nextId);
             ps.setString(2, s.getName());
             ps.setDouble(3, s.getPrice());

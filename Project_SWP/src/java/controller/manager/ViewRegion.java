@@ -102,6 +102,7 @@ public class ViewRegion extends HttpServlet {
                 
                 List<Areas> area = new AreaDAO().getAllByManagerID(user.getUser_Id(), (page - 1) * recordsPerpage, recordsPerpage);
                 System.out.println("areas page "+page+": "+area);
+                
                 System.out.println("rcpp: "+recordsPerpage);
                 request.setAttribute("area", area);
                 request.setAttribute("numberOfPages", numberofPage);
@@ -111,6 +112,8 @@ public class ViewRegion extends HttpServlet {
                     request.setAttribute("error", error);
                     session.removeAttribute("error");
                 }
+               
+
                 request.getRequestDispatcher("manager-region.jsp").forward(request, response);
                 
                 

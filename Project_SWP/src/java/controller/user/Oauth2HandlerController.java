@@ -65,7 +65,7 @@ public class Oauth2HandlerController extends HttpServlet {
                 User newUser = new User();
                 newUser.setUsername(username);
                 
-                String hashedPassword = PasswordUtil.hashPassword("GOOGLE_AUTH");
+                String hashedPassword = PasswordUtil.hashPassword("Badminton_App");
         
                 newUser.setPassword(hashedPassword); 
                 newUser.setEmail(email);

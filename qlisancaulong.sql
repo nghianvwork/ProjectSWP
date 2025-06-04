@@ -20,9 +20,13 @@ CREATE TABLE Areas (
     name VARCHAR(100) NOT NULL,
     location VARCHAR(255),
     manager_id INT NOT NULL,
-	EmptyCourt  INT,
-    FOREIGN KEY (manager_id) REFERENCES Users(user_id)
+    EmptyCourt INT,
+    open_time TIME NOT NULL ,
+    close_time TIME NOT NULL ,
+    FOREIGN KEY (manager_id) REFERENCES Users(user_id),
+    CONSTRAINT chk_area_time CHECK (open_time < close_time)
 );
+
 
 -- ==========================
 -- BẢNG GIÁ THUÊ SÂN
@@ -41,11 +45,15 @@ CREATE TABLE Court_Pricing (
 -- ==========================
 CREATE TABLE Courts (
     court_id INT PRIMARY KEY IDENTITY(1,1),
-    court_number  VARCHAR(50) NOT NULL,
-    
-   [status] [nvarchar](50),
+    court_number VARCHAR(50) NOT NULL,
+    [status] NVARCHAR(50),
     area_id INT NOT NULL,
-    FOREIGN KEY (area_id) REFERENCES Areas(area_id)
+    open_time TIME NULL,
+    close_time TIME NULL,
+    FOREIGN KEY (area_id) REFERENCES Areas(area_id),
+    CONSTRAINT chk_court_time CHECK (
+        open_time IS NULL OR close_time IS NULL OR open_time < close_time
+    )
 );
 
 -- ==========================
@@ -72,7 +80,7 @@ CREATE TABLE Equipments (
     equipment_id INT PRIMARY KEY,
     name NVARCHAR(100) NOT NULL UNIQUE,
     price DECIMAL(10, 2) NOT NULL CHECK (price >= 0),
-    quantity INT NOT NULL CHECK (quantity >= 0)
+    
 );
 
 -- ==========================

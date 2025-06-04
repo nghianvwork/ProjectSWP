@@ -7,7 +7,7 @@
         <title>Region Management</title>
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <style>
             body {
                 background-color: #f4f6f9;
@@ -81,6 +81,9 @@
                                         <th>Tên</th>
                                         <th>Địa chỉ</th>
                                         <th>Số lượng sân</th>
+                                        <th>Thời gian mở cửa</th>
+                                        <th>Thời gian đóng cửa</th>
+
                                         <th style="width: 220px;">Action</th>
                                     </tr>
                                 </thead>
@@ -90,6 +93,9 @@
                                             <td>${a.name}</td>
                                             <td>${a.location}</td>
                                             <td>${a.emptyCourt}</td>
+                                            <td>${a.openTime}</td>
+                                            <td>${a.closeTime}</td>
+
                                             <td>
                                                 <button class="btn btn-warning btn-sm" data-toggle="modal" data-target="#updateModal${loop.index}">Update</button>
                                                 <a href="dorm-detail?id=${a.area_id}" class="btn btn-info btn-sm">Detail</a>
@@ -118,6 +124,15 @@
                                                                         <label>Số lượng sân</label>
                                                                         <input type="number" name="empty" class="form-control" value="${a.emptyCourt}">
                                                                     </div>
+                                                                    <div class="form-group">
+                                                                        <label>Giờ mở cửa</label>
+                                                                        <input type="time" name="openTime" class="form-control" value="${a.openTime}">
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label>Giờ đóng cửa</label>
+                                                                        <input type="time" name="closeTime" class="form-control" value="${a.closeTime}">
+                                                                    </div>
+
                                                                 </div>
                                                                 <div class="modal-footer">
                                                                     <button type="submit" class="btn btn-success">Cập nhật</button>
@@ -172,9 +187,18 @@
                                                 <input type="text" name="address" class="form-control">
                                             </div>
                                             <div class="form-group">
-                                                <label>Số lương sân</label>
+                                                <label>Số lượng sân</label>
                                                 <input type="number" name="emptyCourt" class="form-control" value="0" min="0">
                                             </div>
+                                            <div class="form-group">
+                                                <label>Giờ mở cửa</label>
+                                                <input type="time" name="openTime" class="form-control" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Giờ đóng cửa</label>
+                                                <input type="time" name="closeTime" class="form-control" required>
+                                            </div>
+
                                         </div>
                                         <div class="modal-footer">
                                             <button type="submit" class="btn btn-success">Thêm</button>
@@ -190,17 +214,17 @@
             </div>
         </div>
 
-<!--        <script>
-            $(document).ready(function () {
-            <% if (request.getAttribute("error") != null) { %>
-                $('#addModal').modal('show');
-            <% } %>
-            });
-        </script>-->
+        <!--        <script>
+                    $(document).ready(function () {
+        <% if (request.getAttribute("error") != null) { %>
+            $('#addModal').modal('show');
+        <% } %>
+        });
+    </script>-->
 
         <script>
             function searchDorms() {
-                let input = document.getElementById("searchInput").value.toUpperCase();
+                let input = document.getElementById("searchInput").value.toUpperCase().trim();
                 let rows = document.querySelectorAll("table tbody tr");
                 rows.forEach(row => {
                     let name = row.cells[0].textContent.toUpperCase();
@@ -214,11 +238,11 @@
         </script>
         <c:if test="${not empty error}">
             <script>
-            Swal.fire({
-                title: "Tồn tại !",
-                text: "Tồn tại địa điểm rồi!",
-                icon: "warning"
-            });
+                Swal.fire({
+                    title: "Tồn tại !",
+                    text: "Tồn tại địa điểm rồi!",
+                    icon: "warning"
+                });
             </script>
         </c:if>
         <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>

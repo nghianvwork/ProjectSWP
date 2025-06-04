@@ -13,6 +13,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import utils.PasswordUtil;
 
 /**
  *
@@ -71,6 +72,7 @@ public class ChangePassword extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
+
 protected void doPost(HttpServletRequest request, HttpServletResponse response)
         throws ServletException, IOException {
     String username = request.getParameter("username");
@@ -78,7 +80,8 @@ protected void doPost(HttpServletRequest request, HttpServletResponse response)
     String newPass = request.getParameter("new-password");
     String confirmPass = request.getParameter("confirm-password");
 
-    User user = new UserDAO().getUserByUsername(username);
+    UserDAO dao = new UserDAO();
+    User user = dao.getUserByUsername(username);
 
     if (user == null) {
         request.setAttribute("error", "username"); 
@@ -86,25 +89,36 @@ protected void doPost(HttpServletRequest request, HttpServletResponse response)
         return;
     }
 
-    
-    if (!user.getPassword().equals(oldPass)) {
-        request.setAttribute("error", "wrong old password"); 
-        request.getRequestDispatcher("ChangePassword.jsp").forward(request, response);
-        return;
-    }
-
    
+    String hashedOldPass = PasswordUtil.hashPassword(oldPass);
+    if (!user.getPassword().equals(hashedOldPass)) {
+        request.setAttribute("error", "Wrong old password"); 
+        request.getRequestDispatcher("ChangePassword.jsp").forward(request, response);
+        return;
+    }
+   
+
+
+
     if (!newPass.equals(confirmPass)) {
-        request.setAttribute("error", "mismatch"); 
+        request.setAttribute("error", "Mismatch"); 
         request.getRequestDispatcher("ChangePassword.jsp").forward(request, response);
         return;
     }
 
     
-    user.setPassword(newPass);
-    new UserDAO().updatePassword(user);
+    String hashedNewPass = PasswordUtil.hashPassword(newPass);
+    if (hashedNewPass.equals(user.getPassword())) {
+    request.setAttribute("error", "New password must be different from old password"); 
+    request.getRequestDispatcher("ChangePassword.jsp").forward(request, response);
+    return;
+}
+    user.setPassword(hashedNewPass);
+    dao.updatePassword(user);
+    
     response.sendRedirect("login");
 }
+
 
 
     /**

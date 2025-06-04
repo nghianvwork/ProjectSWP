@@ -10,6 +10,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,39 +30,41 @@ public class AreaDAO   extends DBContext {
         }
     }
 
-    public void addRegion(Areas re) {
-        String sql = "INSERT INTO [dbo].[Areas]\n"
-                + "           ([name]\n"
-                + "           ,[location]\n"
-                + "           ,[manager_id]\n"
-                + "           ,[EmptyCourt])\n"
-                + "     VALUES\n"
-                + "           (?,?,?,?)";
-        
-        try {
-            PreparedStatement pre = conn.prepareStatement(sql);
-            pre.setString(1, re.getName());
-            pre.setString(2, re.getLocation());
-            pre.setInt(3, re.getManager_id());
-            pre.setInt(4, re.getEmptyCourt());
-            pre.executeUpdate();
-        } catch (Exception e) {
-             System.out.println(e.getMessage());
-        }
+  public void addRegion(Areas re) {
+    String sql = "INSERT INTO [dbo].[Areas] " +
+                 "([name], [location], [manager_id], [EmptyCourt], [open_time], [close_time]) " +
+                 "VALUES (?, ?, ?, ?, ?, ?)";
+
+    try {
+        PreparedStatement pre = conn.prepareStatement(sql);
+        pre.setString(1, re.getName());
+        pre.setString(2, re.getLocation());
+        pre.setInt(3, re.getManager_id());
+        pre.setInt(4, re.getEmptyCourt());
+        pre.setTime(5, re.getOpenTime());
+        pre.setTime(6, re.getCloseTime());
+        pre.executeUpdate();
+    } catch (Exception e) {
+        System.out.println(e.getMessage());
     }
+}
+
     
-    public void UpdateArea(int id, String name, String location, int emptyCourt) {
-    String sql = "UPDATE Areas SET name = ?, location = ?, EmptyCourt = ? WHERE area_id = ?";
+   public void UpdateArea(int id, String name, String location, int emptyCourt, Time openTime, Time closeTime) {
+    String sql = "UPDATE Areas SET name = ?, location = ?, EmptyCourt = ?, open_time = ?, close_time = ? WHERE area_id = ?";
     try (PreparedStatement stmt = conn.prepareStatement(sql)) {
         stmt.setString(1, name);
         stmt.setString(2, location);
         stmt.setInt(3, emptyCourt);
-        stmt.setInt(4, id);
+        stmt.setTime(4, openTime);
+        stmt.setTime(5, closeTime);
+        stmt.setInt(6, id);
         stmt.executeUpdate();
     } catch (SQLException e) {
         System.out.println("UpdateArea: " + e.getMessage());
     }
 }
+
 
     
     public int countAreasByManagerId(int id){
@@ -78,17 +81,15 @@ public class AreaDAO   extends DBContext {
         }
         return 0;
     }
-   public List<Areas> getAllByManagerID(int id, int pageNum, int pageSize) {
+  public List<Areas> getAllByManagerID(int id, int pageNum, int pageSize) {
     List<Areas> list = new ArrayList<>();
     String sql = "SELECT * FROM Areas WHERE manager_id = ? ORDER BY area_id OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
     
-    try {
-        PreparedStatement stmt = conn.prepareStatement(sql);
+    try (PreparedStatement stmt = conn.prepareStatement(sql)) {
         
         stmt.setInt(1, id);
-        stmt.setInt(2, pageNum ); // OFFSET = số dòng cần bỏ qua
-        stmt.setInt(3, pageSize); // Số dòng cần lấy
-       
+        stmt.setInt(2, pageNum);    // OFFSET = (pageNum - 1) * pageSize
+        stmt.setInt(3, pageSize);  // Số dòng cần lấy
         ResultSet rs = stmt.executeQuery();
         while (rs.next()) {
             int areasID = rs.getInt("area_id");
@@ -96,8 +97,10 @@ public class AreaDAO   extends DBContext {
             String location = rs.getString("location");
             int managerID = rs.getInt("manager_id");
             int emptyCourt = rs.getInt("EmptyCourt");
+            Time openTime = rs.getTime("open_time");
+            Time closeTime = rs.getTime("close_time");
 
-            Areas ar = new Areas(areasID, areaName, location, managerID, emptyCourt);
+            Areas ar = new Areas(areasID, areaName, location, managerID, emptyCourt, openTime, closeTime);
             list.add(ar);
         }
 
@@ -107,6 +110,7 @@ public class AreaDAO   extends DBContext {
 
     return list;
 }
+
 public void updateEmptyCourtByAreaId(int areaId, int change) {
     try {
        
@@ -136,40 +140,30 @@ public boolean isRegionNameExist(String name, int managerId) {
     }
     return false;
 }
-    
-    public static void main(String[] args) {
-       AreaDAO areaDAO = new AreaDAO();
-
-    
-    Areas newArea = new Areas();
-    newArea.setName("Khu thể thao B ");
-    newArea.setLocation("Hà Nội");
-    newArea.setManager_id(1);
-    newArea.setEmptyCourt(5);
-
-    
-    areaDAO.addRegion(newArea);
-    
-    System.out.println("Đã thêm khu vực thành công!");
-     int managerId = 1;
-        System.out.println(areaDAO.countAreasByManagerId(1));
-     
-    int pageNum = 0; // OFFSET sẽ là 0
-    int pageSize = 5;
-
-    List<Areas> areas = areaDAO.getAllByManagerID(managerId, pageNum, pageSize);
-
-    if (areas.isEmpty()) {
-        System.out.println("Không có khu vực nào được tìm thấy cho manager_id: " + managerId);
-    } else {
-        for (Areas area : areas) {
-            System.out.println("ID: " + area.getArea_id());
-            System.out.println("Tên khu: " + area.getName());
-            System.out.println("Địa chỉ: " + area.getLocation());
-            System.out.println("Quản lý: " + area.getManager_id());
-            System.out.println("Sân trống: " + area.getEmptyCourt());
-            System.out.println("---------------");
+ public static void main(String[] args) {
+       
+        AreaDAO areaDAO = new AreaDAO();
+       
+        Areas newArea = new Areas(
+            0,                   
+            "Khu Vực Mới",      
+            "Hà Nội",            
+            1,              
+            5,               
+            Time.valueOf("08:00:00"),  
+            Time.valueOf("22:00:00")   
+        );
+        
+        // Gọi phương thức addRegion để thêm mới
+        areaDAO.addRegion(newArea);
+        
+         System.out.println("Đã thêm khu vực mới thành công!");
+        List<Areas> a = areaDAO.getAllByManagerID(1, 1, 5);
+        for(Areas list : a){
+            System.out.println(list);
         }
-    }
+       
     }
 }
+    
+ 

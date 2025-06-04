@@ -4,6 +4,8 @@
  */
 package Model;
 
+import java.sql.Time;
+
 /**
  *
  * @author admin
@@ -14,13 +16,22 @@ public class Areas {
     private String location;
     private int manager_id;
     private int  emptyCourt;
+    private Time openTime;
+    private Time closeTime;
 
-    public Areas(int area_id, String name, String location, int manager_id, int emptyCourt) {
+    public Areas(int area_id, String name, String location, int manager_id, int emptyCourt, Time openTime, Time closeTime) {
         this.area_id = area_id;
         this.name = name;
         this.location = location;
         this.manager_id = manager_id;
-        this.emptyCourt = emptyCourt ;
+        this.emptyCourt = emptyCourt;
+        this.openTime = openTime;
+        this.closeTime = closeTime;
+    }
+
+    @Override
+    public String toString() {
+        return "Areas{" + "area_id=" + area_id + ", name=" + name + ", location=" + location + ", manager_id=" + manager_id + ", emptyCourt=" + emptyCourt + ", openTime=" + openTime + ", closeTime=" + closeTime + '}';
     }
 
     public Areas() {
@@ -66,7 +77,21 @@ public class Areas {
         this.emptyCourt = emptyCourt;
     }
 
-   
+    public Time getOpenTime() {
+        return openTime;
+    }
+
+    public void setOpenTime(Time openTime) {
+        this.openTime = openTime;
+    }
+
+    public Time getCloseTime() {
+        return closeTime;
+    }
+
+    public void setCloseTime(Time closeTime) {
+        this.closeTime = closeTime;
+    }
     
     
     
