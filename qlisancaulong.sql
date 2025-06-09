@@ -3,7 +3,8 @@
 -- ==========================
 -- BẢNG NGƯỜI DÙNG
 -- ==========================
-CREATE TABLE Users (
+CREATE TABLE Users
+(
     user_id INT PRIMARY KEY IDENTITY(1,1),
     username VARCHAR(50) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
@@ -17,7 +18,8 @@ CREATE TABLE Users (
 -- ==========================
 -- BẢNG KHU VỰC
 -- ==========================
-CREATE TABLE Areas (
+CREATE TABLE Areas
+(
     area_id INT PRIMARY KEY IDENTITY(1,1),
     name VARCHAR(100) NOT NULL,
     location VARCHAR(255),
@@ -25,25 +27,27 @@ CREATE TABLE Areas (
     EmptyCourt INT,
     open_time TIME NOT NULL,
     close_time TIME NOT NULL,
-   
-    descriptions NVARCHAR(MAX),      
+
+    descriptions NVARCHAR(MAX),
     FOREIGN KEY (manager_id) REFERENCES Users(user_id),
     CONSTRAINT chk_area_time CHECK (open_time < close_time)
 );
 
-CREATE TABLE Area_Image (
+CREATE TABLE Area_Image
+(
     imageID INT PRIMARY KEY IDENTITY(1,1),
     area_id INT,
     imageURL TEXT,
-	
-	FOREIGN KEY ( area_id) REFERENCES Areas(area_id)
+
+    FOREIGN KEY ( area_id) REFERENCES Areas(area_id)
 );
 
 
 -- ==========================
 -- BẢNG GIÁ THUÊ SÂN
 -- ==========================
-CREATE TABLE Court_Pricing (
+CREATE TABLE Court_Pricing
+(
     pricing_id INT PRIMARY KEY IDENTITY(1,1),
     area_id INT NOT NULL,
     start_time TIME NOT NULL,
@@ -57,9 +61,20 @@ CREATE TABLE Court_Pricing (
 -- ==========================
 -- BẢNG SÂN
 -- ==========================
-CREATE TABLE Courts (
+CREATE TABLE Courts
+(
     court_id INT PRIMARY KEY IDENTITY(1,1),
     court_number VARCHAR(50) NOT NULL,
+    type NVARCHAR(50),
+    -- Loại sân
+    floor_material NVARCHAR(50),
+    -- Loại mặt sân
+    lighting NVARCHAR(50),
+    -- Hệ thống chiếu sáng
+    description NVARCHAR(255),
+    -- Mô tả thêm
+    image_url NVARCHAR(255),
+    -- Ảnh minh họa
     [status] NVARCHAR(50),
     area_id INT NOT NULL,
     open_time TIME NULL,
@@ -75,7 +90,8 @@ CREATE TABLE Courts (
 -- ==========================
 -- BẢNG ĐẶT SÂN
 -- ==========================
-CREATE TABLE Bookings (
+CREATE TABLE Bookings
+(
     booking_id INT PRIMARY KEY IDENTITY(1,1),
     user_id INT NOT NULL,
     court_id INT NOT NULL,
@@ -92,25 +108,27 @@ CREATE TABLE Bookings (
 -- ==========================
 -- BẢNG THIẾT BỊ
 -- ==========================
-CREATE TABLE Services (
-    services_id INT PRIMARY KEY IDENTITY(1,1),         
-    name NVARCHAR(100) NOT NULL UNIQUE,                 
-    price DECIMAL(10, 2) NOT NULL CHECK (price >= 0),   
-    description NVARCHAR(MAX),                          
-    image_url VARCHAR(255),                             
-    status NVARCHAR(50) DEFAULT 'Active',              
-    created_at DATETIME DEFAULT GETDATE(),              
-    updated_at DATETIME,                                
-    is_deleted BIT DEFAULT 0                            
+CREATE TABLE Services
+(
+    services_id INT PRIMARY KEY IDENTITY(1,1),
+    name NVARCHAR(100) NOT NULL UNIQUE,
+    price DECIMAL(10, 2) NOT NULL CHECK (price >= 0),
+    description NVARCHAR(MAX),
+    image_url VARCHAR(255),
+    status NVARCHAR(50) DEFAULT 'Active',
+    created_at DATETIME DEFAULT GETDATE(),
+    updated_at DATETIME,
+    is_deleted BIT DEFAULT 0
 );
 
 
-CREATE TABLE Areas_Services (
+CREATE TABLE Areas_Services
+(
     AreaServices_id INT PRIMARY KEY IDENTITY(1,1),
-   
+
     services_id INT NOT NULL,
-   
-   area_id INT,
+
+    area_id INT,
     FOREIGN KEY (area_id) REFERENCES Areas(area_id),
     FOREIGN KEY (services_id) REFERENCES Services(services_id)
 );
@@ -118,7 +136,8 @@ CREATE TABLE Areas_Services (
 -- ==========================
 -- BẢNG BÀI VIẾT
 -- ==========================
-CREATE TABLE Posts (
+CREATE TABLE Posts
+(
     post_id INT PRIMARY KEY IDENTITY(1,1),
     title VARCHAR(255) NOT NULL,
     content VARCHAR(MAX) NOT NULL,
@@ -131,7 +150,8 @@ CREATE TABLE Posts (
 -- ==========================
 -- BẢNG BÌNH LUẬN
 -- ==========================
-CREATE TABLE Comments (
+CREATE TABLE Comments
+(
     comment_id INT PRIMARY KEY IDENTITY(1,1),
     post_id INT NOT NULL,
     user_id INT NOT NULL,
@@ -144,7 +164,8 @@ CREATE TABLE Comments (
 -- ==========================
 -- BẢNG ĐÁNH GIÁ
 -- ==========================
-CREATE TABLE Reviews (
+CREATE TABLE Reviews
+(
     review_id INT PRIMARY KEY IDENTITY(1,1),
     user_id INT NOT NULL,
     area_id INT NOT NULL,
@@ -156,17 +177,18 @@ CREATE TABLE Reviews (
 );
 
 
-CREATE TABLE [dbo].[password_reset_tokens](
-	[id] [int] IDENTITY(1,1) NOT NULL,
-	[user_id] [int] NOT NULL,
-	[token] [varchar](255) NOT NULL,
-	[created_at] [datetime] NULL,
-	[is_used] [bit] NULL,
-PRIMARY KEY CLUSTERED 
+CREATE TABLE [dbo].[password_reset_tokens]
+(
+    [id] [int] IDENTITY(1,1) NOT NULL,
+    [user_id] [int] NOT NULL,
+    [token] [varchar](255) NOT NULL,
+    [created_at] [datetime] NULL,
+    [is_used] [bit] NULL,
+    PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY],
-UNIQUE NONCLUSTERED 
+    UNIQUE NONCLUSTERED 
 (
 	[token] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
