@@ -254,6 +254,7 @@ public Object[] checkUserByUsernameOrEmail(String username, String email) {
 
     public void updatePassword(User us) {
         String sql = "UPDATE Users SET password = ? WHERE user_id = ?";
+        System.out.println(us.getPassword());
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, us.getPassword());
             ps.setInt(2, us.getUser_Id());

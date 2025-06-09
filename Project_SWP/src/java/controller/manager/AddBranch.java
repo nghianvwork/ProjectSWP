@@ -5,6 +5,8 @@
 package controller.manager;
 
 import DAO.AreaDAO;
+import Model.Branch;
+import Model.User;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -12,13 +14,15 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import java.sql.Time;
 
 /**
  *
  * @author admin
  */
-@WebServlet(name = "UpdateArea", urlPatterns = {"/UpdateArea"})
-public class UpdateArea extends HttpServlet {
+@WebServlet(name = "AddRegionController", urlPatterns = {"/add-region"})
+public class AddBranch extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -37,10 +41,10 @@ public class UpdateArea extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet UpdateArea</title>");
+            out.println("<title>Servlet AddRegion</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet UpdateArea at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet AddRegion at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -69,39 +73,51 @@ public class UpdateArea extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
- @Override
-protected void doPost(HttpServletRequest request, HttpServletResponse response)
-        throws ServletException, IOException {
-    request.setCharacterEncoding("UTF-8");
-    response.setCharacterEncoding("UTF-8");
 
-    try {
-        int id = Integer.parseInt(request.getParameter("regionID"));
-        String name = request.getParameter("RegionName");
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        HttpSession session = request.getSession(false);
+        User user = (User) session.getAttribute("user");
+        if (user == null || !user.getRole().equals("staff")) {
+            response.sendRedirect("login");
+            return;
+        }
+
+        String name = request.getParameter("regionName");
         String address = request.getParameter("address");
-        int empty = Integer.parseInt(request.getParameter("empty"));
+        
+        Time openTime = Time.valueOf(request.getParameter("openTime") + ":00");
+        Time closeTime = Time.valueOf(request.getParameter("closeTime") + ":00");
+        String description = request.getParameter("description");
+        int empty = 0;
 
-        // Lấy chuỗi giờ từ input
-        String openTimeStr = request.getParameter("openTime");
-        String closeTimeStr = request.getParameter("closeTime");
-
-        // Chuyển từ chuỗi sang java.sql.Time
-        java.sql.Time openTime = java.sql.Time.valueOf(openTimeStr + ":00");
-        java.sql.Time closeTime = java.sql.Time.valueOf(closeTimeStr + ":00");
+                try {
+                    empty = Integer.parseInt(request.getParameter("emptyCourt"));
+                } catch (NumberFormatException e) {
+                    System.out.println("Lỗi chuyển đổi số lượng sân: " + e.getMessage());
+                }
+        Branch area = new Branch();
+        area.setName(name);
+        area.setLocation(address);
+        area.setEmptyCourt(empty);
+        area.setOpenTime(openTime);
+        area.setCloseTime(closeTime);
+        area.setDescription(description);
+        area.setManager_id(user.getUser_Id()); // 
 
         AreaDAO dao = new AreaDAO();
-        dao.UpdateArea(id, name, address, empty, openTime, closeTime);
+        boolean exists = dao.isRegionNameExist(name, user.getUser_Id());
+        if (exists) {
+            session.setAttribute("error", "Tồn tại địa điểm rồi!");
+        } else {
+            dao.addRegion(area);
+        }
 
         response.sendRedirect("view-region");
-    } catch ( NumberFormatException  e) {
-        e.printStackTrace();
-        request.setAttribute("error", "Lỗi dữ liệu nhập vào!");
-        request.getRequestDispatcher("view-region").forward(request, response);
-    } catch (Exception ex) {
-        ex.printStackTrace();
-        response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Có lỗi xảy ra trong quá trình cập nhật.");
     }
-}
+
 
 
     /**
