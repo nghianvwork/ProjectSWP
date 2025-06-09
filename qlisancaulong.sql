@@ -21,10 +21,20 @@ CREATE TABLE Areas (
     location VARCHAR(255),
     manager_id INT NOT NULL,
     EmptyCourt INT,
-    open_time TIME NOT NULL ,
-    close_time TIME NOT NULL ,
+    open_time TIME NOT NULL,
+    close_time TIME NOT NULL,
+   
+    descriptions NVARCHAR(MAX),      
     FOREIGN KEY (manager_id) REFERENCES Users(user_id),
     CONSTRAINT chk_area_time CHECK (open_time < close_time)
+);
+
+CREATE TABLE Area_Image (
+    imageID INT PRIMARY KEY IDENTITY(1,1),
+    area_id INT,
+    imageURL TEXT,
+	
+	FOREIGN KEY ( area_id) REFERENCES Areas(area_id)
 );
 
 
@@ -37,8 +47,10 @@ CREATE TABLE Court_Pricing (
     start_time TIME NOT NULL,
     end_time TIME NOT NULL,
     price DECIMAL(10,2) NOT NULL,
-    FOREIGN KEY (area_id) REFERENCES Areas(area_id)
+    FOREIGN KEY (area_id) REFERENCES Areas(area_id),
+    CONSTRAINT chk_pricing_time CHECK (start_time < end_time)
 );
+
 
 -- ==========================
 -- BẢNG SÂN
@@ -53,8 +65,10 @@ CREATE TABLE Courts (
     FOREIGN KEY (area_id) REFERENCES Areas(area_id),
     CONSTRAINT chk_court_time CHECK (
         open_time IS NULL OR close_time IS NULL OR open_time < close_time
-    )
+    ),
+    CONSTRAINT uq_court_number UNIQUE (court_number, area_id)
 );
+
 
 -- ==========================
 -- BẢNG ĐẶT SÂN
@@ -66,32 +80,33 @@ CREATE TABLE Bookings (
     date DATE NOT NULL,
     start_time TIME NOT NULL,
     end_time TIME NOT NULL,
-    [status] [nvarchar](50),
-    
-   
+    [status] NVARCHAR(50),
     FOREIGN KEY (user_id) REFERENCES Users(user_id),
-    FOREIGN KEY (court_id) REFERENCES Courts(court_id)
+    FOREIGN KEY (court_id) REFERENCES Courts(court_id),
+    CONSTRAINT chk_booking_time CHECK (start_time < end_time)
 );
+
 
 -- ==========================
 -- BẢNG THIẾT BỊ
 -- ==========================
 CREATE TABLE Equipments (
-    equipment_id INT PRIMARY KEY,
+    equipment_id INT PRIMARY KEY IDENTITY(1,1),
     name NVARCHAR(100) NOT NULL UNIQUE,
     price DECIMAL(10, 2) NOT NULL CHECK (price >= 0),
-    
+    descriptions NVARCHAR(MAX)
 );
 
--- ==========================
--- BẢNG ĐẶT THIẾT BỊ THEO BOOKING
--- ==========================
-CREATE TABLE Booking_Equipments (
-    id INT PRIMARY KEY IDENTITY(1,1),
-    booking_id INT NOT NULL,
+
+
+
+CREATE TABLE Areas_Equipments (
+    AreaEquipment_id INT PRIMARY KEY IDENTITY(1,1),
+   
     equipment_id INT NOT NULL,
-    quantity INT NOT NULL CHECK (quantity > 0),
-    FOREIGN KEY (booking_id) REFERENCES Bookings(booking_id),
+   
+   area_id INT,
+    FOREIGN KEY (area_id) REFERENCES Areas(area_id),
     FOREIGN KEY (equipment_id) REFERENCES Equipments(equipment_id)
 );
 
@@ -135,18 +150,7 @@ CREATE TABLE Reviews (
     FOREIGN KEY (area_id) REFERENCES Areas(area_id)
 );
 
--- ==========================
--- BẢNG DOANH THU
--- ==========================
-CREATE TABLE Revenue (
-    revenue_id INT PRIMARY KEY IDENTITY(1,1),
-    court_id INT NOT NULL,
-    date DATE NOT NULL,
-    amount DECIMAL(10, 2) NOT NULL CHECK (amount >= 0),
-    description VARCHAR(MAX),
-    created_at DATETIME DEFAULT GETDATE(),
-    FOREIGN KEY (court_id) REFERENCES Courts(court_id)
-);
+
 CREATE TABLE [dbo].[password_reset_tokens](
 	[id] [int] IDENTITY(1,1) NOT NULL,
 	[user_id] [int] NOT NULL,

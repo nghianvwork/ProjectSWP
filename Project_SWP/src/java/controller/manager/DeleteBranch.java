@@ -5,7 +5,6 @@
 package controller.manager;
 
 import DAO.AreaDAO;
-import Model.Areas;
 import Model.User;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -15,14 +14,13 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import java.sql.Time;
 
 /**
  *
  * @author admin
  */
-@WebServlet(name = "AddRegionController", urlPatterns = {"/add-region"})
-public class AddRegion extends HttpServlet {
+@WebServlet(name = "DeleteBranch", urlPatterns = {"/delete"})
+public class DeleteBranch extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -41,10 +39,10 @@ public class AddRegion extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet AddRegion</title>");
+            out.println("<title>Servlet DeleteBranch</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet AddRegion at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet DeleteBranch at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -62,7 +60,18 @@ public class AddRegion extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            User user = (User) session.getAttribute("user");
+            if (user.getRole().equals("staff")) {
+                int regionID = Integer.parseInt(request.getParameter("regionId"));
+                AreaDAO dao = new AreaDAO();
+                dao.deleteById(regionID);
+                response.sendRedirect("view-region");
+            }
+        } else {
+            response.sendRedirect("login");
+        }
     }
 
     /**
@@ -73,51 +82,11 @@ public class AddRegion extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
-        HttpSession session = request.getSession(false);
-        User user = (User) session.getAttribute("user");
-        if (user == null || !user.getRole().equals("staff")) {
-            response.sendRedirect("login");
-            return;
-        }
-
-        String name = request.getParameter("regionName");
-        String address = request.getParameter("address");
-        
-        Time openTime = Time.valueOf(request.getParameter("openTime") + ":00");
-        Time closeTime = Time.valueOf(request.getParameter("closeTime") + ":00");
-
-        int empty = 0;
-
-                try {
-                    empty = Integer.parseInt(request.getParameter("emptyCourt"));
-                } catch (NumberFormatException e) {
-                    System.out.println("Lỗi chuyển đổi số lượng sân: " + e.getMessage());
-                }
-        Areas area = new Areas();
-        area.setName(name);
-        area.setLocation(address);
-        area.setEmptyCourt(empty);
-        area.setOpenTime(openTime);
-        area.setCloseTime(closeTime);
-        area.setManager_id(user.getUser_Id()); // 
-
-        AreaDAO dao = new AreaDAO();
-        boolean exists = dao.isRegionNameExist(name, user.getUser_Id());
-        if (exists) {
-            session.setAttribute("error", "Tồn tại địa điểm rồi!");
-        } else {
-            dao.addRegion(area);
-        }
-
-        response.sendRedirect("view-region");
+       
     }
-
-
 
     /**
      * Returns a short description of the servlet.

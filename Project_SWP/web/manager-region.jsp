@@ -44,6 +44,15 @@
             .navbar-custom .btn {
                 border-radius: 8px;
             }
+            .col-small {
+                width: 90px;
+            }
+            .col-time {
+                width: 110px;
+            }
+            .col-description {
+                width: 250px;
+            }
         </style>
     </head>
     <body>
@@ -80,13 +89,14 @@
                                     <tr>
                                         <th>Tên</th>
                                         <th>Địa chỉ</th>
-                                        <th>Số lượng sân</th>
-                                        <th>Thời gian mở cửa</th>
-                                        <th>Thời gian đóng cửa</th>
-
+                                        <th class="col-small">Số lượng sân</th>
+                                        <th class="col-time">Thời gian mở cửa</th>
+                                        <th class="col-time">Thời gian đóng cửa</th>
+                                        <th class="col-description">Mô tả</th>
                                         <th style="width: 220px;">Action</th>
                                     </tr>
                                 </thead>
+
                                 <tbody>
                                     <c:forEach var="a" items="${area}" varStatus="loop">
                                         <tr>
@@ -95,11 +105,11 @@
                                             <td>${a.emptyCourt}</td>
                                             <td>${a.openTime}</td>
                                             <td>${a.closeTime}</td>
-
+                                            <td>${a.description}</td>
                                             <td>
                                                 <button class="btn btn-warning btn-sm" data-toggle="modal" data-target="#updateModal${loop.index}">Update</button>
                                                 <a href="dorm-detail?id=${a.area_id}" class="btn btn-info btn-sm">Detail</a>
-                                                <a href="delete-dorm?id=${a.area_id}" class="btn btn-danger btn-sm" onclick="return confirmDelete()">Delete</a>
+                                                <a href="delete?regionId=${a.area_id}" class="btn btn-danger btn-sm" onclick="return confirmDelete()">Delete</a>
 
 
                                                 <div class="modal fade" id="updateModal${loop.index}" tabindex="-1" role="dialog">
@@ -197,6 +207,10 @@
                                             <div class="form-group">
                                                 <label>Giờ đóng cửa</label>
                                                 <input type="time" name="closeTime" class="form-control" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Mô tả</label>
+                                                <input type="text" name="description" class="form-control" required>
                                             </div>
 
                                         </div>

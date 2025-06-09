@@ -6,7 +6,7 @@ package controller.manager;
 
 import DAO.AreaDAO;
 import DAO.UserDAO;
-import Model.Areas;
+import Model.Branch;
 import Model.User;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -24,7 +24,7 @@ import java.util.List;
  * @author admin
  */
 @WebServlet(name = "view-region", urlPatterns = {"/view-region"})
-public class ViewRegion extends HttpServlet {
+public class ViewBranch extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -100,7 +100,7 @@ public class ViewRegion extends HttpServlet {
                 int numberofRegion = dao.countAreasByManagerId(user.getUser_Id());
                 int numberofPage = (int) Math.ceil((double) numberofRegion / recordsPerpage);
                 
-                List<Areas> area = new AreaDAO().getAllByManagerID(user.getUser_Id(), (page - 1) * recordsPerpage, recordsPerpage);
+                List<Branch> area = new AreaDAO().getAllByManagerID(user.getUser_Id(), (page - 1) * recordsPerpage, recordsPerpage);
                 System.out.println("areas page "+page+": "+area);
                 
                 System.out.println("rcpp: "+recordsPerpage);

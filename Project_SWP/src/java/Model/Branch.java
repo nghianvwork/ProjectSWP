@@ -5,12 +5,13 @@
 package Model;
 
 import java.sql.Time;
+import java.util.logging.Logger;
 
 /**
  *
  * @author admin
  */
-public class Areas {
+public class Branch {
     private int area_id;
     private String name;
     private String location;
@@ -18,8 +19,9 @@ public class Areas {
     private int  emptyCourt;
     private Time openTime;
     private Time closeTime;
+    private String description;
 
-    public Areas(int area_id, String name, String location, int manager_id, int emptyCourt, Time openTime, Time closeTime) {
+    public Branch(int area_id, String name, String location, int manager_id, int emptyCourt, Time openTime, Time closeTime) {
         this.area_id = area_id;
         this.name = name;
         this.location = location;
@@ -29,12 +31,32 @@ public class Areas {
         this.closeTime = closeTime;
     }
 
-    @Override
-    public String toString() {
-        return "Areas{" + "area_id=" + area_id + ", name=" + name + ", location=" + location + ", manager_id=" + manager_id + ", emptyCourt=" + emptyCourt + ", openTime=" + openTime + ", closeTime=" + closeTime + '}';
+    public Branch(int area_id, String name, String location, int manager_id, int emptyCourt, Time openTime, Time closeTime, String description) {
+        this.area_id = area_id;
+        this.name = name;
+        this.location = location;
+        this.manager_id = manager_id;
+        this.emptyCourt = emptyCourt;
+        this.openTime = openTime;
+        this.closeTime = closeTime;
+        this.description = description;
     }
 
-    public Areas() {
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    @Override
+    public String toString() {
+        return "Areas{" + "area_id=" + area_id + ", name=" + name + ", location=" + location + ", manager_id=" + manager_id + ", emptyCourt=" + emptyCourt + ", openTime=" + openTime + ", closeTime=" + closeTime + ", description=" + description + '}';
+    }
+    
+    
+    public Branch() {
     }
 
     public int getArea_id() {

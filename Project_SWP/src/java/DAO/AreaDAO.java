@@ -5,7 +5,8 @@
 package DAO;
 
 import Dal.DBContext;
-import Model.Areas;
+import Model.Branch;
+import Model.Branch_pictures;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -30,10 +31,10 @@ public class AreaDAO   extends DBContext {
         }
     }
 
-  public void addRegion(Areas re) {
+  public void addRegion(Branch re) {
     String sql = "INSERT INTO [dbo].[Areas] " +
-                 "([name], [location], [manager_id], [EmptyCourt], [open_time], [close_time]) " +
-                 "VALUES (?, ?, ?, ?, ?, ?)";
+                 "([name], [location], [manager_id], [EmptyCourt], [open_time], [close_time],[descriptions]) " +
+                 "VALUES (?, ?, ?, ?, ?, ?,?)";
 
     try {
         PreparedStatement pre = conn.prepareStatement(sql);
@@ -43,6 +44,7 @@ public class AreaDAO   extends DBContext {
         pre.setInt(4, re.getEmptyCourt());
         pre.setTime(5, re.getOpenTime());
         pre.setTime(6, re.getCloseTime());
+        pre.setString(7, re.getDescription());
         pre.executeUpdate();
     } catch (Exception e) {
         System.out.println(e.getMessage());
@@ -63,8 +65,18 @@ public class AreaDAO   extends DBContext {
     } catch (SQLException e) {
         System.out.println("UpdateArea: " + e.getMessage());
     }
+    
 }
-
+  public void deleteById(int areaId) {
+        String sql = "delete from Areas where area_id = ?";
+        try {
+            PreparedStatement pre = conn.prepareStatement(sql);
+            pre.setInt(1, areaId );
+            pre.executeLargeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
 
     
     public int countAreasByManagerId(int id){
@@ -81,8 +93,8 @@ public class AreaDAO   extends DBContext {
         }
         return 0;
     }
-  public List<Areas> getAllByManagerID(int id, int pageNum, int pageSize) {
-    List<Areas> list = new ArrayList<>();
+  public List<Branch> getAllByManagerID(int id, int pageNum, int pageSize) {
+    List<Branch> list = new ArrayList<>();
     String sql = "SELECT * FROM Areas WHERE manager_id = ? ORDER BY area_id OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
     
     try (PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -99,8 +111,8 @@ public class AreaDAO   extends DBContext {
             int emptyCourt = rs.getInt("EmptyCourt");
             Time openTime = rs.getTime("open_time");
             Time closeTime = rs.getTime("close_time");
-
-            Areas ar = new Areas(areasID, areaName, location, managerID, emptyCourt, openTime, closeTime);
+            String description = rs.getString("descriptions");
+            Branch ar = new Branch(areasID, areaName, location, managerID, emptyCourt, openTime, closeTime,description);
             list.add(ar);
         }
 
@@ -140,26 +152,47 @@ public boolean isRegionNameExist(String name, int managerId) {
     }
     return false;
 }
+public List<Branch_pictures> getRoomImagesByDormID(int area_id) {
+        List<Branch_pictures> imageUrls = new ArrayList<>();
+        String query = "SELECT * FROM Area_Image WHERE area_id = ?";
+
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, area_id);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                int id = rs.getInt("imageID");
+                int area = rs.getInt("area_id");
+                String imageUrl = rs.getString("imageURL");
+                imageUrls.add(new Branch_pictures(id, area, imageUrl));
+            }
+        } catch (SQLException ex) {
+            System.out.println("getRoomImagesByRoomID: " + ex.getMessage());
+        }
+
+        return imageUrls;
+    }
  public static void main(String[] args) {
        
         AreaDAO areaDAO = new AreaDAO();
        
-        Areas newArea = new Areas(
+        Branch newArea = new Branch(
             0,                   
-            "Khu Vực Mới",      
-            "Hà Nội",            
+            "Khu Vuc cu",      
+            "Hola",            
             1,              
             5,               
             Time.valueOf("08:00:00"),  
-            Time.valueOf("22:00:00")   
+            Time.valueOf("22:00:00")   ,
+                "String"
         );
         
         // Gọi phương thức addRegion để thêm mới
         areaDAO.addRegion(newArea);
         
          System.out.println("Đã thêm khu vực mới thành công!");
-        List<Areas> a = areaDAO.getAllByManagerID(1, 1, 5);
-        for(Areas list : a){
+        List<Branch> a = areaDAO.getAllByManagerID(1, 1, 5);
+        for(Branch list : a){
             System.out.println(list);
         }
        
