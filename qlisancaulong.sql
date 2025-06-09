@@ -1,4 +1,6 @@
-﻿-- ==========================
+﻿
+
+-- ==========================
 -- BẢNG NGƯỜI DÙNG
 -- ==========================
 CREATE TABLE Users (
@@ -90,24 +92,27 @@ CREATE TABLE Bookings (
 -- ==========================
 -- BẢNG THIẾT BỊ
 -- ==========================
-CREATE TABLE Equipments (
-    equipment_id INT PRIMARY KEY IDENTITY(1,1),
-    name NVARCHAR(100) NOT NULL UNIQUE,
-    price DECIMAL(10, 2) NOT NULL CHECK (price >= 0),
-    descriptions NVARCHAR(MAX)
+CREATE TABLE Services (
+    services_id INT PRIMARY KEY IDENTITY(1,1),         
+    name NVARCHAR(100) NOT NULL UNIQUE,                 
+    price DECIMAL(10, 2) NOT NULL CHECK (price >= 0),   
+    description NVARCHAR(MAX),                          
+    image_url VARCHAR(255),                             
+    status NVARCHAR(50) DEFAULT 'Active',              
+    created_at DATETIME DEFAULT GETDATE(),              
+    updated_at DATETIME,                                
+    is_deleted BIT DEFAULT 0                            
 );
 
 
-
-
-CREATE TABLE Areas_Equipments (
-    AreaEquipment_id INT PRIMARY KEY IDENTITY(1,1),
+CREATE TABLE Areas_Services (
+    AreaServices_id INT PRIMARY KEY IDENTITY(1,1),
    
-    equipment_id INT NOT NULL,
+    services_id INT NOT NULL,
    
    area_id INT,
     FOREIGN KEY (area_id) REFERENCES Areas(area_id),
-    FOREIGN KEY (equipment_id) REFERENCES Equipments(equipment_id)
+    FOREIGN KEY (services_id) REFERENCES Services(services_id)
 );
 
 -- ==========================
