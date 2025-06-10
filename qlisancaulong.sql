@@ -15,6 +15,23 @@ CREATE TABLE Users
     created_at DATETIME DEFAULT GETDATE()
 );
 
+-- =========================
+-- BẢNG HOST (TRƯỚC ĐÂY LÀ STAFF)
+-- =========================
+CREATE TABLE Host (
+    host_id INT PRIMARY KEY IDENTITY(1,1),
+    user_id INT NOT NULL UNIQUE,
+    full_name NVARCHAR(100) NOT NULL,
+    gender NVARCHAR(10),
+    date_of_birth DATE,
+    address NVARCHAR(255),
+    phone_number VARCHAR(20),
+    id_card_number VARCHAR(20),
+    education_level NVARCHAR(100),
+    personal_notes NVARCHAR(MAX),
+    FOREIGN KEY (user_id) REFERENCES Users(user_id) ON DELETE CASCADE
+);
+
 -- ==========================
 -- BẢNG KHU VỰC
 -- ==========================
