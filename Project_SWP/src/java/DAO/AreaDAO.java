@@ -78,7 +78,35 @@ public class AreaDAO   extends DBContext {
         }
     }
 
+    public List<Branch> getAreasByManager(int managerId){
+    List<Branch> areas = new ArrayList<>();
+    String sql = "SELECT * FROM Areas WHERE manager_id = ?";
     
+    try (
+         PreparedStatement stmt = conn.prepareStatement(sql)) {
+        
+        stmt.setInt(1, managerId);
+        ResultSet rs = stmt.executeQuery();
+        
+        while (rs.next()) {
+            Branch area = new Branch(
+                rs.getInt("area_id"),
+                rs.getString("name"),
+                rs.getString("location"),
+                rs.getInt("manager_id"),
+                rs.getInt("EmptyCourt"),
+                rs.getTime("open_time"),
+                rs.getTime("close_time"),
+                rs.getString("descriptions")
+            );
+            areas.add(area);
+        }
+    }catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    return areas;
+}
+
     public int countAreasByManagerId(int id){
         String sql  ="SELECT count(*) as Total FROM Areas where manager_id = ?";
         try {
@@ -176,26 +204,31 @@ public List<Branch_pictures> getRoomImagesByDormID(int area_id) {
        
         AreaDAO areaDAO = new AreaDAO();
        
-        Branch newArea = new Branch(
-            0,                   
-            "Khu Vuc cu",      
-            "Hola",            
-            1,              
-            5,               
-            Time.valueOf("08:00:00"),  
-            Time.valueOf("22:00:00")   ,
-                "String"
-        );
-        
-        // Gọi phương thức addRegion để thêm mới
-        areaDAO.addRegion(newArea);
-        
-         System.out.println("Đã thêm khu vực mới thành công!");
-        List<Branch> a = areaDAO.getAllByManagerID(1, 1, 5);
-        for(Branch list : a){
-            System.out.println(list);
-        }
-       
+//        Branch newArea = new Branch(
+//            0,                   
+//            "Khu Vuc cu",      
+//            "Hola",            
+//            1,              
+//            5,               
+//            Time.valueOf("08:00:00"),  
+//            Time.valueOf("22:00:00")   ,
+//                "String"
+//        );
+//        
+//        // Gọi phương thức addRegion để thêm mới
+//        areaDAO.addRegion(newArea);
+//        
+//         System.out.println("Đã thêm khu vực mới thành công!");
+//        List<Branch> a = areaDAO.getAllByManagerID(1, 1, 5);
+//        for(Branch list : a){
+//            System.out.println(list);
+//        }
+//       
+            int managerId = 1; // Thay đổi ID tùy theo nhu cầu kiểm tra
+    int totalAreas = areaDAO.countAreasByManagerId(managerId);
+    
+    System.out.println("Tổng số khu vực của manager có ID " + managerId + " là: " + totalAreas);
+
     }
 }
     

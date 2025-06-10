@@ -3,14 +3,10 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
 
-package controller.manager;
+package controller.user;
 
-import DAO.AreaDAO;
-import DAO.EquipmentsDAO;
-
-import Model.Branch_Equipments;
-import Model.Branch_pictures;
-import Model.Equipments;
+import DAO.BookingDAO;
+import Model.Bookings;
 import Model.User;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -20,14 +16,17 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import java.util.List;
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 /**
  *
  * @author admin
  */
-@WebServlet(name="Detail_Branch", urlPatterns={"/detailBranch"})
-public class Detail_Branch extends HttpServlet {
+@WebServlet(name="Cancel_booking", urlPatterns={"/cancel_booking"})
+public class Cancel_booking extends HttpServlet {
    
     /** 
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -44,10 +43,10 @@ public class Detail_Branch extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet Detail_Branch</title>");  
+            out.println("<title>Servlet Cancel_booking</title>");  
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet Detail_Branch at " + request.getContextPath () + "</h1>");
+            out.println("<h1>Servlet Cancel_booking at " + request.getContextPath () + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -64,32 +63,8 @@ public class Detail_Branch extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-       HttpSession session = request.getSession(false);
-        if (session != null) {
-            User user = (User) session.getAttribute("user");
-            if (user.getRole().equals("staff")) {
-                int area_id = Integer.parseInt(request.getParameter("area_id"));
-
-                AreaDAO dao = new AreaDAO();
-                EquipmentsDAO eDao = new EquipmentsDAO();
-                
-                List<Branch_pictures> areaImages = dao.getRoomImagesByDormID(area_id);
-                List<Branch_Equipments> areaAllServices = eDao.getAllAreaServices(area_id);
-                List<Equipments> allServicees = eDao.getAllEquipments();
-                request.setAttribute("allServices", allServicees);
-                request.setAttribute("areaAllServices", areaAllServices);
-
-                request.setAttribute("areaImages", areaImages);
-                request.setAttribute("area_id", area_id);
-                request.getRequestDispatcher("DetailBranch.jsp").forward(request, response);
-            } else {
-                response.sendError(403);
-            }
-        } else {
-            response.sendRedirect("login");
-        }
-    }
-     
+        processRequest(request, response);
+    } 
 
     /** 
      * Handles the HTTP <code>POST</code> method.
@@ -101,8 +76,39 @@ public class Detail_Branch extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-        processRequest(request, response);
+        HttpSession session = request.getSession(false);
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            response.sendRedirect("login");
+            return;
+        }
+
+        int bookingId = Integer.parseInt(request.getParameter("bookingId"));
+        BookingDAO bookingDAO = new BookingDAO();
+        Bookings booking = bookingDAO.getBookingById(bookingId);
+
+        if (booking == null || booking.getUser_id() != user.getUser_Id()) {
+            response.sendRedirect("booking-list?error=unauthorized");
+            return;
+        }
+
+        
+        LocalDate date = booking.getDate();
+        LocalTime time = booking.getStart_time().toLocalTime();
+        LocalDateTime startDateTime = LocalDateTime.of(date, time);
+        LocalDateTime now = LocalDateTime.now();
+
+        Duration duration = Duration.between(now, startDateTime);
+        if (duration.toHours() < 4) {
+            response.sendRedirect("booking-list?error=late-cancel");
+            return;
+        }
+
+        // Cập nhật trạng thái
+        boolean success = bookingDAO.cancelBookingById(bookingId);
+        response.sendRedirect("booking-list?cancel=" + (success ? "success" : "failed"));
     }
+   
 
     /** 
      * Returns a short description of the servlet.

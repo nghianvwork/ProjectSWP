@@ -5,6 +5,7 @@ public class Equipments {
     private String name;
     private double price;
     
+    
 
     public Equipments() {}
 

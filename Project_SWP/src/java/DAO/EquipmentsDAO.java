@@ -17,12 +17,12 @@ public class EquipmentsDAO extends DBContext{
             System.out.println("Connect failed");
         }
     }
-    public  List<Equipments> getAllEquipments() {
+    public static  List<Equipments> getAllEquipments() {
         List<Equipments> list = new ArrayList<>();
         try {
             Connection con = new DBContext().getConnection();
             Statement st = con.createStatement();
-            ResultSet rs = st.executeQuery("SELECT * FROM Equipments");
+            ResultSet rs = st.executeQuery("SELECT * FROM Service");
 
             while (rs.next()) {
                 list.add(new Equipments(

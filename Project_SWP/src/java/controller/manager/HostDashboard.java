@@ -6,11 +6,10 @@
 package controller.manager;
 
 import DAO.AreaDAO;
-import DAO.EquipmentsDAO;
-
-import Model.Branch_Equipments;
-import Model.Branch_pictures;
-import Model.Equipments;
+import DAO.BookingDAO;
+import DAO.CourtDAO;
+import DAO.ReviewDAO;
+import Model.Branch;
 import Model.User;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -20,14 +19,15 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.util.ArrayList;
 import java.util.List;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
 /**
  *
  * @author admin
  */
-@WebServlet(name="Detail_Branch", urlPatterns={"/detailBranch"})
-public class Detail_Branch extends HttpServlet {
+@WebServlet(name="HostDashboard", urlPatterns={"/dashboard"})
+public class HostDashboard extends HttpServlet {
    
     /** 
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -44,10 +44,10 @@ public class Detail_Branch extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet Detail_Branch</title>");  
+            out.println("<title>Servlet HostDashboard</title>");  
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet Detail_Branch at " + request.getContextPath () + "</h1>");
+            out.println("<h1>Servlet HostDashboard at " + request.getContextPath () + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -61,33 +61,60 @@ public class Detail_Branch extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
+    private static final ObjectMapper mapper = new ObjectMapper();
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-       HttpSession session = request.getSession(false);
-        if (session != null) {
-            User user = (User) session.getAttribute("user");
-            if (user.getRole().equals("staff")) {
-                int area_id = Integer.parseInt(request.getParameter("area_id"));
-
-                AreaDAO dao = new AreaDAO();
-                EquipmentsDAO eDao = new EquipmentsDAO();
-                
-                List<Branch_pictures> areaImages = dao.getRoomImagesByDormID(area_id);
-                List<Branch_Equipments> areaAllServices = eDao.getAllAreaServices(area_id);
-                List<Equipments> allServicees = eDao.getAllEquipments();
-                request.setAttribute("allServices", allServicees);
-                request.setAttribute("areaAllServices", areaAllServices);
-
-                request.setAttribute("areaImages", areaImages);
-                request.setAttribute("area_id", area_id);
-                request.getRequestDispatcher("DetailBranch.jsp").forward(request, response);
-            } else {
-                response.sendError(403);
-            }
-        } else {
+        
+        HttpSession session = request.getSession(false);
+        User user = (User) session.getAttribute("user");
+        if (user == null || !user.getRole().equals("staff")) {
             response.sendRedirect("login");
+            return;
         }
+      AreaDAO areaDAO = new AreaDAO();
+        CourtDAO courtDAO = new CourtDAO();
+        BookingDAO bookingDAO = new BookingDAO();
+        ReviewDAO reviewDAO = new ReviewDAO();
+      
+        int managerId = (int) session.getAttribute("user"); 
+
+        List<Branch> areas = areaDAO.getAreasByManager(managerId);
+
+        List<String> areaNames = new ArrayList<>();
+        List<Integer> courtCounts = new ArrayList<>();
+        List<Integer> bookingCounts = new ArrayList<>();
+        List<Integer> reviewCounts = new ArrayList<>();
+
+        for (Branch area : areas) {
+            int areaId = area.getArea_id();
+            areaNames.add(area.getName());
+
+            int courtCount = courtDAO.countCourtsByArea(areaId);
+            int bookingCount = bookingDAO.countBookingsByManager(managerId); 
+            int reviewCount = reviewDAO.countByArea(areaId);
+
+            courtCounts.add(courtCount);
+            bookingCounts.add(bookingCount);
+            reviewCounts.add(reviewCount);
+        }
+
+        
+        ObjectMapper mapper = new ObjectMapper();
+        request.setAttribute("areaLabelsJson", mapper.writeValueAsString(areaNames));
+        request.setAttribute("courtDataJson", mapper.writeValueAsString(courtCounts));
+        request.setAttribute("bookingDataJson", mapper.writeValueAsString(bookingCounts));
+        request.setAttribute("reviewDataJson", mapper.writeValueAsString(reviewCounts));
+
+        
+        request.setAttribute("areaCount", areas.size());
+        request.setAttribute("courtCount", courtDAO.countCourtsByManager(managerId));
+        request.setAttribute("bookingCount", bookingDAO.countBookingsByManager(managerId));
+        request.setAttribute("reviewCount", reviewDAO.countReviewsByManager(managerId));
+
+       request.getRequestDispatcher("host_dashboard.jsp").forward(request, response);
+
     }
      
 

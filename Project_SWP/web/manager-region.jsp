@@ -108,7 +108,7 @@
                                             <td>${a.description}</td>
                                             <td>
                                                 <button class="btn btn-warning btn-sm" data-toggle="modal" data-target="#updateModal${loop.index}">Update</button>
-                                                <a href="dorm-detail?id=${a.area_id}" class="btn btn-info btn-sm">Detail</a>
+                                                <a href="detailBranch?id=${a.area_id}" class="btn btn-info btn-sm">Detail</a>
                                                 <a href="delete?regionId=${a.area_id}" class="btn btn-danger btn-sm" onclick="return confirmDelete()">Delete</a>
 
 

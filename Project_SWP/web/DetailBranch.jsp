@@ -65,7 +65,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <c:forEach var="image" items="${dormImages}">
+                            <c:forEach var="image" items="${areaImages}">
                                 <tr>
                                     <td style="width: 20%">${image.imageID}</td>
                                     <td><img src="${image.imageURL}" alt="Dorm Image" width="100"></td>
@@ -87,11 +87,12 @@
                                
                                 <th>Service Name</th>
                                 <th>Price</th>
+                                <th>Description</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <c:forEach var="s" items="${dormAllServices}">
+                            <c:forEach var="s" items="${areaAllServices}">
                                 <tr>
                                     
                                     <td>${s.service.serviceName}</td>

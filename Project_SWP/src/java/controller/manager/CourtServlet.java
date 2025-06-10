@@ -31,7 +31,8 @@ public class CourtServlet extends HttpServlet {
             request.getRequestDispatcher("/court_manager.jsp").forward(request, response);
         } else if (action.equals("edit")) {
             String courtId = request.getParameter("courtId");
-            Courts court = courtDAO.getCourtById(courtId);
+            int courtid = Integer.parseInt(courtId);
+            Courts court = courtDAO.getCourtById(courtid);
             request.setAttribute("court", court);
             request.getRequestDispatcher("/court_manager.jsp").forward(request, response);
         }

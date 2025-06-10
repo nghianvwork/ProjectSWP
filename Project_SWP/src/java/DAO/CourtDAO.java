@@ -66,11 +66,11 @@ public class CourtDAO extends DBContext{
         return courts;
     }
 
-    public Courts getCourtById(String courtId) {
+    public Courts getCourtById(int courtId) {
         Courts court = null;
         String sql = "SELECT court_id, court_number, status, area_id FROM Courts WHERE court_id = ?";
         try (Connection conn = getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, courtId);
+            stmt.setInt(1, courtId);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 court = new Courts();
@@ -113,6 +113,32 @@ public class CourtDAO extends DBContext{
             Logger.getLogger(CourtDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    public int countCourtsByArea(int areaId) {
+    String sql = "SELECT COUNT(*) FROM Courts WHERE area_id = ?";
     
+    try (
+         PreparedStatement stmt = connection.prepareStatement(sql)) {
+        stmt.setInt(1, areaId);
+        ResultSet rs = stmt.executeQuery();
+        if (rs.next()) return rs.getInt(1);
+    }catch(SQLException e){
+        System.out.println(e.getMessage());
+    }
+    return 0;
+}
+public int countCourtsByManager(int managerId) {
+    String sql = "SELECT COUNT(*) FROM Courts c JOIN Areas a ON c.area_id = a.area_id WHERE a.manager_id = ?";
+    
+    try (
+         PreparedStatement stmt = connection.prepareStatement(sql)) {
+        stmt.setInt(1, managerId);
+        ResultSet rs = stmt.executeQuery();
+        if (rs.next()) return rs.getInt(1);
+    }catch(SQLException e){
+        System.out.println(e.getMessage());
+    }
+    return 0;
+}
+
     
 }
