@@ -96,7 +96,7 @@
                 color: #333;
             }
 
-<<<<<<< HEAD
+
         .court-card:nth-child(2) { animation-delay: 0.1s; }
         .court-card:nth-child(3) { animation-delay: 0.2s; }
         .court-card:nth-child(4) { animation-delay: 0.3s; }
