@@ -52,15 +52,17 @@ public class AreaDAO   extends DBContext {
 }
 
     
-   public void UpdateArea(int id, String name, String location, int emptyCourt, Time openTime, Time closeTime) {
-    String sql = "UPDATE Areas SET name = ?, location = ?, EmptyCourt = ?, open_time = ?, close_time = ? WHERE area_id = ?";
+   public void UpdateArea(int id, String name, String location, int emptyCourt, Time openTime, Time closeTime,String descriptions) {
+    String sql = "UPDATE Areas SET name = ?, location = ?, EmptyCourt = ?, open_time = ?, close_time = ?, descriptions = ? WHERE area_id = ?";
     try (PreparedStatement stmt = conn.prepareStatement(sql)) {
         stmt.setString(1, name);
         stmt.setString(2, location);
         stmt.setInt(3, emptyCourt);
         stmt.setTime(4, openTime);
         stmt.setTime(5, closeTime);
-        stmt.setInt(6, id);
+        stmt.setString(6, descriptions);
+        stmt.setInt(7, id);
+        
         stmt.executeUpdate();
     } catch (SQLException e) {
         System.out.println("UpdateArea: " + e.getMessage());
@@ -224,11 +226,27 @@ public List<Branch_pictures> getRoomImagesByDormID(int area_id) {
 //            System.out.println(list);
 //        }
 //       
-            int managerId = 1; // Thay đổi ID tùy theo nhu cầu kiểm tra
-    int totalAreas = areaDAO.countAreasByManagerId(managerId);
-    
-    System.out.println("Tổng số khu vực của manager có ID " + managerId + " là: " + totalAreas);
+//            int managerId = 1; // Thay đổi ID tùy theo nhu cầu kiểm tra
+//    int totalAreas = areaDAO.countAreasByManagerId(managerId);
+//    
+//    System.out.println("Tổng số khu vực của manager có ID " + managerId + " là: " + totalAreas);
+int areaId = 1;
+    String newName = "Khu vực đã cập nhật";
+    String newLocation = "Địa điểm mới";
+    int newEmptyCourt = 4;
+    Time newOpenTime = Time.valueOf("07:00:00");
+    Time newCloseTime = Time.valueOf("21:00:00");
+    String newDescription = "Cập nhật mô tả cho khu vực.";
 
+    // Gọi hàm update
+    areaDAO.UpdateArea(areaId, newName, newLocation, newEmptyCourt, newOpenTime, newCloseTime, newDescription);
+
+    System.out.println("Đã cập nhật thông tin khu vực có ID " + areaId);
+    List<Branch> a = areaDAO.getAreasByManager(1);
+
+       for(Branch list : a){
+           System.out.println(list);
+       }
     }
 }
     

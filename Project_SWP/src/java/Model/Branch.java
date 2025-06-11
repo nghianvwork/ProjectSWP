@@ -21,16 +21,7 @@ public class Branch {
     private Time closeTime;
     private String description;
 
-    public Branch(int area_id, String name, String location, int manager_id, int emptyCourt, Time openTime, Time closeTime) {
-        this.area_id = area_id;
-        this.name = name;
-        this.location = location;
-        this.manager_id = manager_id;
-        this.emptyCourt = emptyCourt;
-        this.openTime = openTime;
-        this.closeTime = closeTime;
-    }
-
+   
     public Branch(int area_id, String name, String location, int manager_id, int emptyCourt, Time openTime, Time closeTime, String description) {
         this.area_id = area_id;
         this.name = name;

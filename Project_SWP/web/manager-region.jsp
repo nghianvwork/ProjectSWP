@@ -140,7 +140,13 @@
                                                                     </div>
                                                                     <div class="form-group">
                                                                         <label>Giờ đóng cửa</label>
+
                                                                         <input type="time" name="closeTime" class="form-control" value="${a.closeTime}">
+
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label>Mô tả </label>
+                                                                        <input type="text" name="description" class="form-control" value="${a.description}">
                                                                     </div>
 
                                                                 </div>

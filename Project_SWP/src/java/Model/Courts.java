@@ -10,14 +10,14 @@ package Model;
  */
 public class Courts {
     private int court_id;
-    private String court_number;
+    private int court_number;
     private String status;
     private int area_id;
 
     public Courts() {
     }
 
-    public Courts(int court_id, String court_number, String status, int area_id) {
+    public Courts(int court_id, int court_number, String status, int area_id) {
         this.court_id = court_id;
         this.court_number = court_number;
         this.status = status;
@@ -32,11 +32,11 @@ public class Courts {
         this.court_id = court_id;
     }
 
-    public String getCourt_number() {
+    public int getCourt_number() {
         return court_number;
     }
 
-    public void setCourt_number(String court_number) {
+    public void setCourt_number(int court_number) {
         this.court_number = court_number;
     }
 
@@ -55,5 +55,6 @@ public class Courts {
     public void setArea_id(int area_id) {
         this.area_id = area_id;
     }
-    
+
+   
 }

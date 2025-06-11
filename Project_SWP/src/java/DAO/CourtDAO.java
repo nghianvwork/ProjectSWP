@@ -34,7 +34,7 @@ public class CourtDAO extends DBContext{
         String sql = "INSERT INTO Courts (court_number, status, area_id) VALUES (?, ?, ?)";
         try {
             PreparedStatement ps = connection.prepareStatement(sql);
-            ps.setString(1, court.getCourt_number());
+            ps.setInt(1, court.getCourt_number());
             ps.setString(2, court.getStatus());
             ps.setInt(3, court.getArea_id());
             ps.executeUpdate();
@@ -53,7 +53,7 @@ public class CourtDAO extends DBContext{
             while (rs.next()) {
                 Courts court = new Courts();
                 court.setCourt_id(rs.getInt("court_id"));
-                court.setCourt_number(rs.getString("court_number"));
+                court.setCourt_number(rs.getInt("court_number"));
                 court.setStatus(rs.getString("status"));
                 court.setArea_id(rs.getInt("area_id"));
                 courts.add(court);
@@ -75,7 +75,7 @@ public class CourtDAO extends DBContext{
             if (rs.next()) {
                 court = new Courts();
                 court.setCourt_id(rs.getInt("court_id"));
-                court.setCourt_number(rs.getString("court_number"));
+                court.setCourt_number(rs.getInt("court_number"));
                 court.setStatus(rs.getString("status"));
                 court.setArea_id(rs.getInt("area_id"));
             }
@@ -90,7 +90,7 @@ public class CourtDAO extends DBContext{
     public void updateCourt(Courts court) {
         String sql = "UPDATE Courts SET court_number = ?, status = ?, area_id = ? WHERE court_id = ?";
         try (Connection conn = getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, court.getCourt_number());
+            stmt.setInt(1, court.getCourt_number());
             stmt.setString(2, court.getStatus());
             stmt.setInt(3, court.getArea_id());
             stmt.setInt(4, court.getCourt_id());

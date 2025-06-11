@@ -24,7 +24,7 @@ import java.sql.Time;
  *
  * @author admin
  */
-@WebServlet(name="BookFieldServlet", urlPatterns={"/bookCourt"})
+@WebServlet(name="BookFieldServlet", urlPatterns={"/book-field"})
 public class BookFieldServlet extends HttpServlet {
    
     /** 

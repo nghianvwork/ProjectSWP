@@ -423,6 +423,9 @@
     </style>
 </head>
 <body>
+     <%
+        User user = (User) session.getAttribute("user");
+        %>
     <!-- Header -->
     <header class="header">
         <div class="header-container">
@@ -431,11 +434,13 @@
                 <input type="text" placeholder="Tìm sân cầu lông...">
                 <button class="search-btn">Tìm</button>
             </div>
-            <div class="header-actions">
-                <!--<button class="header-btn">👤 Tài khoản</button>-->
-                <a href="login.jsp" class="header-btn">Đăng Nhập</a>
-                <a href="register.jsp" class="header-btn">Đăng Ký</a>
-            </div>
+           <div class="header-actions">
+                    
+                    <span>
+                        <a href="viewprofile.jsp" class="header-btn"><%=user.getUsername()%></a>
+                    </span>
+                    <a href="homepage.jsp" class="header-btn">Thoát</a>
+                </div>
         </div>
     </header>
 
@@ -444,7 +449,7 @@
         <div class="nav-container">
             <div class="nav-item"><a href="homepage.jsp">Trang Chủ</a></div>
             <div class="nav-item active"><a href="listCourt.jsp">Danh Sách Sân Bãi</a></div>
-            <div class="nav-item"><a href="GioiThieu.jsp">Giới Thiệu</a></div>
+              <div class="nav-item"><a href="booking_list.jsp">Danh sách đặt sân</a></div>
             <div class="nav-item"><a href="#">Điều Khoản</a></div>
             <div class="nav-item"><a href="#">Danh Sách Chủ Sân</a></div>
             <div class="nav-item">Liên Hệ</div>
