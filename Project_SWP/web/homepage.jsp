@@ -354,8 +354,13 @@
     <nav class="nav">
         <div class="nav-container">
             <div class="nav-item active"><a href="homepage.jsp">Trang Chủ</a></div>
+<<<<<<< HEAD
             <div class="nav-item"><a href="listCourt.jsp">Danh Sách Sân Bãi</a></div>
               <div class="nav-item"><a href="booking_list.jsp">Danh sách đặt sân</a></div>
+=======
+            <div class="nav-item"><a href="login.jsp">Danh Sách Sân Bãi</a></div>
+            <div class="nav-item"><a href="GioiThieu.jsp">Giới Thiệu</a></div>
+>>>>>>> 922435322d40219746c23095a34c48f759f1b526
             <div class="nav-item"><a href="#">Điều Khoản</a></div>
             <div class="nav-item"><a href="#">Danh Sách Chủ Sân</a></div>
             <div class="nav-item">Liên Hệ</div>
@@ -486,36 +491,5 @@
         </div>
     </footer>
 
-    <script>
-        // Simple interactivity
-        document.addEventListener('DOMContentLoaded', function() {
-            // Nav item click handling
-            const navItems = document.querySelectorAll('.nav-item');
-            navItems.forEach(item => {
-                item.addEventListener('click', function() {
-                    navItems.forEach(nav => nav.classList.remove('active'));
-                    this.classList.add('active');
-                });
-            });
-
-            // Search functionality
-            const searchBtn = document.querySelector('.search-btn');
-            
-            searchBtn.addEventListener('click', handleSearch);
-
-            // Book button functionality
-            const bookBtns = document.querySelectorAll('.book-btn');
-            bookBtns.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const courtName = this.closest('.court-card').querySelector('.court-name').textContent;
-                    alert(`Đang chuyển đến trang đặt sân: ${courtName}`);
-                });
-            });
-        });
-
-        function handleSearch() {
-            alert('Đang tìm kiếm sân cầu lông...');
-        }
-    </script>
 </body>
 </html>
