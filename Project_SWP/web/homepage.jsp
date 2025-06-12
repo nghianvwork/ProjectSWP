@@ -354,15 +354,9 @@
     <nav class="nav">
         <div class="nav-container">
             <div class="nav-item active"><a href="homepage.jsp">Trang Chủ</a></div>
-<<<<<<< HEAD
-            <div class="nav-item"><a href="listCourt.jsp">Danh Sách Sân Bãi</a></div>
-              <div class="nav-item"><a href="booking_list.jsp">Danh sách đặt sân</a></div>
-=======
             <div class="nav-item"><a href="login.jsp">Danh Sách Sân Bãi</a></div>
-            <div class="nav-item"><a href="GioiThieu.jsp">Giới Thiệu</a></div>
->>>>>>> 922435322d40219746c23095a34c48f759f1b526
-            <div class="nav-item"><a href="#">Điều Khoản</a></div>
-            <div class="nav-item"><a href="#">Danh Sách Chủ Sân</a></div>
+            <div class="nav-item"><a href="login.jsp">Danh Sách Đặt Sân</a></div>
+            <div class="nav-item"><a href="login.jsp">Giới Thiệu</a></div>
             <div class="nav-item">Liên Hệ</div>
         </div>
     </nav>

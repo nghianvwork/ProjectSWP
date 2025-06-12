@@ -1,5 +1,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@page import="Model.Areas"%>
+<%--<%@page import="DAO.AreaDAo"%>--%>
 <!DOCTYPE html>
 <html lang="vi">
     <head>
@@ -96,46 +98,6 @@
                 color: #333;
             }
 
-
-        .court-card:nth-child(2) { animation-delay: 0.1s; }
-        .court-card:nth-child(3) { animation-delay: 0.2s; }
-        .court-card:nth-child(4) { animation-delay: 0.3s; }
-    </style>
-</head>
-<body>
-     <%
-        User user = (User) session.getAttribute("user");
-        %>
-    <!-- Header -->
-    <header class="header">
-        <div class="header-container">
-            <div class="logo">BadmintonCourt</div>
-            <div class="search-bar">
-                <input type="text" placeholder="Tìm sân cầu lông...">
-                <button class="search-btn">Tìm</button>
-            </div>
-           <div class="header-actions">
-                    
-                    <span>
-                        <a href="viewprofile.jsp" class="header-btn"><%=user.getUsername()%></a>
-                    </span>
-                    <a href="homepage.jsp" class="header-btn">Thoát</a>
-                </div>
-        </div>
-    </header>
-
-    <!-- Navigation -->
-    <nav class="nav">
-        <div class="nav-container">
-            <div class="nav-item"><a href="homepage.jsp">Trang Chủ</a></div>
-            <div class="nav-item active"><a href="listCourt.jsp">Danh Sách Sân Bãi</a></div>
-              <div class="nav-item"><a href="booking_list.jsp">Danh sách đặt sân</a></div>
-            <div class="nav-item"><a href="#">Điều Khoản</a></div>
-            <div class="nav-item"><a href="#">Danh Sách Chủ Sân</a></div>
-            <div class="nav-item">Liên Hệ</div>
-        </div>
-    </nav>
-=======
             .featured-card p {
                 font-size: 1.1rem;
                 color: #666;
@@ -152,7 +114,6 @@
                 font-weight: 500;
                 transition: all 0.3s;
             }
->>>>>>> 922435322d40219746c23095a34c48f759f1b526
 
             .featured-btn:hover {
                 background: #ff3838;
@@ -290,7 +251,6 @@
     </head>
     <body>
 
-
         <jsp:include page="homehead.jsp" />
 
         <!-- Main Content -->
@@ -341,7 +301,7 @@
             <!-- Featured Section -->
             <div class="featured">
                 <div class="featured-card">
-                    <h3>Có 8.386 Sân cầu lông</h3>
+                    <h3>Có ${listCourt.size()} Sân cầu lông</h3>
                     <p>Đa dạng các sân cầu lông chất lượng cao trên toàn quốc</p>
                     <button class="featured-btn">Đăng ký ngay</button>
                 </div>
@@ -352,76 +312,26 @@
                 </div>
             </div>
 
-            <!-- Courts Grid -->
             <div class="courts-grid">
-                <div class="court-card">
-                    <div class="logo-san">
-                        <img src="./images/san/san.jpg" alt="Sân A" />
+                <c:forEach var="area" items="${listCourt}">
+                    <div class="court-card">
+                        <div class="logo-san">
+                            <img src="./images/san/san.jpg" alt="${area.name}" />
+                        </div>
+                        <div class="court-info">
+                            <div class="court-name">${area.name}</div>
+                            <div class="court-location">${area.location}</div>
+                            <button class="book-btn">Đặt sân ngay</button>
+                        </div>
                     </div>
-                    <div class="court-info">
-                        <div class="court-name">Sân cầu lông Hoàng Gia</div>
-                        <div class="court-location">Quận Ba Đình, Hà Nội</div>   
-                        <button class="book-btn">Đặt sân ngay</button>
-                    </div>
-                </div>
-
-                <div class="court-card">
-                    <div class="logo-san">
-                        <img src="./images/san/san.jpg" alt="Sân A" />
-                    </div>
-                    <div class="court-info">
-                        <div class="court-name">CLB Cầu lông Thăng Long</div>
-                        <div class="court-location">Quận Cầu Giấy, Hà Nội</div>
-                        <button class="book-btn">Đặt sân ngay</button>
-                    </div>
-                </div>
-
-                <div class="court-card">
-                    <div class="logo-san">
-                        <img src="./images/san/san.jpg" alt="Sân A" />
-                    </div>
-                    <div class="court-info">
-                        <div class="court-name">Sân cầu lông Vinasport</div>
-                        <div class="court-location">Quận Hai Bà Trưng, Hà Nội</div>
-                        <button class="book-btn">Đặt sân ngay</button>
-                    </div>
-                </div>
-
-                <div class="court-card">
-                    <div class="logo-san">
-                        <img src="./images/san/san.jpg" alt="Sân A" />
-                    </div>
-                    <div class="court-info">
-                        <div class="court-name">Trung tâm cầu lông Hà Đông</div>
-                        <div class="court-location">Quận Hà Đông, Hà Nội</div>
-                        <button class="book-btn">Đặt sân ngay</button>
-                    </div>
-                </div>
-
-                <div class="court-card">
-                    <div class="logo-san">
-                        <img src="./images/san/san.jpg" alt="Sân A" />
-                    </div>
-                    <div class="court-info">
-                        <div class="court-name">Sân cầu lông Olympic</div>
-                        <div class="court-location">Quần Thanh Xuân, Hà Nội</div>
-                        <button class="book-btn">Đặt sân ngay</button>
-                    </div>
-                </div>
-
-                <div class="court-card">
-                    <div class="logo-san">
-                        <img src="./images/san/san.jpg" alt="Sân A" />
-                    </div>
-                    <div class="court-info">
-                        <div class="court-name">CLB Cầu lông Thể Thao</div>
-                        <div class="court-location">Quận Long Biên, Hà Nội</div>
-                        <button class="book-btn">Đặt sân ngay</button>
-                    </div>
-                </div>
+                </c:forEach>
             </div>
-        </main>
 
-        <jsp:include page="homefooter.jsp" />
-    </body>
+
+        </div>
+    </main>
+
+    <jsp:include page="homefooter.jsp" />
+
+</body>
 </html>
