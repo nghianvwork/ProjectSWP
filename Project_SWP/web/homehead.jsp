@@ -176,16 +176,12 @@
         <nav class="nav">
             <div class="nav-container">
                 <div class="nav-item active"><a href="homepageUser.jsp">Trang Chủ</a></div>
-<<<<<<< HEAD
+
                 <div class="nav-item"><a href="listBranch">Danh Sách Sân Bãi</a></div>
                 <div class="nav-item"><a href="booking_list.jsp">Danh sách đặt sân</a></div>
                 <div class="nav-item"><a href="#">Điều Khoản</a></div>
                 <div class="nav-item"><a href="#">Danh Sách Chủ Sân</a></div>
-=======
-                <div class="nav-item"><a href="ListCourt">Danh Sách Sân Bãi</a></div>
-                <div class="nav-item"><a href="booking_list.jsp">Danh Sách Đặt Sân</a></div>
-                <div class="nav-item"><a href="AboutUs.jsp">Giới Thiệu</a></div>
->>>>>>> 9d22bccb04f668f9390fbc85887ff3219b2f050c
+
                 <div class="nav-item">Liên Hệ</div>
             </div>
         </nav>

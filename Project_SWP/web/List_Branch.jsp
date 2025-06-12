@@ -104,36 +104,7 @@
 </head>
 <body>
     
-    <!-- Header -->
-    <header class="header">
-        <div class="header-container">
-            <div class="logo">BadmintonCourt</div>
-            <div class="search-bar">
-                <input type="text" placeholder="Tìm sân cầu lông...">
-                <button class="search-btn">Tìm</button>
-            </div>
-           <div class="header-actions">
-                    
-                    <span>
-                        <a href="viewprofile.jsp" class="header-btn"></a>
-                    </span>
-                    <a href="homepage.jsp" class="header-btn">Thoát</a>
-                </div>
-        </div>
-    </header>
-
-    <!-- Navigation -->
-    <nav class="nav">
-        <div class="nav-container">
-            <div class="nav-item"><a href="homepage.jsp">Trang Chủ</a></div>
-            <div class="nav-item active"><a href="listCourt.jsp">Danh Sách Sân Bãi</a></div>
-              <div class="nav-item"><a href="booking_list.jsp">Danh sách đặt sân</a></div>
-            <div class="nav-item"><a href="#">Điều Khoản</a></div>
-            <div class="nav-item"><a href="#">Danh Sách Chủ Sân</a></div>
-            <div class="nav-item">Liên Hệ</div>
-        </div>
-    </nav>
-
+   
           
 
 
