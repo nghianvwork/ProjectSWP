@@ -18,8 +18,19 @@ public class User {
     private String phone_number ;
     private String role;
     private  LocalDateTime createdAt = LocalDateTime.now();
+    private String status;
 
     public User() {
+    }
+
+    public User(int user_Id, String username, String password, String email, String phone_number, String role, String status) {
+        this.user_Id = user_Id;
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.phone_number = phone_number;
+        this.role = role;
+        this.status = status;
     }
 
     public User(int user_Id, String username, String password, String email, String phone_number, String role) {
@@ -30,6 +41,16 @@ public class User {
         this.phone_number = phone_number;
         this.role = role;
     }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+   
 
     @Override
     public String toString() {

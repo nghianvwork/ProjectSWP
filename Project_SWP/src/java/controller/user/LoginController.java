@@ -116,7 +116,7 @@ public class LoginController extends HttpServlet {
             }
 
                       if ("staff".equalsIgnoreCase(user.getRole())) {
-                response.sendRedirect("host_dashboard.jsp");
+                response.sendRedirect("view-region");
             } else {
                 response.sendRedirect("homepageUser.jsp");
             }
