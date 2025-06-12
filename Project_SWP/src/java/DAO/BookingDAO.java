@@ -12,6 +12,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Time;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -66,12 +67,12 @@ public int countBookingsByArea(int areaId)  {
 
     return 0; 
 }
-public boolean checkSlotAvailable(int courtId, String date, Time startTime, Time endTime) {
+public boolean checkSlotAvailable(int courtId, LocalDate date, Time startTime, Time endTime) {
     String sql = "SELECT COUNT(*) FROM Bookings WHERE court_id = ? AND date = ? " +
                  "AND ((start_time < ? AND end_time > ?) OR (start_time >= ? AND start_time < ?))";
     try (PreparedStatement ps = conn.prepareStatement(sql)) {
         ps.setInt(1, courtId);
-        ps.setString(2, date);
+           ps.setDate(2, java.sql.Date.valueOf(date)); 
         ps.setTime(3, endTime);
         ps.setTime(4, startTime);
         ps.setTime(5, startTime);
@@ -86,6 +87,35 @@ public boolean checkSlotAvailable(int courtId, String date, Time startTime, Time
     }
     return false;
 }
+public int insertBooking(int userId, int courtId, LocalDate date, Time startTime, Time endTime, String status) {
+    String sql = "INSERT INTO Bookings (user_id, court_id, date, start_time, end_time, status) VALUES (?, ?, ?, ?, ?, ?)";
+    int bookingId = -1;
+
+    try (PreparedStatement ps = conn.prepareStatement(sql )) {
+        ps.setInt(1, userId);
+        ps.setInt(2, courtId);
+        ps.setDate(3, java.sql.Date.valueOf(date));
+        ps.setTime(4, startTime);
+        ps.setTime(5, endTime);
+        ps.setString(6, status); // e.g., "pending"
+
+        int affectedRows = ps.executeUpdate();
+
+        if (affectedRows > 0) {
+            try (ResultSet rs = ps.getGeneratedKeys()) {
+                if (rs.next()) {
+                    bookingId = rs.getInt(1); // lấy booking_id vừa tạo
+                }
+            }
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+
+    return bookingId;
+}
+
+
 public Bookings getBookingById(int bookingId) {
     String sql = "SELECT * FROM Bookings WHERE booking_id = ?";
     try (PreparedStatement ps = conn.prepareStatement(sql)) {

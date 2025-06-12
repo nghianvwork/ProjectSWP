@@ -6,9 +6,7 @@
 package controller.user;
 
 import DAO.BookingDAO;
-import DAO.CourtDAO;
-import DAO.CourtPricingDAO;
-import Model.Courts;
+import DAO.BookingServiceDAO;
 import Model.User;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -25,8 +23,8 @@ import java.time.LocalDate;
  *
  * @author admin
  */
-@WebServlet(name="BookFieldServlet", urlPatterns={"/book-field"})
-public class BookFieldServlet extends HttpServlet {
+@WebServlet(name="ConfirmBook", urlPatterns={"/confirm-booking"})
+public class ConfirmBook extends HttpServlet {
    
     /** 
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -43,10 +41,10 @@ public class BookFieldServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet BookFieldServlet</title>");  
+            out.println("<title>Servlet ConfirmBook</title>");  
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet BookFieldServlet at " + request.getContextPath () + "</h1>");
+            out.println("<h1>Servlet ConfirmBook at " + request.getContextPath () + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -76,41 +74,46 @@ public class BookFieldServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-         HttpSession session = request.getSession();
+       HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
+
         if (user == null) {
             response.sendRedirect("login");
             return;
         }
 
-        int courtId = Integer.parseInt(request.getParameter("courtId"));
-        LocalDate date = LocalDate.parse(request.getParameter("date"));
-        Time startTime = Time.valueOf(request.getParameter("startTime") + ":00");
-        Time endTime = Time.valueOf(request.getParameter("endTime") + ":00");
+        try {
+            int userId = user.getUser_Id();
+            int courtId = Integer.parseInt(request.getParameter("courtId"));
+            String dateStr = request.getParameter("date");
+            String startTimeStr = request.getParameter("startTime");
+            String endTimeStr = request.getParameter("endTime");
+            LocalDate date = LocalDate.parse(dateStr);
+            Time startTime = Time.valueOf(startTimeStr);
+            Time endTime = Time.valueOf(endTimeStr);
+            String[] selectedServices = request.getParameterValues("selectedServices");
 
-        BookingDAO bookingDAO = new BookingDAO();
-        CourtDAO courtDAO = new CourtDAO();
-        Courts court = courtDAO.getCourtById(courtId);
+            BookingDAO bookingDAO = new BookingDAO();
+            int bookingId = bookingDAO.insertBooking(userId, courtId, date, startTime, endTime, "pending");
+            BookingServiceDAO bookingserviceDao = new BookingServiceDAO();
+           
+            if (selectedServices != null && bookingId != -1) {
+                for (String serviceIdStr : selectedServices) {
+                    int serviceId = Integer.parseInt(serviceIdStr);
+                    bookingserviceDao.addServiceToBooking(bookingId, serviceId);
+                }
+            }
 
-        boolean isAvailable = bookingDAO.checkSlotAvailable(courtId, date, startTime, endTime);
-        if (!isAvailable) {
-            request.setAttribute("message", "Khoảng thời gian này đã có người đặt.");
-            request.setAttribute("court", court);
-            request.getRequestDispatcher("book_field.jsp").forward(request, response);
-            return;
+            request.setAttribute("success", "Đặt sân thành công. Vui lòng đợi admin duyệt!");
+            response.sendRedirect("booking-list");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            request.setAttribute("error", "Đã xảy ra lỗi khi đặt sân.");
+            request.getRequestDispatcher("confirm_booking.jsp").forward(request, response);
         }
-
-   
-        CourtPricingDAO pricingDAO = new CourtPricingDAO();
-        int totalPrice = pricingDAO.calculatePrice(court.getArea_id(), startTime, endTime);
-
-        request.setAttribute("court", court);
-        request.setAttribute("date", date);
-        request.setAttribute("startTime", startTime);
-        request.setAttribute("endTime", endTime);
-        request.setAttribute("totalPrice", totalPrice);
-        request.getRequestDispatcher("confirm_booking.jsp").forward(request, response);
     }
+    
     
 
     /** 

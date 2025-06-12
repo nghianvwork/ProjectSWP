@@ -108,7 +108,8 @@
                                             <td>${a.description}</td>
                                             <td>
                                                 <button class="btn btn-warning btn-sm" data-toggle="modal" data-target="#updateModal${loop.index}">Update</button>
-                                                <a href="detailBranch?id=${a.area_id}" class="btn btn-info btn-sm">Detail</a>
+                                                <a href="detailBranch?area_id=${a.area_id}" class="btn btn-info btn-sm">Detail</a>
+
                                                 <a href="delete?regionId=${a.area_id}" class="btn btn-danger btn-sm" onclick="return confirmDelete()">Delete</a>
 
 
@@ -141,7 +142,7 @@
                                                                     <div class="form-group">
                                                                         <label>Giờ đóng cửa</label>
 
-                                                                        <input type="time" name="closeTime" class="form-control" value="${a.closeTime}">
+                                                                        <input type="time" name="closeTime" class="form-control" value="${a.closeTime }">
 
                                                                     </div>
                                                                     <div class="form-group">

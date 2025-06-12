@@ -7,6 +7,7 @@ package controller.manager;
 
 import DAO.AreaDAO;
 import DAO.EquipmentsDAO;
+import Model.Branch;
 
 import Model.Branch_Equipments;
 import Model.Branch_pictures;
@@ -62,34 +63,44 @@ public class Detail_Branch extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
-       HttpSession session = request.getSession(false);
-        if (session != null) {
-            User user = (User) session.getAttribute("user");
-            if (user.getRole().equals("staff")) {
-                int area_id = Integer.parseInt(request.getParameter("area_id"));
+protected void doGet(HttpServletRequest request, HttpServletResponse response)
+throws ServletException, IOException {
+    HttpSession session = request.getSession(false);
+    if (session != null) {
+        User user = (User) session.getAttribute("user");
+        if (user != null && "staff".equals(user.getRole())) {
+            int area_id = Integer.parseInt(request.getParameter("area_id"));
 
-                AreaDAO dao = new AreaDAO();
-                EquipmentsDAO eDao = new EquipmentsDAO();
-                
-                List<Branch_pictures> areaImages = dao.getRoomImagesByDormID(area_id);
-                List<Branch_Equipments> areaAllServices = eDao.getAllAreaServices(area_id);
-                List<Equipments> allServicees = eDao.getAllEquipments();
-                request.setAttribute("allServices", allServicees);
-                request.setAttribute("areaAllServices", areaAllServices);
+            AreaDAO dao = new AreaDAO();
+            EquipmentsDAO eDao = new EquipmentsDAO();
 
-                request.setAttribute("areaImages", areaImages);
-                request.setAttribute("area_id", area_id);
-                request.getRequestDispatcher("DetailBranch.jsp").forward(request, response);
-            } else {
-                response.sendError(403);
-            }
+           
+            Branch areaDetail = dao.getAreaByIdWithManager(area_id);
+            request.setAttribute("areaDetail", areaDetail);
+
+            
+            List<Branch_pictures> areaImages = dao.getRoomImagesByDormID(area_id);
+            request.setAttribute("areaImages", areaImages);
+
+         
+            List<Branch_Equipments> areaAllServices = eDao.getAllAreaServices(area_id);
+            request.setAttribute("areaAllServices", areaAllServices);
+
+           
+            List<Equipments> allServicees = eDao.getAllEquipments();
+            request.setAttribute("allServices", allServicees);
+
+            
+            request.setAttribute("area_id", area_id);
+  request.getRequestDispatcher("DetailBranch.jsp").forward(request, response);
         } else {
-            response.sendRedirect("login");
+            response.sendError(HttpServletResponse.SC_FORBIDDEN);
         }
+    } else {
+        response.sendRedirect("login");
     }
-     
+}
+
 
     /** 
      * Handles the HTTP <code>POST</code> method.

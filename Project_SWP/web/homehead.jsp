@@ -176,7 +176,7 @@
         <nav class="nav">
             <div class="nav-container">
                 <div class="nav-item active"><a href="homepageUser.jsp">Trang Chủ</a></div>
-                <div class="nav-item"><a href="listCourt.jsp">Danh Sách Sân Bãi</a></div>
+                <div class="nav-item"><a href="listBranch">Danh Sách Sân Bãi</a></div>
                 <div class="nav-item"><a href="booking_list.jsp">Danh sách đặt sân</a></div>
                 <div class="nav-item"><a href="#">Điều Khoản</a></div>
                 <div class="nav-item"><a href="#">Danh Sách Chủ Sân</a></div>

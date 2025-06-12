@@ -50,6 +50,29 @@ public class AreaDAO   extends DBContext {
         System.out.println(e.getMessage());
     }
 }
+public Branch getAreaByIdWithManager(int area_id) {
+    String sql = "SELECT a.*, u.username AS managerName FROM Areas a " +
+                 "JOIN Users u ON a.manager_id = u.user_id WHERE a.area_id = ?";
+    try (
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+        ps.setInt(1, area_id);
+        ResultSet rs = ps.executeQuery();
+        if (rs.next()) {
+            Branch area = new Branch();
+            area.setArea_id(rs.getInt("area_id"));
+            area.setName(rs.getString("name"));
+            area.setLocation(rs.getString("location"));
+            area.setOpenTime(rs.getTime("open_time"));
+            area.setCloseTime(rs.getTime("close_time"));
+            area.setDescription(rs.getString("descriptions"));
+            area.setManagerName(rs.getString("managerName")); 
+            return area;
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return null;
+}
 
     
    public void UpdateArea(int id, String name, String location, int emptyCourt, Time openTime, Time closeTime,String descriptions) {
@@ -152,6 +175,28 @@ public class AreaDAO   extends DBContext {
 
     return list;
 }
+  public List<Branch> getAllAreas() {
+    List<Branch> list = new ArrayList<>();
+    String sql = "SELECT area_id, name, location, open_time, close_time, descriptions FROM Areas";
+    try (
+         PreparedStatement ps = conn.prepareStatement(sql);
+         ResultSet rs = ps.executeQuery()) {
+        while (rs.next()) {
+            Branch area = new Branch();
+            area.setArea_id(rs.getInt("area_id"));
+            area.setName(rs.getString("name"));
+            area.setLocation(rs.getString("location"));
+            area.setOpenTime(rs.getTime("open_time"));
+            area.setCloseTime(rs.getTime("close_time"));
+            area.setDescription(rs.getString("descriptions"));
+            list.add(area);
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return list;
+}
+
 
 public void updateEmptyCourtByAreaId(int areaId, int change) {
     try {
@@ -242,7 +287,7 @@ int areaId = 1;
     areaDAO.UpdateArea(areaId, newName, newLocation, newEmptyCourt, newOpenTime, newCloseTime, newDescription);
 
     System.out.println("Đã cập nhật thông tin khu vực có ID " + areaId);
-    List<Branch> a = areaDAO.getAreasByManager(1);
+    List<Branch> a = areaDAO.getAllAreas();
 
        for(Branch list : a){
            System.out.println(list);

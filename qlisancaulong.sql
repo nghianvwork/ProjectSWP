@@ -38,17 +38,17 @@ CREATE TABLE Host (
 CREATE TABLE Areas
 (
     area_id INT PRIMARY KEY IDENTITY(1,1),
-    name VARCHAR(100) NOT NULL,
-    location VARCHAR(255),
+    name NVARCHAR(100) NOT NULL,
+    location NVARCHAR(255), 
     manager_id INT NOT NULL,
     EmptyCourt INT,
     open_time TIME NOT NULL,
     close_time TIME NOT NULL,
-
     descriptions NVARCHAR(MAX),
     FOREIGN KEY (manager_id) REFERENCES Users(user_id),
     CONSTRAINT chk_area_time CHECK (open_time < close_time)
 );
+
 
 CREATE TABLE Area_Image
 (
@@ -136,6 +136,13 @@ CREATE TABLE Services
     created_at DATETIME DEFAULT GETDATE(),
     updated_at DATETIME,
     is_deleted BIT DEFAULT 0
+);
+CREATE TABLE Booking_Services (
+    id INT PRIMARY KEY IDENTITY(1,1) ,
+    booking_id INT,
+    service_id INT,
+    FOREIGN KEY (booking_id) REFERENCES Bookings(booking_id),
+    FOREIGN KEY (service_id) REFERENCES Services(services_id)
 );
 
 
