@@ -7,13 +7,15 @@ package controller.manager;
 
 import DAO.AreaDAO;
 import DAO.Branch_ImageDAO;
-import DAO.EquipmentsDAO;
+import DAO.ServiceDAO;
 import DAO.Service_BranchDAO;
+
+
 import Model.Branch;
 
-import Model.Branch_Equipments;
+import Model.Branch_Service;
 import Model.Branch_pictures;
-import Model.Equipments;
+import Model.Service;
 import Model.User;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -74,9 +76,15 @@ throws ServletException, IOException {
             int area_id = Integer.parseInt(request.getParameter("area_id"));
 
             AreaDAO dao = new AreaDAO();
-            EquipmentsDAO eDao = new EquipmentsDAO();
+
+            
             Service_BranchDAO sdao = new Service_BranchDAO();
             Branch_ImageDAO idao = new Branch_ImageDAO();
+
+            ServiceDAO eDao = new ServiceDAO();
+
+           
+
             Branch areaDetail = dao.getAreaByIdWithManager(area_id);
             request.setAttribute("areaDetail", areaDetail);
 
@@ -85,11 +93,13 @@ throws ServletException, IOException {
             request.setAttribute("areaImages", areaImages);
 
          
-            List<Branch_Equipments> areaAllServices = sdao.getAllAreaServices(area_id);
+
+            List<Branch_Service> areaAllServices = eDao.getAllAreaServices(area_id);
+
             request.setAttribute("areaAllServices", areaAllServices);
 
            
-            List<Equipments> allServicees = eDao.getAllEquipments();
+            List<Service> allServicees = eDao.getAllService();
             request.setAttribute("allServices", allServicees);
 
             

@@ -1,5 +1,5 @@
 <%@ page import="java.util.List" %>
-<%@ page import="Model.Equipments" %>
+<%@ page import="Model.Service" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page contentType="text/html; charset=UTF-8" language="java" %>
 
@@ -220,8 +220,8 @@
 <body>
 <jsp:include page="Sidebar.jsp" />
 <%
-    List<Equipments> equipments = (List<Equipments>) request.getAttribute("equipments");
-    if (equipments == null) equipments = java.util.Collections.emptyList();
+    List<Service> service = (List<Service>) request.getAttribute("service");
+    if (service == null) service = java.util.Collections.emptyList();
     String status = (String) request.getAttribute("status");
 %>
 
@@ -232,19 +232,19 @@
 
 <div class="main-content">
     <div class="card">
-        <h2>Danh sách thiết bị</h2>
+        <h2>Danh sách dịch vụ</h2>
 
         <% if ("success".equals(status)) { %>
-            <p class="status-message success">✔ Thiết bị đã được thêm thành công!</p>
+            <p class="status-message success">✔ Dịch vụ đã được thêm thành công!</p>
         <% } else if ("fail".equals(status)) { %>
-            <p class="status-message fail">✘ Thêm thiết bị thất bại. Vui lòng thử lại.</p>
+            <p class="status-message fail">✘ Thêm dịch vụ thất bại. Vui lòng thử lại.</p>
         <% } else if ("duplicate".equals(status)) { %>
-            <p class="status-message duplicate">⚠ Thiết bị đã tồn tại!</p>
+            <p class="status-message duplicate">⚠ Dịch vụ đã tồn tại!</p>
         <% } %>
 
         <!-- Tìm kiếm -->
         <form class="search-bar" method="get" action="searchEquipments">
-            <input type="text" name="keyword" placeholder="🔍 Tìm kiếm tên thiết bị...">
+            <input type="text" name="keyword" placeholder="🔍 Tìm kiếm tên dịch vụ...">
             <button type="submit">Tìm</button>
         </form>
 
@@ -254,20 +254,20 @@
                 <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Tên thiết bị</th>
+                    <th>Tên dịch vụ</th>
                     <th>Giá</th>
                     <th style="width: 180px;">Hành động</th>
                 </tr>
                 </thead>
                 <tbody>
-                <% for (Equipments eq : equipments) { %>
+                <% for (Service eq : service) { %>
                     <tr>
-                        <td><%= eq.getEquipment_id() %></td>
+                        <td><%= eq.getService_id() %></td>
                         <td><%= eq.getName() %></td>
                         <td><%= eq.getPrice() %> VNĐ</td>
                         <td class="action-buttons">
-                            <a href="UpdateEquipments.jsp?id=<%= eq.getEquipment_id() %>" class="btn btn-warning">Sửa</a>
-                            <a href="deleteEquipment?id=<%= eq.getEquipment_id() %>" class="btn btn-danger"
+                            <a href="UpdateEquipments.jsp?id=<%= eq.getService_id() %>" class="btn btn-warning">Sửa</a>
+                            <a href="deleteEquipment?id=<%= eq.getService_id() %>" class="btn btn-danger"
                                onclick="return confirm('Bạn có chắc chắn muốn xóa thiết bị này?');">Xóa</a>
                         </td>
                     </tr>
@@ -291,7 +291,7 @@
             </c:if>
         </div>
 
-        <a href="AddEquipments.jsp" class="btn-green">+ Thêm thiết bị mới</a>
+        <a href="AddService.jsp" class="btn-green">+ Thêm thiết bị mới</a>
     </div>
 </div>
 

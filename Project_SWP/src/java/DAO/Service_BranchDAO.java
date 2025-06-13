@@ -5,7 +5,8 @@
 package DAO;
 
 import Dal.DBContext;
-import Model.Branch_Equipments;
+
+import Model.Branch_Service;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -36,8 +37,8 @@ public class Service_BranchDAO extends DBContext{
             ps.executeUpdate();
         }
     }
-    public List<Branch_Equipments> getAllAreaServices(int areaID) {
-        List<Branch_Equipments> areaServices = new ArrayList<>();
+    public List<Branch_Service> getAllAreaServices(int areaID) {
+        List<Branch_Service> areaServices = new ArrayList<>();
         String query = "SELECT AreaEquipment_id, equipment_id, area_id FROM Areas_Services  where area_id = ?";
 
         try (PreparedStatement preparedStatement = conn.prepareStatement(query)) {
@@ -45,9 +46,9 @@ public class Service_BranchDAO extends DBContext{
             ResultSet resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()) {
-                Branch_Equipments areaService = new Branch_Equipments();
-                areaService.setAreaEquipment_id(resultSet.getInt("AreaEquipment_id"));
-                areaService.setEquipment_id(resultSet.getInt("equipment_id"));
+                Branch_Service areaService = new Branch_Service();
+                areaService.setAreaService_id(resultSet.getInt("AreaEquipment_id"));
+                areaService.setService_id(resultSet.getInt("equipment_id"));
                 areaService.setArea_id(resultSet.getInt("area_id"));
                 areaServices.add(areaService);
             }

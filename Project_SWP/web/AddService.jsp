@@ -11,7 +11,6 @@
                 background-color: #eef2f3;
                 padding: 40px;
             }
-
             .form-container {
                 background-color: #fff;
                 padding: 30px;
@@ -20,27 +19,30 @@
                 border-radius: 8px;
                 box-shadow: 0 0 10px rgba(0,0,0,0.1);
             }
-
             h2 {
                 text-align: center;
                 color: #333;
             }
-
             label {
                 display: block;
                 margin-top: 15px;
                 font-weight: bold;
             }
-
             input[type="text"],
-            input[type="number"] {
+            input[type="number"],
+            textarea,
+            select {
                 width: 100%;
                 padding: 10px;
                 margin-top: 5px;
                 border: 1px solid #ccc;
                 border-radius: 4px;
+                box-sizing: border-box;
             }
-
+            textarea {
+                min-height: 80px;
+                resize: vertical;
+            }
             .btn-submit {
                 margin-top: 20px;
                 width: 100%;
@@ -52,11 +54,9 @@
                 border-radius: 4px;
                 cursor: pointer;
             }
-
             .btn-submit:hover {
                 background-color: #218838;
             }
-
             .back-link {
                 display: block;
                 text-align: center;
@@ -64,7 +64,6 @@
                 color: #007bff;
                 text-decoration: none;
             }
-
             .back-link:hover {
                 text-decoration: underline;
             }
@@ -80,11 +79,27 @@
                 <input type="text" name="name" required>
 
                 <label for="price">Giá (VND):</label>
-                <input type="number" name="price" required>
+                <input type="number" name="price" min="0" required>
+
+                <label for="description">Mô tả:</label>
+                <textarea name="description" placeholder="Nhập mô tả chi tiết"></textarea>
+
+                <label for="image_url">Ảnh dịch vụ (URL):</label>
+                <input type="text" name="image_url" placeholder="https://example.com/image.jpg">
+
+                <label for="status">Trạng thái:</label>
+                <div style="margin-top: 5px; margin-bottom: 15px; display: flex; gap: 30px; align-items: center;">
+                    <label style="font-weight: normal; margin-bottom: 0;">
+                        <input type="radio" name="status" value="Active" checked> Active
+                    </label>
+                    <label style="font-weight: normal; margin-bottom: 0;">
+                        <input type="radio" name="status" value="Inactive"> Inactive
+                    </label>
+                </div>
 
                 <button type="submit" class="btn-submit">Thêm</button>
             </form>
-            <a class="back-link" href="EquipmentsView.jsp">← Quay lại danh sách</a>
+            <a class="back-link" href="ServiceView.jsp">← Quay lại danh sách</a>
         </div>
 
     </body>

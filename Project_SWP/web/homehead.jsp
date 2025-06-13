@@ -116,6 +116,7 @@
                 margin: 0 auto;
                 padding: 0 2rem;
                 display: flex;
+                justify-content: center;
                 gap: 2rem;
             }
 
@@ -179,9 +180,7 @@
 
                 <div class="nav-item"><a href="listBranch">Danh Sách Sân Bãi</a></div>
                 <div class="nav-item"><a href="booking_list.jsp">Danh sách đặt sân</a></div>
-                <div class="nav-item"><a href="#">Điều Khoản</a></div>
-                <div class="nav-item"><a href="#">Danh Sách Chủ Sân</a></div>
-
+                <div class="nav-item"><a href="AboutUs.jsp">Giới Thiệu</a></div>
                 <div class="nav-item">Liên Hệ</div>
             </div>
         </nav>
