@@ -126,8 +126,7 @@ public class RegisterController extends HttpServlet {
             }
 
             // Đăng ký thành công → chuyển hướng
-            request.getSession().setAttribute("message", "Registration successful! You can now login.");
-            response.sendRedirect("login");
+            response.sendRedirect("register.jsp?status=success");
         } else {
             // Đăng ký thất bại → hiển thị lỗi
             request.setAttribute("error", "Username or email already exists, please enter another!");
