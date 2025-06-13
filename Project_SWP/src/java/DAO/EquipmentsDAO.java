@@ -38,26 +38,7 @@ public class EquipmentsDAO extends DBContext{
         }
         return list;
     }
- public List<Branch_Equipments> getAllAreaServices(int areaID) {
-        List<Branch_Equipments> areaServices = new ArrayList<>();
-        String query = "SELECT AreaEquipment_id, equipment_id, area_id FROM DormService where area_id = ?";
-
-        try (PreparedStatement preparedStatement = conn.prepareStatement(query)) {
-            preparedStatement.setInt(1, areaID);
-            ResultSet resultSet = preparedStatement.executeQuery();
-
-            while (resultSet.next()) {
-                Branch_Equipments areaService = new Branch_Equipments();
-                areaService.setAreaEquipment_id(resultSet.getInt("AreaEquipment_id"));
-                areaService.setEquipment_id(resultSet.getInt("equipment_id"));
-                areaService.setArea_id(resultSet.getInt("area_id"));
-                areaServices.add(areaService);
-            }
-        } catch (SQLException e) {
-            System.out.println("getAllRoomServices: " + e.getMessage());
-        }
-        return areaServices;
-    }
+ 
     public static void addService(Equipments s) throws SQLException {
         try {
             if (isDuplicateService(s.getName())) {
@@ -67,7 +48,7 @@ public class EquipmentsDAO extends DBContext{
             int nextId = getNextEquipmentId();
 
             Connection con = new DBContext().getConnection();
-            PreparedStatement ps = con.prepareStatement("INSERT INTO Equipments(equipment_id, name, price) VALUES (?, ?, ?)");
+            PreparedStatement ps = con.prepareStatement("INSERT INTO (equipment_id, name, price) VALUES (?, ?, ?)");
             ps.setInt(1, nextId);
             ps.setString(2, s.getName());
             ps.setDouble(3, s.getPrice());

@@ -31,6 +31,28 @@ public class AreaDAO extends DBContext {
             System.out.println("Connect failed");
         }
     }
+public List<Branch> searchAreaByName(String keyword) {
+    List<Branch> areas = new ArrayList<>();
+    String sql = "SELECT * FROM Areas WHERE name LIKE ?";
+    try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        ps.setString(1, "%" + keyword + "%");
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            Branch area = new Branch();
+            area.setArea_id(rs.getInt("area_id"));
+            area.setName(rs.getString("name"));
+            area.setLocation(rs.getString("location"));
+            area.setEmptyCourt(rs.getInt("EmptyCourt"));
+            area.setOpenTime(rs.getTime("open_time"));
+            area.setCloseTime(rs.getTime("close_time"));
+            area.setDescription(rs.getString("descriptions"));
+            areas.add(area);
+        }
+    } catch (Exception e) {
+        System.out.println("searchAreaByName error: " + e.getMessage());
+    }
+    return areas;
+}
 
     public void addRegion(Branch re) {
         String sql = "INSERT INTO [dbo].[Areas] "
@@ -241,26 +263,7 @@ public Branch getAreaByIdWithManager(int area_id) {
         return false;
     }
 
-    public List<Branch_pictures> getRoomImagesByDormID(int area_id) {
-        List<Branch_pictures> imageUrls = new ArrayList<>();
-        String query = "SELECT * FROM Area_Image WHERE area_id = ?";
-
-        try (PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setInt(1, area_id);
-            ResultSet rs = stmt.executeQuery();
-
-            while (rs.next()) {
-                int id = rs.getInt("imageID");
-                int area = rs.getInt("area_id");
-                String imageUrl = rs.getString("imageURL");
-                imageUrls.add(new Branch_pictures(id, area, imageUrl));
-            }
-        } catch (SQLException ex) {
-            System.out.println("getRoomImagesByRoomID: " + ex.getMessage());
-        }
-
-        return imageUrls;
-    }
+   
 
     public static void main(String[] args) {
 

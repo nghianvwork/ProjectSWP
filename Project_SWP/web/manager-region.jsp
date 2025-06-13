@@ -77,10 +77,11 @@
                         <h3 class="mb-4 text-primary">🏙 Quản lí địa điểm</h3>
 
                         <!-- Search Bar -->
-                        <div class="form-inline mb-4">
-                            <input type="text" id="searchInput" class="form-control mr-2 w-50" placeholder="🔍 Search by region name">
-                            <button class="btn btn-primary" onclick="searchDorms()">Tìm kiếm</button>
-                        </div>
+                        <form action="search-branch" method="POST" class="form-inline mb-4">
+                            <input type="text" name="searchInput" value="${searchKeyword}" class="form-control mr-2 w-50" placeholder="🔍 Search by branch name">
+                            <button type="submit" class="btn btn-primary">Tìm kiếm</button>
+                        </form>
+
 
                         <!-- Regions Table -->
                         <div class="table-responsive">
@@ -244,15 +245,7 @@
     </script>-->
 
         <script>
-            function searchDorms() {
-                let input = document.getElementById("searchInput").value.toUpperCase().trim();
-                let rows = document.querySelectorAll("table tbody tr");
-                rows.forEach(row => {
-                    let name = row.cells[0].textContent.toUpperCase();
-                    row.style.display = name.includes(input) ? "" : "none";
-                });
-            }
-
+           
             function confirmDelete() {
                 return confirm("Do you want to delete this?");
             }
