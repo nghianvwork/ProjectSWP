@@ -1,5 +1,4 @@
 ﻿
-
 -- ==========================
 -- BẢNG NGƯỜI DÙNG
 -- ==========================
@@ -112,15 +111,15 @@ CREATE TABLE Bookings
 -- ==========================
 -- BẢNG THIẾT BỊ
 -- ==========================
-CREATE TABLE Services
+CREATE TABLE BadmintonService
 (
-    services_id INT PRIMARY KEY IDENTITY(1,1),
+    service_id INT PRIMARY KEY IDENTITY(1,1),
     name NVARCHAR(100) NOT NULL UNIQUE,
     price DECIMAL(10, 2) NOT NULL CHECK (price >= 0),
     description NVARCHAR(MAX),
-    image_url VARCHAR(255),
+    image_url NVARCHAR(255),
     status NVARCHAR(50) DEFAULT 'Active',
-    created_at DATETIME DEFAULT GETDATE(),
+	created_at DATETIME DEFAULT GETDATE(),
     updated_at DATETIME,
     is_deleted BIT DEFAULT 0
 );
@@ -129,16 +128,16 @@ CREATE TABLE Booking_Services (
     booking_id INT,
     service_id INT,
     FOREIGN KEY (booking_id) REFERENCES Bookings(booking_id),
-    FOREIGN KEY (service_id) REFERENCES Services(services_id)
+    FOREIGN KEY (service_id) REFERENCES BadmintonService(service_id)
 );
 
 CREATE TABLE Areas_Services
 (
     AreaServices_id INT PRIMARY KEY IDENTITY(1,1),
-    services_id INT NOT NULL,
+    service_id INT NOT NULL,
     area_id INT,
     FOREIGN KEY (area_id) REFERENCES Areas(area_id),
-    FOREIGN KEY (services_id) REFERENCES Services(services_id)
+    FOREIGN KEY (service_id) REFERENCES BadmintonService(service_id)
 );
 
 -- ==========================

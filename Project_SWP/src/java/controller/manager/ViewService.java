@@ -4,8 +4,8 @@
  */
 package controller.manager;
 
-import DAO.EquipmentsDAO;
-import Model.Equipments;
+import DAO.ServiceDAO;
+import Model.Service;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -19,8 +19,8 @@ import java.util.List;
  *
  * @author admin
  */
-@WebServlet(name = "ViewEquipments", urlPatterns = {"/ViewEquipments"})
-public class ViewEquipments extends HttpServlet {
+@WebServlet(name = "ViewService", urlPatterns = {"/ViewService"})
+public class ViewService extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -60,14 +60,14 @@ public class ViewEquipments extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        EquipmentsDAO dao = new EquipmentsDAO();
-        List<Equipments> equipments = dao.getAllEquipments();  
-        request.setAttribute("equipments", equipments);
+        ServiceDAO dao = new ServiceDAO();
+        List<Service> service = dao.getAllService();  
+        request.setAttribute("service", service);
 
         String status = request.getParameter("status"); 
         request.setAttribute("status", status);
 
-        request.getRequestDispatcher("EquipmentsView.jsp").forward(request, response);
+        request.getRequestDispatcher("ServiceView.jsp").forward(request, response);
     }
 
     /**
