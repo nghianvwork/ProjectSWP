@@ -157,6 +157,10 @@
             .court-info {
                 padding: 1.5rem;
             }
+            
+            .court-info p{
+                margin-bottom: 0.5rem;
+            }
 
             .court-name {
                 font-size: 1.2rem;
@@ -325,7 +329,7 @@
                             <div class="court-name">${area.name}</div>
                             <div class="court-location">${area.location}</div>
                             <p>Giờ mở cửa: ${area.openTime} - ${area.closeTime}</p>
-                            <p>${area.description}</p>
+                            <p>Mô tả: ${area.description}</p>
                             <form action="areaDetail" method="get">
                                 <input type="hidden" name="area_id" value="${area.area_id}" />
                                 <button type="submit" class="book-btn">Xem chi tiết</button>

@@ -39,7 +39,7 @@ public class Service_BranchDAO extends DBContext{
     }
     public List<Branch_Service> getAllAreaServices(int areaID) {
         List<Branch_Service> areaServices = new ArrayList<>();
-        String query = "SELECT AreaEquipment_id, equipment_id, area_id FROM Areas_Services  where area_id = ?";
+        String query = "SELECT AreaEquipment_id, service_id, area_id FROM Areas_Services  where area_id = ?";
 
         try (PreparedStatement preparedStatement = conn.prepareStatement(query)) {
             preparedStatement.setInt(1, areaID);
@@ -48,7 +48,7 @@ public class Service_BranchDAO extends DBContext{
             while (resultSet.next()) {
                 Branch_Service areaService = new Branch_Service();
                 areaService.setAreaService_id(resultSet.getInt("AreaEquipment_id"));
-                areaService.setService_id(resultSet.getInt("equipment_id"));
+                areaService.setService_id(resultSet.getInt("service_id"));
                 areaService.setArea_id(resultSet.getInt("area_id"));
                 areaServices.add(areaService);
             }

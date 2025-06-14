@@ -42,7 +42,7 @@ public List<Branch> searchAreaByName(String keyword) {
             area.setArea_id(rs.getInt("area_id"));
             area.setName(rs.getString("name"));
             area.setLocation(rs.getString("location"));
-            area.setEmptyCourt(rs.getInt("EmptyCourt"));
+            area.setEmptyCourt(rs.getInt("court"));
             area.setOpenTime(rs.getTime("open_time"));
             area.setCloseTime(rs.getTime("close_time"));
             area.setDescription(rs.getString("descriptions"));
@@ -56,7 +56,7 @@ public List<Branch> searchAreaByName(String keyword) {
 
     public void addRegion(Branch re) {
         String sql = "INSERT INTO [dbo].[Areas] "
-                + "([name], [location], [manager_id], [EmptyCourt], [open_time], [close_time],[descriptions]) "
+                + "([name], [location], [manager_id], [court], [open_time], [close_time],[descriptions]) "
                 + "VALUES (?, ?, ?, ?, ?, ?,?)";
 
         try {
@@ -101,7 +101,7 @@ public Branch getAreaByIdWithManager(int area_id) {
 
 
     public void UpdateArea(int id, String name, String location, int emptyCourt, Time openTime, Time closeTime, String descriptions) {
-        String sql = "UPDATE Areas SET name = ?, location = ?, EmptyCourt = ?, open_time = ?, close_time = ?, descriptions = ? WHERE area_id = ?";
+        String sql = "UPDATE Areas SET name = ?, location = ?, court = ?, open_time = ?, close_time = ?, descriptions = ? WHERE area_id = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, name);
             stmt.setString(2, location);
@@ -145,7 +145,7 @@ public Branch getAreaByIdWithManager(int area_id) {
                         rs.getString("name"),
                         rs.getString("location"),
                         rs.getInt("manager_id"),
-                        rs.getInt("EmptyCourt"),
+                        rs.getInt("court"),
                         rs.getTime("open_time"),
                         rs.getTime("close_time"),
                         rs.getString("descriptions")
@@ -188,7 +188,7 @@ public Branch getAreaByIdWithManager(int area_id) {
                 String areaName = rs.getString("name");
                 String location = rs.getString("location");
                 int managerID = rs.getInt("manager_id");
-                int emptyCourt = rs.getInt("EmptyCourt");
+                int emptyCourt = rs.getInt("court");
                 Time openTime = rs.getTime("open_time");
                 Time closeTime = rs.getTime("close_time");
                 String description = rs.getString("descriptions");
@@ -218,7 +218,7 @@ public Branch getAreaByIdWithManager(int area_id) {
                 String areaName = rs.getString("name");
                 String location = rs.getString("location");
                 int managerID = rs.getInt("manager_id");
-                int emptyCourt = rs.getInt("EmptyCourt");
+                int emptyCourt = rs.getInt("court");
                 Time openTime = rs.getTime("open_time");
                 Time closeTime = rs.getTime("close_time");
                 String description = rs.getString("descriptions");
@@ -231,11 +231,36 @@ public Branch getAreaByIdWithManager(int area_id) {
         }
         return listCourt;
     }
+    
+    public List<Branch> getTop3() {
+        List<Branch> listTop3 = new ArrayList<>();
+        String sql = "SELECT TOP 3 * FROM Areas ORDER BY area_id DESC;";
+        try (
+                PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                int areasID = rs.getInt("area_id");
+                String areaName = rs.getString("name");
+                String location = rs.getString("location");
+                int managerID = rs.getInt("manager_id");
+                int emptyCourt = rs.getInt("EmptyCourt");
+                Time openTime = rs.getTime("open_time");
+                Time closeTime = rs.getTime("close_time");
+                String description = rs.getString("descriptions");
+                Branch branch = new Branch(areasID, areaName, location, managerID, emptyCourt, openTime, closeTime, description);
+                listTop3.add(branch);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return listTop3;
+    }
 
     public void updateEmptyCourtByAreaId(int areaId, int change) {
         try {
 
-            String sql = "UPDATE Areas SET EmptyCourt = ISNULL(EmptyCourt, 0) + ? WHERE area_id = ?";
+            String sql = "UPDATE Areas SET court = ISNULL(court, 0) + ? WHERE area_id = ?";
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setInt(1, change);
             ps.setInt(2, areaId);
@@ -269,21 +294,21 @@ public Branch getAreaByIdWithManager(int area_id) {
 
         AreaDAO areaDAO = new AreaDAO();
 
-//        Branch newArea = new Branch(
-//            0,                   
-//            "Khu Vuc cu",      
-//            "Hola",            
-//            1,              
-//            5,               
-//            Time.valueOf("08:00:00"),  
-//            Time.valueOf("22:00:00")   ,
-//                "String"
-//        );
-//        
-//        // Gọi phương thức addRegion để thêm mới
-//        areaDAO.addRegion(newArea);
-//        
-//         System.out.println("Đã thêm khu vực mới thành công!");
+        Branch newArea = new Branch(
+            1,                   
+            "Khu Vuc Hola",      
+            "Ha Noi",            
+            2,              
+            0,               
+            Time.valueOf("10:00:00"),  
+            Time.valueOf("22:00:00")   ,
+                "String"
+        );
+        
+        // Gọi phương thức addRegion để thêm mới
+        areaDAO.addRegion(newArea);
+        
+         System.out.println("Đã thêm khu vực mới thành công!");
 //        List<Branch> a = areaDAO.getAllByManagerID(1, 1, 5);
 //        for(Branch list : a){
 //            System.out.println(list);
@@ -293,6 +318,25 @@ public Branch getAreaByIdWithManager(int area_id) {
 //    int totalAreas = areaDAO.countAreasByManagerId(managerId);
 //    
 //    System.out.println("Tổng số khu vực của manager có ID " + managerId + " là: " + totalAreas);
+<<<<<<< HEAD
+//        int areaId = 1;
+//        String newName = "Khu vực đã cập nhật";
+//        String newLocation = "Địa điểm mới";
+//        int newEmptyCourt = 4;
+//        Time newOpenTime = Time.valueOf("07:00:00");
+//        Time newCloseTime = Time.valueOf("21:00:00");
+//        String newDescription = "Cập nhật mô tả cho khu vực.";
+//
+//        // Gọi hàm update
+//        areaDAO.UpdateArea(areaId, newName, newLocation, newEmptyCourt, newOpenTime, newCloseTime, newDescription);
+//
+//
+//    System.out.println("Đã cập nhật thông tin khu vực có ID " + areaId);
+//    List<Branch> a = areaDAO.getAllAreas();
+//
+//        System.out.println("Đã cập nhật thông tin khu vực có ID " + areaId);
+        List<Branch> aa = areaDAO.getAreasByManager(2);
+=======
         int areaId = 1;
         String newName = "Khu vực đã cập nhật";
         String newLocation = "Địa điểm mới";
@@ -304,16 +348,22 @@ public Branch getAreaByIdWithManager(int area_id) {
         // Gọi hàm update
         areaDAO.UpdateArea(areaId, newName, newLocation, newEmptyCourt, newOpenTime, newCloseTime, newDescription);
 
-
-    System.out.println("Đã cập nhật thông tin khu vực có ID " + areaId);
-    List<Branch> a = areaDAO.getAllAreas();
+        System.out.println("Đã cập nhật thông tin khu vực có ID " + areaId);
+        List<Branch> a = areaDAO.getAllAreas();
 
         System.out.println("Đã cập nhật thông tin khu vực có ID " + areaId);
         List<Branch> aa = areaDAO.getAreasByManager(1);
-
+>>>>>>> 2cde8fb0f33c4ffa37c77120868e487692e11ea5
 
         for (Branch list : aa) {
             System.out.println(list);
+        }
+        
+        List<Branch> top3Areas = areaDAO.getTop3();
+
+        System.out.println("Danh sách 3 khu vực mới nhất:");
+        for (Branch branch : top3Areas) {
+            System.out.println(branch);
         }
     }
 }
