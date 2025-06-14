@@ -44,7 +44,6 @@ public class CourtDAO extends DBContext{
             ps.setString(7, court.getStatus());
             ps.setInt(8, court.getArea_id());
             ps.executeUpdate();
-            dao.updateEmptyCourtByAreaId(court.getArea_id(), 1);
         } catch (SQLException e) {
             e.printStackTrace();
         }
