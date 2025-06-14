@@ -2,33 +2,30 @@
 -- ==========================
 -- BẢNG NGƯỜI DÙNG
 -- ==========================
-CREATE TABLE Users
+CREATE TABLE [dbo].[Users](
+	[user_id] [int] IDENTITY(1,1) NOT NULL,
+	[username] [varchar](50) NOT NULL,
+	[password] [varchar](255) NOT NULL,
+	[email] [varchar](100) NULL,
+	[phone_number] [varchar](20) NULL,
+	[role] [varchar](50) NULL,
+	[created_at] [datetime] NULL,
+	[status] [nvarchar](50) NULL,
+	[note] [nvarchar](max) NULL,
+PRIMARY KEY CLUSTERED 
 (
-    user_id INT PRIMARY KEY IDENTITY(1,1),
-    username VARCHAR(50) NOT NULL UNIQUE,
-    password VARCHAR(255) NOT NULL,
-    email VARCHAR(100),
-    phone_number VARCHAR(20),
-    role VARCHAR(50),
-    created_at DATETIME DEFAULT GETDATE()
-);
+	[user_id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY],
+UNIQUE NONCLUSTERED 
+(
+	[username] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 
 -- ==========================
 -- BẢNG STAFF (ĐỔI TÊN TỪ HOST)
 -- ==========================
-CREATE TABLE Staff (
-    staff_id INT PRIMARY KEY IDENTITY(1,1),
-    user_id INT NOT NULL UNIQUE,
-    full_name NVARCHAR(100) NOT NULL,
-    gender NVARCHAR(10),
-    date_of_birth DATE,
-    address NVARCHAR(255),
-    phone_number VARCHAR(20),
-    id_card_number VARCHAR(20),
-    education_level NVARCHAR(100),
-    personal_notes NVARCHAR(MAX),
-    FOREIGN KEY (user_id) REFERENCES Users(user_id) ON DELETE CASCADE
-);
+
 
 -- ==========================
 -- BẢNG KHU VỰC
@@ -39,11 +36,12 @@ CREATE TABLE Areas
     name NVARCHAR(100) NOT NULL,
     location NVARCHAR(255), 
     manager_id INT NOT NULL,
-    EmptyCourt INT,
+    court INT,
     open_time TIME NOT NULL,
     close_time TIME NOT NULL,
     descriptions NVARCHAR(MAX),
-    FOREIGN KEY (manager_id) REFERENCES Staff(user_id),  -- Tham chiếu đến Staff thay vì Host
+   FOREIGN KEY (manager_id) REFERENCES Users(user_id),
+
     CONSTRAINT chk_area_time CHECK (open_time < close_time)
 );
 
@@ -202,3 +200,38 @@ ALTER TABLE [dbo].[password_reset_tokens] ADD  DEFAULT ((0)) FOR [is_used];
 ALTER TABLE [dbo].[password_reset_tokens] 
     ADD CONSTRAINT FK_password_reset_user 
     FOREIGN KEY([user_id]) REFERENCES [dbo].[Users] ([user_id]) ON DELETE CASCADE;
+
+	CREATE TABLE [dbo].[Notification](
+	[notification_id] [int] IDENTITY(1,1) NOT NULL,
+	[title] [nvarchar](255) NOT NULL,
+	[content] [nvarchar](max) NOT NULL,
+	[image_url] [nvarchar](255) NULL,
+	[created_by] [int] NOT NULL,
+	[scheduled_time] [datetime] NULL,
+	[sent_time] [datetime] NULL,
+	[status] [varchar](20) NOT NULL,
+	[created_at] [datetime] NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[notification_id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Notification_Receiver]    Script Date: 6/14/2025 11:42:53 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Notification_Receiver](
+	[id] [int] IDENTITY(1,1) NOT NULL,
+	[notification_id] [int] NOT NULL,
+	[user_id] [int] NOT NULL,
+	[is_read] [bit] NOT NULL,
+	[read_at] [datetime] NULL,
+	[opened_at] [datetime] NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO

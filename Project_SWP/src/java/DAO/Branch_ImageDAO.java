@@ -64,11 +64,11 @@ public class Branch_ImageDAO extends DBContext{
             Branch_ImageDAO imageDAO = new Branch_ImageDAO();
 
             // Thông tin cần thêm (sửa lại giá trị thực tế tùy ứng dụng)
-            int areaId = 1;  // ID của khu vực muốn thêm ảnh
+            int areaId = 4;  // ID của khu vực muốn thêm ảnh
             String imageUrl = "https://example.com/images/area1.jpg";  // URL của ảnh
 
             // Gọi phương thức thêm ảnh vào cơ sở dữ liệu
-//            imageDAO.addImage(areaId, imageUrl);
+            imageDAO.addImage(areaId, imageUrl);
             List<Branch_pictures> list = imageDAO.getRoomImagesByDormID(areaId);
             for(Branch_pictures a : list){
                 System.out.println(a);
