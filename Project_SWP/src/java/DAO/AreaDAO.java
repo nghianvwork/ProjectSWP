@@ -243,7 +243,7 @@ public Branch getAreaByIdWithManager(int area_id) {
                 String areaName = rs.getString("name");
                 String location = rs.getString("location");
                 int managerID = rs.getInt("manager_id");
-                int emptyCourt = rs.getInt("EmptyCourt");
+                int emptyCourt = rs.getInt("court");
                 Time openTime = rs.getTime("open_time");
                 Time closeTime = rs.getTime("close_time");
                 String description = rs.getString("descriptions");
@@ -309,51 +309,9 @@ public Branch getAreaByIdWithManager(int area_id) {
         areaDAO.addRegion(newArea);
         
          System.out.println("Đã thêm khu vực mới thành công!");
-//        List<Branch> a = areaDAO.getAllByManagerID(1, 1, 5);
-//        for(Branch list : a){
-//            System.out.println(list);
-//        }
-//       
-//            int managerId = 1; // Thay đổi ID tùy theo nhu cầu kiểm tra
-//    int totalAreas = areaDAO.countAreasByManagerId(managerId);
-//    
-//    System.out.println("Tổng số khu vực của manager có ID " + managerId + " là: " + totalAreas);
-<<<<<<< HEAD
-//        int areaId = 1;
-//        String newName = "Khu vực đã cập nhật";
-//        String newLocation = "Địa điểm mới";
-//        int newEmptyCourt = 4;
-//        Time newOpenTime = Time.valueOf("07:00:00");
-//        Time newCloseTime = Time.valueOf("21:00:00");
-//        String newDescription = "Cập nhật mô tả cho khu vực.";
-//
-//        // Gọi hàm update
-//        areaDAO.UpdateArea(areaId, newName, newLocation, newEmptyCourt, newOpenTime, newCloseTime, newDescription);
-//
-//
-//    System.out.println("Đã cập nhật thông tin khu vực có ID " + areaId);
-//    List<Branch> a = areaDAO.getAllAreas();
-//
-//        System.out.println("Đã cập nhật thông tin khu vực có ID " + areaId);
-        List<Branch> aa = areaDAO.getAreasByManager(2);
-=======
-        int areaId = 1;
-        String newName = "Khu vực đã cập nhật";
-        String newLocation = "Địa điểm mới";
-        int newEmptyCourt = 4;
-        Time newOpenTime = Time.valueOf("07:00:00");
-        Time newCloseTime = Time.valueOf("21:00:00");
-        String newDescription = "Cập nhật mô tả cho khu vực.";
 
-        // Gọi hàm update
-        areaDAO.UpdateArea(areaId, newName, newLocation, newEmptyCourt, newOpenTime, newCloseTime, newDescription);
-
-        System.out.println("Đã cập nhật thông tin khu vực có ID " + areaId);
-        List<Branch> a = areaDAO.getAllAreas();
-
-        System.out.println("Đã cập nhật thông tin khu vực có ID " + areaId);
         List<Branch> aa = areaDAO.getAreasByManager(1);
->>>>>>> 2cde8fb0f33c4ffa37c77120868e487692e11ea5
+
 
         for (Branch list : aa) {
             System.out.println(list);
@@ -365,5 +323,21 @@ public Branch getAreaByIdWithManager(int area_id) {
         for (Branch branch : top3Areas) {
             System.out.println(branch);
         }
+         int areaIdToUpdate = 4;
+
+    // ✅ Dữ liệu mới cần cập nhật
+    String newName = "Khu Vực Test Cập Nhật";
+    String newLocation = "Đường ABC, Quận XYZ";
+    int newEmptyCourt = 5;
+    Time newOpenTime = Time.valueOf("08:00:00");
+    Time newCloseTime = Time.valueOf("20:00:00");
+    String newDescription = "Khu vực được cập nhật qua hàm main";
+
+    try {
+        areaDAO.UpdateArea(areaIdToUpdate, newName, newLocation, newEmptyCourt, newOpenTime, newCloseTime, newDescription);
+        System.out.println(" Đã cập nhật thành công khu vực có ID: " + areaIdToUpdate);
+    } catch (Exception e) {
+        System.out.println(" Cập nhật thất bại: " + e.getMessage());
+    }
     }
 }
