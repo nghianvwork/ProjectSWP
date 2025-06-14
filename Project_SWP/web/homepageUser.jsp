@@ -61,6 +61,10 @@
                 height: 180px;
                 object-fit: cover;
             }
+            
+            .court-info p{
+                margin-bottom: 0.5rem;
+            }
 
             .court-info {
                 padding: 1.5rem;

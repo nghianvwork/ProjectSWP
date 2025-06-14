@@ -157,6 +157,10 @@
             .court-info {
                 padding: 1.5rem;
             }
+            
+            .court-info p{
+                margin-bottom: 0.5rem;
+            }
 
             .court-name {
                 font-size: 1.2rem;
