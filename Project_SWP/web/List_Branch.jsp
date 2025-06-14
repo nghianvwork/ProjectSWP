@@ -318,7 +318,7 @@
                 </div>
             </div>
 
-            <!-- Courts Grid -->
+           
             <div class="courts-grid">
                 <c:forEach var="area" items="${areaList}">
                     <div class="court-card">

@@ -79,29 +79,7 @@ public class UserDAO extends DBContext {
         }
     }
 
-    public boolean addStaff(Staff staff)  {
-        String sql = "INSERT INTO Staff (user_id, full_name, gender, date_of_birth, address, phone_number, id_card_number, education_level, personal_notes) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        int rowsInserted =0;
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, staff.getUserId().getUser_Id());  // ✅ lấy ra user_id từ đối tượng User
-            stmt.setString(2, staff.getFullName());
-            stmt.setString(3, staff.getGender());
-            stmt.setDate(4, staff.getDateOfBirth());
-            stmt.setString(5, staff.getAddress());
-            stmt.setString(6, staff.getPhoneNumber());
-            stmt.setString(7, staff.getIdCardNumber());
-            stmt.setString(8, staff.getEducationLevel());
-            stmt.setString(9, staff.getPersonalNotes());
-
-             rowsInserted = stmt.executeUpdate();
-            
-        }catch(SQLException e){
-            System.out.println(e.getMessage());
-        }
-        return rowsInserted > 0;
-    }
-
+   
     // Cập nhật user
     public void updateUser(User u) {
         String sql = "UPDATE Users SET username = ?, password = ?, email = ?, phone_number = ?, role = ? WHERE user_id = ?";
