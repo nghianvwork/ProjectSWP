@@ -1,7 +1,7 @@
 ﻿-- ==========================
 -- BẢNG NGƯỜI DÙNG
 -- ==========================
-<<<<<<< HEAD
+
 CREATE TABLE Users (
     user_id INT PRIMARY KEY IDENTITY(1,1),
     username VARCHAR(50) NOT NULL UNIQUE,
@@ -15,7 +15,7 @@ CREATE TABLE Users (
 );
 
 -- ==========================
-=======
+
 CREATE TABLE [dbo].[Users](
 	[user_id] [int] IDENTITY(1,1) NOT NULL,
 	[username] [varchar](50) NOT NULL,
@@ -42,7 +42,7 @@ UNIQUE NONCLUSTERED
 
 
 -- ==========================
->>>>>>> b44ee9235bdd4bdb4052c7666c231601ae623d69
+
 -- BẢNG KHU VỰC
 -- ==========================
 CREATE TABLE Areas (
@@ -54,12 +54,11 @@ CREATE TABLE Areas (
     open_time TIME NOT NULL,
     close_time TIME NOT NULL,
     descriptions NVARCHAR(MAX),
-<<<<<<< HEAD
+
     FOREIGN KEY (manager_id) REFERENCES Users(user_id),
-=======
    FOREIGN KEY (manager_id) REFERENCES Users(user_id),
 
->>>>>>> b44ee9235bdd4bdb4052c7666c231601ae623d69
+
     CONSTRAINT chk_area_time CHECK (open_time < close_time)
 );
 
@@ -242,7 +241,7 @@ CREATE TABLE [dbo].[faq_tag] (
 );
 GO
 
-<<<<<<< HEAD
+
 -- ==========================
 -- BẢNG CÂU HỎI (faq_question)
 -- ==========================
@@ -267,7 +266,7 @@ CREATE TABLE [dbo].[faq_answer] (
     [updated_at] DATETIME,
     FOREIGN KEY ([question_id]) REFERENCES [dbo].[faq_question]([question_id])
 );
-=======
+
 ALTER TABLE [dbo].[password_reset_tokens] ADD  DEFAULT (getdate()) FOR [created_at];
 ALTER TABLE [dbo].[password_reset_tokens] ADD  DEFAULT ((0)) FOR [is_used];
 ALTER TABLE [dbo].[password_reset_tokens] 
@@ -307,5 +306,4 @@ PRIMARY KEY CLUSTERED
 	[id] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
->>>>>>> b44ee9235bdd4bdb4052c7666c231601ae623d69
 GO
