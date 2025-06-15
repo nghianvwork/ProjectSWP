@@ -137,9 +137,9 @@ public class CourtDAO extends DBContext {
         }
     }
 
-<<<<<<< HEAD
-     public List<Courts> getCourtsByAreaId(int areaId) {
-=======
+
+     
+
     public int countCourtsByArea(int areaId) {
         String sql = "SELECT COUNT(*) FROM Courts WHERE area_id = ?";
 
@@ -173,7 +173,7 @@ public class CourtDAO extends DBContext {
     }
 
     public List<Courts> getCourtsByAreaId(int areaId) {
->>>>>>> 9666cc4c6b177abb4a3002edc56a55bbdeb3db22
+
         List<Courts> listCourt = new ArrayList<>();
         String sql = "SELECT court_id, court_number, type, floor_material, lighting, description, image_url, status, area_id, open_time, close_time FROM Courts WHERE area_id = ?";
 
@@ -203,8 +203,7 @@ public class CourtDAO extends DBContext {
 
         return listCourt;
     }
-<<<<<<< HEAD
-=======
+
 
     public static void main(String[] args) {
 
@@ -218,5 +217,4 @@ public class CourtDAO extends DBContext {
         }
 
     }
->>>>>>> 9666cc4c6b177abb4a3002edc56a55bbdeb3db22
 }
