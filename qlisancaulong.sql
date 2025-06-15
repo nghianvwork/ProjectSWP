@@ -1,7 +1,8 @@
-﻿-- ==========================
+﻿
+
+-- ==========================
 -- BẢNG NGƯỜI DÙNG
 -- ==========================
-
 CREATE TABLE Users (
     user_id INT PRIMARY KEY IDENTITY(1,1),
     username VARCHAR(50) NOT NULL UNIQUE,
@@ -15,34 +16,6 @@ CREATE TABLE Users (
 );
 
 -- ==========================
-
-CREATE TABLE [dbo].[Users](
-	[user_id] [int] IDENTITY(1,1) NOT NULL,
-	[username] [varchar](50) NOT NULL,
-	[password] [varchar](255) NOT NULL,
-	[email] [varchar](100) NULL,
-	[phone_number] [varchar](20) NULL,
-	[role] [varchar](50) NULL,
-	[created_at] [datetime] NULL,
-	[status] [nvarchar](50) NULL,
-	[note] [nvarchar](max) NULL,
-PRIMARY KEY CLUSTERED 
-(
-	[user_id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY],
-UNIQUE NONCLUSTERED 
-(
-	[username] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
-
--- ==========================
--- BẢNG STAFF (ĐỔI TÊN TỪ HOST)
--- ==========================
-
-
--- ==========================
-
 -- BẢNG KHU VỰC
 -- ==========================
 CREATE TABLE Areas (
@@ -54,11 +27,7 @@ CREATE TABLE Areas (
     open_time TIME NOT NULL,
     close_time TIME NOT NULL,
     descriptions NVARCHAR(MAX),
-
     FOREIGN KEY (manager_id) REFERENCES Users(user_id),
-   FOREIGN KEY (manager_id) REFERENCES Users(user_id),
-
-
     CONSTRAINT chk_area_time CHECK (open_time < close_time)
 );
 
@@ -96,7 +65,7 @@ CREATE TABLE Courts (
     lighting NVARCHAR(50),
     description NVARCHAR(255),
     image_url NVARCHAR(255),
-    [status] NVARCHAR(50),
+    status NVARCHAR(50),
     area_id INT NOT NULL,
     open_time TIME NULL,
     close_time TIME NULL,
@@ -115,7 +84,7 @@ CREATE TABLE Bookings (
     date DATE NOT NULL,
     start_time TIME NOT NULL,
     end_time TIME NOT NULL,
-    [status] NVARCHAR(50),
+    status NVARCHAR(50),
     FOREIGN KEY (user_id) REFERENCES Users(user_id),
     FOREIGN KEY (court_id) REFERENCES Courts(court_id),
     CONSTRAINT chk_booking_time CHECK (start_time < end_time)
@@ -129,7 +98,7 @@ CREATE TABLE BadmintonService (
     name NVARCHAR(100) NOT NULL UNIQUE,
     price DECIMAL(10, 2) NOT NULL CHECK (price >= 0),
     description NVARCHAR(MAX),
-image_url NVARCHAR(255),
+    image_url NVARCHAR(255),
     status NVARCHAR(50) DEFAULT 'Active',
     created_at DATETIME DEFAULT GETDATE(),
     updated_at DATETIME,
@@ -202,108 +171,71 @@ CREATE TABLE Reviews (
 -- BẢNG TOKEN RESET MẬT KHẨU
 -- ==========================
 CREATE TABLE password_reset_tokens (
-    id INT IDENTITY(1,1) NOT NULL,
+    id INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
     user_id INT NOT NULL,
-    token VARCHAR(255) NOT NULL,
+    token VARCHAR(255) NOT NULL UNIQUE,
     created_at DATETIME DEFAULT GETDATE(),
     is_used BIT DEFAULT 0,
-    PRIMARY KEY (id),
-    UNIQUE (token),
     FOREIGN KEY (user_id) REFERENCES Users(user_id) ON DELETE CASCADE
 );
-CREATE TABLE [dbo].[Notification] (
-    [notification_id] INT IDENTITY(1,1) PRIMARY KEY,
-    [title] NVARCHAR(255) NOT NULL,
-    [content] NVARCHAR(MAX) NOT NULL,
-    [image_url] NVARCHAR(255),
-    [created_by] INT, -- Không có ràng buộc FK
-    [scheduled_time] DATETIME,
-    [sent_time] DATETIME,
-    [status] VARCHAR(20),
-    [created_at] DATETIME DEFAULT GETDATE()
-);
-GO
-CREATE TABLE [dbo].[Notification_Receiver] (
-    [id] INT IDENTITY(1,1) PRIMARY KEY,
-    [notification_id] INT, -- Không có ràng buộc FK
-[user_id] INT,
-    [is_read] BIT DEFAULT 0,
-    [read_at] DATETIME,
-    [opened_at] DATETIME
-);
-GO
--- ==========================
--- BẢNG THẺ TAG CHO CÂU HỎI (faq_tag)
--- ==========================
-CREATE TABLE [dbo].[faq_tag] (
-    [tag_id] INT IDENTITY(1,1) PRIMARY KEY,
-    [name] NVARCHAR(100) NOT NULL UNIQUE
-);
-GO
-
 
 -- ==========================
--- BẢNG CÂU HỎI (faq_question)
+-- BẢNG THÔNG BÁO
 -- ==========================
-CREATE TABLE [dbo].[faq_question] (
-    [question_id] INT IDENTITY(1,1) PRIMARY KEY,
-    [title] NVARCHAR(255) NOT NULL,
-    [tag_id] INT NOT NULL,
-    [created_at] DATETIME DEFAULT GETDATE(),
-    [updated_at] DATETIME,
-    FOREIGN KEY ([tag_id]) REFERENCES [dbo].[faq_tag]([tag_id])
-);
-GO
-
--- ==========================
--- BẢNG TRẢ LỜI (faq_answer)
--- ==========================
-CREATE TABLE [dbo].[faq_answer] (
-    [answer_id] INT IDENTITY(1,1) PRIMARY KEY,
-    [question_id] INT NOT NULL,
-    [content] NVARCHAR(MAX) NOT NULL,
-    [created_at] DATETIME DEFAULT GETDATE(),
-    [updated_at] DATETIME,
-    FOREIGN KEY ([question_id]) REFERENCES [dbo].[faq_question]([question_id])
+CREATE TABLE Notification (
+    notification_id INT IDENTITY(1,1) PRIMARY KEY,
+    title NVARCHAR(255) NOT NULL,
+    content NVARCHAR(MAX) NOT NULL,
+    image_url NVARCHAR(255),
+    created_by INT,
+    scheduled_time DATETIME,
+    sent_time DATETIME,
+    status VARCHAR(20),
+    created_at DATETIME DEFAULT GETDATE()
 );
 
-ALTER TABLE [dbo].[password_reset_tokens] ADD  DEFAULT (getdate()) FOR [created_at];
-ALTER TABLE [dbo].[password_reset_tokens] ADD  DEFAULT ((0)) FOR [is_used];
-ALTER TABLE [dbo].[password_reset_tokens] 
-    ADD CONSTRAINT FK_password_reset_user 
-    FOREIGN KEY([user_id]) REFERENCES [dbo].[Users] ([user_id]) ON DELETE CASCADE;
+-- ==========================
+-- BẢNG NGƯỜI NHẬN THÔNG BÁO
+-- ==========================
+CREATE TABLE Notification_Receiver (
+    id INT IDENTITY(1,1) PRIMARY KEY,
+    notification_id INT,
+    user_id INT,
+    is_read BIT DEFAULT 0,
+    read_at DATETIME,
+    opened_at DATETIME,
+    FOREIGN KEY (notification_id) REFERENCES Notification(notification_id),
+    FOREIGN KEY (user_id) REFERENCES Users(user_id)
+);
 
-	CREATE TABLE [dbo].[Notification](
-	[notification_id] [int] IDENTITY(1,1) NOT NULL,
-	[title] [nvarchar](255) NOT NULL,
-	[content] [nvarchar](max) NOT NULL,
-	[image_url] [nvarchar](255) NULL,
-	[created_by] [int] NOT NULL,
-	[scheduled_time] [datetime] NULL,
-	[sent_time] [datetime] NULL,
-	[status] [varchar](20) NOT NULL,
-	[created_at] [datetime] NOT NULL,
-PRIMARY KEY CLUSTERED 
-(
-	[notification_id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
-GO
-/****** Object:  Table [dbo].[Notification_Receiver]    Script Date: 6/14/2025 11:42:53 AM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[Notification_Receiver](
-	[id] [int] IDENTITY(1,1) NOT NULL,
-	[notification_id] [int] NOT NULL,
-	[user_id] [int] NOT NULL,
-	[is_read] [bit] NOT NULL,
-	[read_at] [datetime] NULL,
-	[opened_at] [datetime] NULL,
-PRIMARY KEY CLUSTERED 
-(
-	[id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
-GO
+-- ==========================
+-- BẢNG THẺ TAG CHO FAQ
+-- ==========================
+CREATE TABLE faq_tag (
+    tag_id INT IDENTITY(1,1) PRIMARY KEY,
+    name NVARCHAR(100) NOT NULL UNIQUE
+);
+
+-- ==========================
+-- BẢNG CÂU HỎI FAQ
+-- ==========================
+CREATE TABLE faq_question (
+    question_id INT IDENTITY(1,1) PRIMARY KEY,
+    title NVARCHAR(255) NOT NULL,
+    tag_id INT NOT NULL,
+    created_at DATETIME DEFAULT GETDATE(),
+    updated_at DATETIME,
+    FOREIGN KEY (tag_id) REFERENCES faq_tag(tag_id)
+);
+
+-- ==========================
+-- BẢNG TRẢ LỜI FAQ
+-- ==========================
+CREATE TABLE faq_answer (
+    answer_id INT IDENTITY(1,1) PRIMARY KEY,
+    question_id INT NOT NULL,
+    content NVARCHAR(MAX) NOT NULL,
+    created_at DATETIME DEFAULT GETDATE(),
+    updated_at DATETIME,
+    FOREIGN KEY (question_id) REFERENCES faq_question(question_id)
+);
