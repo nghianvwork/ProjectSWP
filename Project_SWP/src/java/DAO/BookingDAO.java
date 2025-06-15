@@ -68,25 +68,42 @@ public int countBookingsByArea(int areaId)  {
     return 0; 
 }
 public boolean checkSlotAvailable(int courtId, LocalDate date, Time startTime, Time endTime) {
-    String sql = "SELECT COUNT(*) FROM Bookings WHERE court_id = ? AND date = ? " +
-                 "AND ((start_time < ? AND end_time > ?) OR (start_time >= ? AND start_time < ?))";
-    try (PreparedStatement ps = conn.prepareStatement(sql)) {
+    String sql = "SELECT * FROM Bookings " +
+                 "WHERE court_id = ? AND date = ? AND status != 'cancelled' " +
+                 "AND NOT (end_time <= ? OR start_time >= ?)";
+    try (Connection conn = getConnection();  // 🔥 quan trọng: mở mới mỗi lần
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+
         ps.setInt(1, courtId);
-           ps.setDate(2, java.sql.Date.valueOf(date)); 
-        ps.setTime(3, endTime);
-        ps.setTime(4, startTime);
-        ps.setTime(5, startTime);
-        ps.setTime(6, endTime);
+        ps.setDate(2, java.sql.Date.valueOf(date));
+        ps.setTime(3, startTime);
+        ps.setTime(4, endTime);
 
         ResultSet rs = ps.executeQuery();
-        if (rs.next()) {
-            return rs.getInt(1) == 0;
+        boolean hasConflict = rs.next();
+
+        // 🪵 Log ra kết quả kiểm tra
+        System.out.println("⚠️ Đặt sân kiểm tra: courtId=" + courtId + ", date=" + date);
+        System.out.println("Giờ bắt đầu: " + startTime + ", kết thúc: " + endTime);
+        if (hasConflict) {
+            System.out.println("❌ Đã trùng với lịch trước đó:");
+            do {
+                System.out.println(" -> bookingId=" + rs.getInt("booking_id")
+                        + " [" + rs.getTime("start_time") + " - " + rs.getTime("end_time") + "]");
+            } while (rs.next());
+        } else {
+            System.out.println("✅ Không trùng, được phép đặt.");
         }
-    } catch (SQLException e) {
+
+        return !hasConflict;
+
+    } catch (Exception e) {
         e.printStackTrace();
+        return false;
     }
-    return false;
 }
+
+
 public int insertBooking(int userId, int courtId, LocalDate date, Time startTime, Time endTime, String status) {
     String sql = "INSERT INTO Bookings (user_id, court_id, date, start_time, end_time, status) VALUES (?, ?, ?, ?, ?, ?)";
     int bookingId = -1;

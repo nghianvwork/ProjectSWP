@@ -63,7 +63,32 @@ public class BookFieldServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-        processRequest(request, response);
+         HttpSession session = request.getSession();
+    User user = (User) session.getAttribute("user");
+
+    if (user == null) {
+        response.sendRedirect("login");
+        return;
+    }
+
+    try {
+        String courtIdStr = request.getParameter("courtId");
+        if (courtIdStr == null || courtIdStr.isEmpty()) {
+            response.sendRedirect("home"); 
+            return;
+        }
+
+        int courtId = Integer.parseInt(courtIdStr);
+        CourtDAO courtDAO = new CourtDAO();
+        Courts court = courtDAO.getCourtById(courtId);
+
+        request.setAttribute("court", court);
+        request.getRequestDispatcher("book_field.jsp").forward(request, response);
+
+    } catch (Exception e) {
+        e.printStackTrace();
+        response.sendRedirect("error.jsp");
+    }
     } 
 
     /** 

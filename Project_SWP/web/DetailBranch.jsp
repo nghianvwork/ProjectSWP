@@ -88,7 +88,7 @@
                     <c:forEach var="image" items="${areaImages}">
                         <tr>
                             <td>${image.image_id}</td>
-                            <td><img src="${image.imageUrl}" alt="Branch Image" width="120"></td>
+                            <td><img src="${image.imageURL}" alt="Branch Image" width="120"></td>
                             <td>
                                 <a href="delete-image?image_id=${image.image_id}&area_id=${image.area_id}" onclick="return confirmDelete()" class="btn btn-danger">Delete</a>
                                 <button class="btn btn-warning" data-toggle="modal" data-target="#updateImageModal${image.image_id}">Update</button>

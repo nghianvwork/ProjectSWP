@@ -98,9 +98,9 @@
                     <tbody>
                         <c:forEach var="booking" items="${bookings}">
                             <tr>
-                                <td>${booking.court_name}</td>
+                                <td>${booking.court_id}</td>
                                 <td>${booking.date}</td>
-                                <td>${booking.startTime} - ${booking.endTime}</td>
+                                <td>${booking.start_time} - ${booking.end_time}</td>
                                 <td>${booking.status}</td>
                                 <td>
                                     <c:if test="${booking.status eq 'confirmed'}">
