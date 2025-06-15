@@ -4,21 +4,26 @@
  */
 package controller.user;
 
-import DAO.UserDAO;
+import DAO.AreaDAO;
+import DAO.CourtDAO;
+import Model.Branch;
+import Model.Courts;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
-import Model.User;
-import utils.PasswordUtil;
+//import java.awt.geom.Area;
+import java.util.List;
 
-@WebServlet(name = "LoginController", urlPatterns = {"/login"})
-public class LoginController extends HttpServlet {
+/**
+ *
+ * @author sangn
+ */
+@WebServlet(name = "AreaDetail", urlPatterns = {"/AreaDetail"})
+public class AreaDetail extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -37,10 +42,10 @@ public class LoginController extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet LoginController</title>");
+            out.println("<title>Servlet AreaDetail</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet LoginController at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet AreaDetail at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -58,8 +63,28 @@ public class LoginController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.getRequestDispatcher("login.jsp").forward(request, response);
-    }
+
+//        CourtDAO courtDAO = new CourtDAO();
+//        List<Courts> listCourt = courtDAO.getCourtsByAreaId();
+//        request.setAttribute("listCourt", listCourt);
+//        
+//        request.getRequestDispatcher("CourtDetail.jsp").forward(request, response);
+
+        String areaIdParam = request.getParameter("area_id");
+
+        if (areaIdParam != null) {
+            int areaId = Integer.parseInt(areaIdParam);
+            CourtDAO courtDAO = new CourtDAO();
+            List<Courts> courts = courtDAO.getCourtsByAreaId(areaId);
+
+            request.setAttribute("courts", courts);
+            request.setAttribute("area_id", areaId); // có thể dùng cho tiêu đề hoặc gắn ngược form
+            request.getRequestDispatcher("CourtDetail.jsp").forward(request, response);
+        } else {
+            response.sendRedirect("ListBranch");
+        }
+
+}
 
     /**
      * Handles the HTTP <code>POST</code> method.
@@ -72,59 +97,7 @@ public class LoginController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
-        String username = request.getParameter("username");
-        String password = request.getParameter("password");
-        String remember = request.getParameter("rememberMe");
-
-        UserDAO userDAO = new UserDAO();
-
-        String hashedPassword = PasswordUtil.hashPassword(password);
-
-        User user = userDAO.login(username, hashedPassword);
-
-        if (user != null) {
-            HttpSession session = request.getSession();
-            session.setAttribute("user", user);
-
-            if ("on".equals(remember)) {
-                Cookie cUser = new Cookie("username", username);
-                Cookie cPass = new Cookie("password", password);
-                Cookie cRemember = new Cookie("remember", "on");
-
-                cUser.setMaxAge(7 * 24 * 60 * 60);    // 7 ngày
-                cPass.setMaxAge(7 * 24 * 60 * 60);
-                cRemember.setMaxAge(7 * 24 * 60 * 60);
-
-                response.addCookie(cUser);
-                response.addCookie(cPass);
-                response.addCookie(cRemember);
-            } else {
-
-                Cookie cUser = new Cookie("username", null);
-                Cookie cPass = new Cookie("password", null);
-                Cookie cRemember = new Cookie("remember", null);
-                cUser.setMaxAge(0);
-                cPass.setMaxAge(0);
-                cRemember.setMaxAge(0);
-                response.addCookie(cUser);
-                response.addCookie(cPass);
-                response.addCookie(cRemember);
-            }
-
-            if ("staff".equalsIgnoreCase(user.getRole())) {
-                response.sendRedirect("view-region");
-            } else if ("admin".equalsIgnoreCase(user.getRole())) {
-                response.sendRedirect("user_manager.jsp");
-            } else {
-                response.sendRedirect("HomePageUser");
-            }
-
-        } else {
-
-            request.setAttribute("error", "Invalid username or password!");
-            request.getRequestDispatcher("login.jsp").forward(request, response);
-        }
+        processRequest(request, response);
     }
 
     /**
