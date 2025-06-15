@@ -15,12 +15,14 @@ import java.util.logging.Logger;
 
 import Dal.DBContext;
 import Model.Courts;
+import java.sql.Time;
 
 /**
  *
  * @author admin
  */
-public class CourtDAO extends DBContext{
+public class CourtDAO extends DBContext {
+
     Connection connection;
 
     public CourtDAO() {
@@ -31,6 +33,7 @@ public class CourtDAO extends DBContext{
         }
     }
     AreaDAO dao = new AreaDAO();
+
     public void addCourt(Courts court) {
         String sql = "INSERT INTO Courts (court_number, type, floor_material, lighting, description, image_url, status, area_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         try {
@@ -44,7 +47,6 @@ public class CourtDAO extends DBContext{
             ps.setString(7, court.getStatus());
             ps.setInt(8, court.getArea_id());
             ps.executeUpdate();
-            dao.updateEmptyCourtByAreaId(court.getArea_id(), 1);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -53,8 +55,8 @@ public class CourtDAO extends DBContext{
     public List<Courts> getAllCourts() {
         List<Courts> courts = new ArrayList<>();
         String sql = "SELECT court_id, court_number, type, floor_material, lighting, description, image_url, status, area_id FROM Courts";
-        try (Connection conn = getConnection();
-            PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (
+                Connection conn = getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 Courts court = new Courts();
@@ -134,34 +136,44 @@ public class CourtDAO extends DBContext{
             Logger.getLogger(CourtDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    public int countCourtsByArea(int areaId) {
-    String sql = "SELECT COUNT(*) FROM Courts WHERE area_id = ?";
-    
-    try (
-         PreparedStatement stmt = connection.prepareStatement(sql)) {
-        stmt.setInt(1, areaId);
-        ResultSet rs = stmt.executeQuery();
-        if (rs.next()) return rs.getInt(1);
-    }catch(SQLException e){
-        System.out.println(e.getMessage());
-    }
-    return 0;
-}
-public int countCourtsByManager(int managerId) {
-    String sql = "SELECT COUNT(*) FROM Courts c JOIN Areas a ON c.area_id = a.area_id WHERE a.manager_id = ?";
-    
-    try (
-         PreparedStatement stmt = connection.prepareStatement(sql)) {
-        stmt.setInt(1, managerId);
-        ResultSet rs = stmt.executeQuery();
-        if (rs.next()) return rs.getInt(1);
-    }catch(SQLException e){
-        System.out.println(e.getMessage());
-    }
-    return 0;
-}
 
+<<<<<<< HEAD
      public List<Courts> getCourtsByAreaId(int areaId) {
+=======
+    public int countCourtsByArea(int areaId) {
+        String sql = "SELECT COUNT(*) FROM Courts WHERE area_id = ?";
+
+        try (
+                PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, areaId);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return 0;
+    }
+
+    public int countCourtsByManager(int managerId) {
+        String sql = "SELECT COUNT(*) FROM Courts c JOIN Areas a ON c.area_id = a.area_id WHERE a.manager_id = ?";
+
+        try (
+                PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, managerId);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return 0;
+    }
+
+    public List<Courts> getCourtsByAreaId(int areaId) {
+>>>>>>> 9666cc4c6b177abb4a3002edc56a55bbdeb3db22
         List<Courts> listCourt = new ArrayList<>();
         String sql = "SELECT court_id, court_number, type, floor_material, lighting, description, image_url, status, area_id, open_time, close_time FROM Courts WHERE area_id = ?";
 
@@ -191,4 +203,20 @@ public int countCourtsByManager(int managerId) {
 
         return listCourt;
     }
+<<<<<<< HEAD
+=======
+
+    public static void main(String[] args) {
+
+        CourtDAO ls = new CourtDAO();
+        int areaId = 1;
+        List<Courts> courts = ls.getCourtsByAreaId(areaId);
+
+        System.out.println("Danh sách các sân:");
+        for (Courts court : courts) {
+            System.out.println(court);
+        }
+
+    }
+>>>>>>> 9666cc4c6b177abb4a3002edc56a55bbdeb3db22
 }
