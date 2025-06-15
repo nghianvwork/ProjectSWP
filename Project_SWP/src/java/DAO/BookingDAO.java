@@ -4,8 +4,6 @@
  */
 package DAO;
 
-import Dal.DBContext;
-import Model.Bookings;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -15,6 +13,10 @@ import java.sql.Time;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+
+import Dal.DBContext;
+import Model.BookingScheduleDTO;
+import Model.Bookings;
 
 /**
  *
@@ -103,8 +105,28 @@ public boolean checkSlotAvailable(int courtId, LocalDate date, Time startTime, T
     }
 }
 
+public boolean checkSlotAvailableAdmin(int courtId, LocalDate date, Time startTime, Time endTime) {
+        String sql = "SELECT COUNT(*) FROM Bookings "
+                + "WHERE court_id = ? AND date = ? AND status <> 'cancelled' "
+                + "AND (start_time < ? AND end_time > ?)";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, courtId);
+            ps.setDate(2, Date.valueOf(date));
+            ps.setTime(3, endTime);    // start_time < endTime mới
+            ps.setTime(4, startTime);  // end_time > startTime mới
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                // Nếu count > 0 nghĩa là ĐÃ CÓ booking giao nhau => KHÔNG AVAILABLE
+                return rs.getInt(1) > 0;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return true;
+    }
 
-public int insertBooking(int userId, int courtId, LocalDate date, Time startTime, Time endTime, String status) {
+
+public boolean insertBooking(int userId, int courtId, LocalDate date, Time startTime, Time endTime, String status) {
     String sql = "INSERT INTO Bookings (user_id, court_id, date, start_time, end_time, status) VALUES (?, ?, ?, ?, ?, ?)";
     int bookingId = -1;
 
@@ -129,7 +151,7 @@ public int insertBooking(int userId, int courtId, LocalDate date, Time startTime
         e.printStackTrace();
     }
 
-    return bookingId;
+    return true;
 }
 
 
@@ -187,5 +209,112 @@ public boolean cancelBookingById(int bookingId) {
     }
     return false;
 }
+
+public List<BookingScheduleDTO> getManagerBookings(int managerId, Integer areaId, LocalDate start, LocalDate end, String status) {
+        List<BookingScheduleDTO> list = new ArrayList<>();
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT b.booking_id, b.user_id, b.court_id, b.date, b.start_time, b.end_time, b.status, u.username, c.court_number, c.area_id, a.name AS area_name "
+                + "FROM Bookings b JOIN Courts c ON b.court_id = c.court_id "
+                + "JOIN Areas a ON c.area_id = a.area_id "
+                + "JOIN Users u ON b.user_id = u.user_id "
+                + "WHERE a.manager_id = ?");
+        if (areaId != null) {
+            sql.append(" AND a.area_id = ?");
+        }
+        if (start != null) {
+            sql.append(" AND b.date >= ?");
+        }
+        if (end != null) {
+            sql.append(" AND b.date <= ?");
+        }
+        if (status != null && !status.isEmpty()) {
+            sql.append(" AND b.status = ?");
+        }
+        sql.append(" ORDER BY b.date, b.start_time");
+
+        try (PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+            int idx = 1;
+            ps.setInt(idx++, managerId);
+            if (areaId != null) {
+                ps.setInt(idx++, areaId);
+            }
+            if (start != null) {
+                ps.setDate(idx++, Date.valueOf(start));
+            }
+            if (end != null) {
+                ps.setDate(idx++, Date.valueOf(end));
+            }
+            if (status != null && !status.isEmpty()) {
+                ps.setString(idx++, status);
+            }
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                BookingScheduleDTO dto = new BookingScheduleDTO();
+                dto.setBooking_id(rs.getInt("booking_id"));
+                dto.setUser_id(rs.getInt("user_id"));
+                dto.setCourt_id(rs.getInt("court_id"));
+                dto.setDate(rs.getDate("date").toLocalDate());
+                dto.setStart_time(rs.getTime("start_time"));
+                dto.setEnd_time(rs.getTime("end_time"));
+                dto.setStatus(rs.getString("status"));
+                dto.setCustomerName(rs.getString("username"));
+                dto.setCourtNumber(rs.getString("court_number"));
+                dto.setArea_id(rs.getInt("area_id"));
+                dto.setAreaName(rs.getString("area_name"));
+                list.add(dto);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public boolean updateBookingStatus(int bookingId, String status) {
+        String sql = "UPDATE Bookings SET status = ? WHERE booking_id = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, status);
+            ps.setInt(2, bookingId);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean updateBooking(int bookingId, LocalDate date, Time startTime, Time endTime, String status) {
+        String sql = "UPDATE Bookings SET date = ?, start_time = ?, end_time = ?, status = ? WHERE booking_id = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setDate(1, Date.valueOf(date));
+            ps.setTime(2, startTime);
+            ps.setTime(3, endTime);
+            ps.setString(4, status);
+            ps.setInt(5, bookingId);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean checkSlotAvailableForUpdate(int bookingId, int courtId, LocalDate date, Time startTime, Time endTime) {
+        String sql = "SELECT COUNT(*) FROM Bookings "
+                + "WHERE court_id = ? AND date = ? AND booking_id <> ? "
+                + "AND start_time < ? AND end_time > ? "
+                + "AND status <> 'cancelled'";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, courtId);
+            ps.setDate(2, Date.valueOf(date));
+            ps.setInt(3, bookingId);
+            ps.setTime(4, endTime);
+            ps.setTime(5, startTime);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return true;
+    }
 
 }
