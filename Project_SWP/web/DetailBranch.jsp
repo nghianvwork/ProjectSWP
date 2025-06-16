@@ -141,14 +141,14 @@
         <c:forEach var="court" items="${areaCourts}" varStatus="loop">
             <tr>
                 <td>${loop.count}</td>
-                <td>${court.courtNumber}</td>
+                <td>${court.court_number}</td>
                 <td>${court.type}</td>
-                <td>${court.floorMaterial}</td>
+                <td>${court.floor_material}</td>
                 <td>${court.lighting}</td>
                 <td>${court.description}</td>
                 <td>
-                    <c:if test="${not empty court.imageUrl}">
-                        <img src="${court.imageUrl}" alt="court image" width="100">
+                    <c:if test="${not empty court.image_url}">
+                        <img src="${court.image_url}" alt="court image" width="100">
                     </c:if>
                 </td>
                 <td>${court.status}</td>
@@ -243,6 +243,9 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.10.24/js/dataTables.bootstrap4.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <script>
     $(document).ready(function () {
         $('#table, #table2').DataTable({pageLength: 5, lengthChange: false});

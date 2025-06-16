@@ -326,16 +326,10 @@
                             <div class="court-location">${area.location}</div>
                             <p>Giờ mở cửa: ${area.openTime} - ${area.closeTime}</p>
                             <p>Mô tả: ${area.description}</p>
-<<<<<<< HEAD
-                            <a href="AreaDetail?area_id=${area.area_id}" class="book-btn">Xem chi tiết</a>
 
+                            <a href="AreaDetail?area_id=${area.area_id}" class="book-btn btn" >Xem chi tiết</a>
 
-=======
-                            <form action="AreaDetail" method="get">
-                                <input type="hidden" name="area_id" value="${area.area_id}" />
-                                <button type="submit" class="book-btn">Xem chi tiết</button>
-                            </form>
->>>>>>> 9666cc4c6b177abb4a3002edc56a55bbdeb3db22
+                          
                         </div>
                     </div>
                 </c:forEach>

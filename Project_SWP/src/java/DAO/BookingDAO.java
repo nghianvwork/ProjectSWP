@@ -71,7 +71,7 @@ public boolean checkSlotAvailable(int courtId, LocalDate date, Time startTime, T
     String sql = "SELECT * FROM Bookings " +
                  "WHERE court_id = ? AND date = ? AND status != 'cancelled' " +
                  "AND NOT (end_time <= ? OR start_time >= ?)";
-    try (Connection conn = getConnection();  // 🔥 quan trọng: mở mới mỗi lần
+    try ( 
          PreparedStatement ps = conn.prepareStatement(sql)) {
 
         ps.setInt(1, courtId);
