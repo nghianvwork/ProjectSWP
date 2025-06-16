@@ -367,6 +367,7 @@
                 <div class="nav-item active"><a href="HomePage">Trang Chủ</a></div>
                 <div class="nav-item"><a href="login.jsp">Danh Sách Sân Bãi</a></div>
                 <div class="nav-item"><a href="login.jsp">Danh sách đặt sân</a></div>
+                <div class="nav-item"><a href="login.jsp">Bài Viết</a></div>
                 <div class="nav-item"><a href="login.jsp">Giới Thiệu</a></div>
                 <div class="nav-item">Liên Hệ</div>
             </div>
@@ -398,7 +399,7 @@
                             <div class="court-location">${top.location}</div>
                             <p>Giờ mở cửa: ${top.openTime} - ${top.closeTime}</p>
                             <p>Mô tả: ${top.description}</p>
-                            <form action="AreaDetail" method="get">
+                            <form action="areaDetail" method="get">
                                 <input type="hidden" name="area_id" value="${top.area_id}" />
                                 <button type="submit" class="book-btn">Xem chi tiết</button>
                             </form>
