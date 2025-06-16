@@ -125,8 +125,7 @@ public boolean checkSlotAvailableAdmin(int courtId, LocalDate date, Time startTi
         return true;
     }
 
-
-public boolean insertBooking(int userId, int courtId, LocalDate date, Time startTime, Time endTime, String status) {
+public int insertBooking(int userId, int courtId, LocalDate date, Time startTime, Time endTime, String status) {
     String sql = "INSERT INTO Bookings (user_id, court_id, date, start_time, end_time, status) VALUES (?, ?, ?, ?, ?, ?)";
     int bookingId = -1;
 
@@ -151,8 +150,36 @@ public boolean insertBooking(int userId, int courtId, LocalDate date, Time start
         e.printStackTrace();
     }
 
-    return true;
+    return bookingId;
 }
+
+//public int insertBooking(int userId, int courtId, LocalDate date, Time startTime, Time endTime, String status) {
+//    String sql = "INSERT INTO Bookings (user_id, court_id, date, start_time, end_time, status) VALUES (?, ?, ?, ?, ?, ?)";
+//    int bookingId = -1;
+//
+//    try (PreparedStatement ps = conn.prepareStatement(sql )) {
+//        ps.setInt(1, userId);
+//        ps.setInt(2, courtId);
+//        ps.setDate(3, java.sql.Date.valueOf(date));
+//        ps.setTime(4, startTime);
+//        ps.setTime(5, endTime);
+//        ps.setString(6, status); // e.g., "pending"
+//
+//        int affectedRows = ps.executeUpdate();
+//
+//        if (affectedRows > 0) {
+//            try (ResultSet rs = ps.getGeneratedKeys()) {
+//                if (rs.next()) {
+//                    bookingId = rs.getInt(1); // lấy booking_id vừa tạo
+//                }
+//            }
+//        }
+//    } catch (SQLException e) {
+//        e.printStackTrace();
+//    }
+//
+//    return true;
+//}
 
 
 public Bookings getBookingById(int bookingId) {

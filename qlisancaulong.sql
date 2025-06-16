@@ -1,5 +1,5 @@
-<<<<<<< HEAD
-﻿
+
+
 -- ==========================
 -- BẢNG NGƯỜI DÙNG
 -- ==========================
@@ -142,22 +142,27 @@ CREATE TABLE Areas_Services
 -- ==========================
 -- BẢNG BÀI VIẾT
 -- ==========================
-CREATE TABLE Posts
-(
+CREATE TABLE Posts (
     post_id INT PRIMARY KEY IDENTITY(1,1),
     title VARCHAR(255) NOT NULL,
     content VARCHAR(MAX) NOT NULL,
     created_by INT NOT NULL,
     created_at DATETIME DEFAULT GETDATE(),
-    type VARCHAR(20),
+
+    -- Loại bài viết: 'admin' (tin tức) hoặc 'partner' (tìm đối đánh cầu)
+    post_type VARCHAR(20) CHECK (post_type IN ('admin', 'partner')) NOT NULL,
+
+    -- Chỉ áp dụng cho bài viết user: duyệt bài hay chưa
+    status VARCHAR(20) CHECK (status IN ('pending', 'approved', 'rejected')) DEFAULT NULL,
+
     FOREIGN KEY (created_by) REFERENCES Users(user_id)
 );
+
 
 -- ==========================
 -- BẢNG BÌNH LUẬN
 -- ==========================
-CREATE TABLE Comments
-(
+CREATE TABLE Comments (
     comment_id INT PRIMARY KEY IDENTITY(1,1),
     post_id INT NOT NULL,
     user_id INT NOT NULL,
