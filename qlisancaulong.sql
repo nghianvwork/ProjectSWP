@@ -1,5 +1,9 @@
+<<<<<<< HEAD
 
 ﻿
+=======
+
+>>>>>>> dba615d4fc09e6fe621fa1bdf8bcc00b5b88a4ef
 
 -- ==========================
 -- BẢNG NGƯỜI DÙNG
@@ -137,9 +141,16 @@ CREATE TABLE Posts (
     content VARCHAR(MAX) NOT NULL,
     created_by INT NOT NULL,
     created_at DATETIME DEFAULT GETDATE(),
-    type VARCHAR(20),
+
+    -- Loại bài viết: 'admin' (tin tức) hoặc 'partner' (tìm đối đánh cầu)
+    post_type VARCHAR(20) CHECK (post_type IN ('admin', 'partner')) NOT NULL,
+
+    -- Chỉ áp dụng cho bài viết user: duyệt bài hay chưa
+    status VARCHAR(20) CHECK (status IN ('pending', 'approved', 'rejected')) DEFAULT NULL,
+
     FOREIGN KEY (created_by) REFERENCES Users(user_id)
 );
+
 
 -- ==========================
 -- BẢNG BÌNH LUẬN

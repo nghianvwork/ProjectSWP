@@ -12,7 +12,6 @@ import Model.Courts;
 
 import Model.User;
 
-
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -23,9 +22,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import jakarta.servlet.http.HttpSession;
 
-
 //import java.awt.geom.Area;
-
 import java.util.List;
 
 /**
@@ -70,35 +67,32 @@ public class AreaDetail extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-  
-   protected void doGet(HttpServletRequest request, HttpServletResponse response)
-        throws ServletException, IOException {
-HttpSession session = request.getSession();
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
         if (user == null) {
             response.sendRedirect("login");
             return;
         }
-    String areaIdParam = request.getParameter("area_id");
+        String areaIdParam = request.getParameter("area_id");
 
-    if (areaIdParam != null) {
-        int areaId = Integer.parseInt(areaIdParam);
+        if (areaIdParam != null) {
+            int areaId = Integer.parseInt(areaIdParam);
 
-        CourtDAO courtDAO = new CourtDAO();
-        AreaDAO areaDAO = new AreaDAO();
-        Branch area = areaDAO.getAreaByIdWithManager(areaId); 
+            CourtDAO courtDAO = new CourtDAO();
+            AreaDAO areaDAO = new AreaDAO();
+            Branch area = areaDAO.getAreaByIdWithManager(areaId);
 
-        List<Courts> courts = courtDAO.getCourtsByAreaId(areaId);
+            List<Courts> courts = courtDAO.getCourtsByAreaId(areaId);
 
-        request.setAttribute("area", area); 
-        request.setAttribute("courts", courts); 
-        request.getRequestDispatcher("CourtDetail.jsp").forward(request, response);
-    } else {
-        response.sendRedirect("ListBranch");
+            request.setAttribute("area", area);
+            request.setAttribute("courts", courts);
+            request.getRequestDispatcher("CourtDetail.jsp").forward(request, response);
+        } else {
+            response.sendRedirect("ListBranch");
+        }
     }
-}
-
-
 
     /**
      * Handles the HTTP <code>POST</code> method.
