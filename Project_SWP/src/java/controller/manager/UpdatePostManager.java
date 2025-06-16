@@ -102,11 +102,9 @@ public class UpdatePostManager extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String postIdStr = request.getParameter("postId");
-        String title = request.getParameter("title");
-        String content = request.getParameter("content");
-        String type = request.getParameter("type");
+        String action = request.getParameter("action"); // lấy param action
 
-        if (postIdStr == null || title == null || content == null || type == null) {
+        if (postIdStr == null) {
             response.sendRedirect("ViewPostManager");
             return;
         }
@@ -118,24 +116,40 @@ public class UpdatePostManager extends HttpServlet {
             Connection conn = db.getConnection();
             PostDAO postDAO = new PostDAO(conn);
 
-            Post post = postDAO.getPostById(postId);
-            if (post == null) {
-                response.sendRedirect("ViewPostManager");
-                return;
+            if ("approve".equals(action) || "reject".equals(action)) {
+                // Xử lý duyệt hoặc từ chối
+                String newStatus = "approve".equals(action) ? "approved" : "rejected";
+                postDAO.updatePostStatus(postId, newStatus);
+            } else {
+                // Xử lý update thông tin bài viết
+                String title = request.getParameter("title");
+                String content = request.getParameter("content");
+                String type = request.getParameter("type");
+
+                if (title == null || content == null || type == null) {
+                    response.sendRedirect("ViewPostManager");
+                    return;
+                }
+
+                Post post = postDAO.getPostById(postId);
+                if (post == null) {
+                    response.sendRedirect("ViewPostManager");
+                    return;
+                }
+
+                post.setTitle(title);
+                post.setContent(content);
+                post.setType(type);
+
+                postDAO.updatePost(post);
             }
-
-            post.setTitle(title);
-            post.setContent(content);
-            post.setType(type);
-
-            postDAO.updatePost(post);
 
             response.sendRedirect("ViewPostManager");
 
         } catch (SQLException e) {
             e.printStackTrace();
             response.sendError(500, "Lỗi khi cập nhật bài viết");
-        } catch (Exception e) {
+        }catch (Exception e){
         }
     }
 

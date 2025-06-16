@@ -165,11 +165,11 @@
                                         </div>
                                         <div class="modal-footer">
                                             <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
-                                            <form action="UpdatePostStatus" method="post" style="display:inline;">
+                                            <form action="UpdatePostManager" method="post" style="display:inline;">
                                                 <input type="hidden" name="postId" value="<%=p.getPostId()%>" />
                                                 <button type="submit" name="action" value="approve" class="btn btn-success">Duyệt bài</button>
                                             </form>
-                                            <form action="UpdatePostStatus" method="post" style="display:inline;">
+                                            <form action="UpdatePostManager" method="post" style="display:inline;">
                                                 <input type="hidden" name="postId" value="<%=p.getPostId()%>" />
                                                 <button type="submit" name="action" value="reject" class="btn btn-warning">Từ chối</button>
                                             </form>

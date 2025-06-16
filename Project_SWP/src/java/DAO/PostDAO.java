@@ -216,6 +216,14 @@ public class PostDAO {
         stmt.executeUpdate();
     }
 
+    public void updatePostStatus(int postId, String status) throws SQLException {
+        String sql = "UPDATE Posts SET status = ? WHERE post_id = ?";
+        PreparedStatement stmt = conn.prepareStatement(sql);
+        stmt.setString(1, status);
+        stmt.setInt(2, postId);
+        stmt.executeUpdate();
+    }
+
     public void deletePost(int postId, int userId) throws SQLException {
         String sql = "DELETE FROM Posts WHERE post_id = ? AND created_by = ?";
         PreparedStatement stmt = conn.prepareStatement(sql);
