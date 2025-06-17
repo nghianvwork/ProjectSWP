@@ -4,8 +4,7 @@
  */
 package controller.manager;
 
-import DAO.EquipmentsDAO;
-import Model.Equipments;
+import DAO.ServiceDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -13,14 +12,13 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.List;
 
 /**
  *
  * @author admin
  */
-@WebServlet(name = "ViewEquipments", urlPatterns = {"/ViewEquipments"})
-public class ViewEquipments extends HttpServlet {
+@WebServlet(name = "DeleteService", urlPatterns = {"/DeleteService"})
+public class DeleteService extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -39,10 +37,10 @@ public class ViewEquipments extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet ViewEquipments</title>");
+            out.println("<title>Servlet DeleteService</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet ViewEquipments at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet DeleteService at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -60,14 +58,15 @@ public class ViewEquipments extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        EquipmentsDAO dao = new EquipmentsDAO();
-        List<Equipments> equipments = dao.getAllEquipments();  
-        request.setAttribute("equipments", equipments);
-
-        String status = request.getParameter("status"); 
-        request.setAttribute("status", status);
-
-        request.getRequestDispatcher("EquipmentsView.jsp").forward(request, response);
+        int service_id = Integer.parseInt(request.getParameter("id"));
+        try {
+            boolean result = ServiceDAO.deleteService(service_id);
+            // Có thể set thuộc tính để thông báo xóa thành công/thất bại nếu muốn
+            response.sendRedirect("ServiceView.jsp"); // Chuyển về trang danh sách dịch vụ
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Lỗi khi xóa dịch vụ.");
+        }
     }
 
     /**

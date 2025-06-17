@@ -4,9 +4,7 @@
  */
 package controller.manager;
 
-
 import DAO.ServiceDAO;
-
 import Model.Service;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -15,14 +13,13 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.List;
 
 /**
  *
  * @author admin
  */
-@WebServlet(name = "ViewEquipments", urlPatterns = {"/ViewEquipments"})
-public class ViewService extends HttpServlet {
+@WebServlet(name = "UpdateService", urlPatterns = {"/UpdateService"})
+public class UpdateService extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -41,10 +38,10 @@ public class ViewService extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet ViewEquipments</title>");
+            out.println("<title>Servlet UpdateService</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet ViewEquipments at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet UpdateService at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -52,7 +49,7 @@ public class ViewService extends HttpServlet {
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
-     * Handles the HTTP <code>GET</code> method. 
+     * Handles the HTTP <code>GET</code> method.
      *
      * @param request servlet request
      * @param response servlet response
@@ -62,26 +59,20 @@ public class ViewService extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        ServiceDAO dao = new ServiceDAO();
-
-        // Lấy tham số từ ô search
-        String keyword = request.getParameter("keyword");
-        List<Service> service;
-        if (keyword != null && !keyword.trim().isEmpty()) {
-            // Tìm kiếm theo tên
-            service = dao.searchServiceByName(keyword.trim());
-        } else {
-            service = dao.getAllService();
+        int service_id = Integer.parseInt(request.getParameter("id"));
+        Service service = null;
+        for (Service s : ServiceDAO.getAllService()) {
+            if (s.getService_id() == service_id) {
+                service = s;
+                break;
+            }
+        }
+        if (service == null) {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND, "Không tìm thấy dịch vụ.");
+            return;
         }
         request.setAttribute("service", service);
-
-        // Truyền lại keyword để giữ giá trị trong ô input
-        request.setAttribute("keyword", keyword);
-
-        String status = request.getParameter("status");
-        request.setAttribute("status", status);
-
-        request.getRequestDispatcher("ServiceView.jsp").forward(request, response);
+        request.getRequestDispatcher("editService.jsp").forward(request, response);
     }
 
     /**
@@ -95,7 +86,25 @@ public class ViewService extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        try {
+            int service_id = Integer.parseInt(request.getParameter("service_id"));
+            String name = request.getParameter("name");
+            double price = Double.parseDouble(request.getParameter("price"));
+            String description = request.getParameter("description");
+            String image_url = request.getParameter("image_url");
+            String status = request.getParameter("status");
+
+            Service service = new Service(service_id, name, price, description, image_url, status);
+
+            boolean result = ServiceDAO.updateService(service);
+
+            
+            response.sendRedirect("serviceList"); 
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Lỗi khi cập nhật dịch vụ.");
+        }
     }
 
     /**
