@@ -28,13 +28,15 @@ public class Service_BranchDAO extends DBContext{
             System.out.println("Connect failed");
         }
     }
-     public  void addServiceToArea(int areaId, int serviceId) throws Exception {
-        String sql = "INSERT INTO Areas_Services (area_id, services_id) VALUES (?, ?)";
+     public  void addServiceToArea(int areaId, int serviceId) {
+        String sql = "INSERT INTO Areas_Services (area_id, service_id) VALUES (?, ?)";
         try (
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, areaId);
             ps.setInt(2, serviceId);
             ps.executeUpdate();
+        }catch(SQLException e){
+            System.out.println(e.getMessage());
         }
     }
     public List<Branch_Service> getAllAreaServices(int areaID) {
@@ -56,5 +58,29 @@ public class Service_BranchDAO extends DBContext{
             System.out.println("getAllRoomServices: " + e.getMessage());
         }
         return areaServices;
+    }
+       public void removeServiceFromArea(int areaServiceID) {
+        String query = "DELETE FROM Areas_Services WHERE AreaServices_id = ?";
+
+        try (PreparedStatement preparedStatement = conn.prepareStatement(query)) {
+
+            preparedStatement.setInt(1, areaServiceID);
+
+            int rowsAffected = preparedStatement.executeUpdate();
+            System.out.println(rowsAffected);
+        } catch (SQLException e) {
+            System.out.println("removeServiceFromRoom: " + e.getMessage());
+        }
+    }
+    public static void main(String[] args) {
+        Service_BranchDAO dao = new Service_BranchDAO();
+//         int areaId = 1;
+//            int serviceId = 1;
+//            dao.addServiceToArea(areaId, serviceId);
+//
+//            System.out.println("✅ Dịch vụ đã được thêm vào khu vực thành công.");
+            
+            dao.removeServiceFromArea(1);
+            System.out.println("Da xoa");
     }
 }

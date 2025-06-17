@@ -3,10 +3,10 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
 
-package controller.user;
+package controller.manager;
 
-import DAO.BookingDAO;
-import DAO.BookingServiceDAO;
+import DAO.ServiceDAO;
+import DAO.Service_BranchDAO;
 import Model.User;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -16,15 +16,13 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import java.sql.Time;
-import java.time.LocalDate;
 
 /**
  *
  * @author admin
  */
-@WebServlet(name="ConfirmBook", urlPatterns={"/confirm-booking"})
-public class ConfirmBook extends HttpServlet {
+@WebServlet(name="RemoveServiceAreas", urlPatterns={"/remove-service"})
+public class RemoveServiceAreas extends HttpServlet {
    
     /** 
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -41,10 +39,10 @@ public class ConfirmBook extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet ConfirmBook</title>");  
+            out.println("<title>Servlet RemoveServiceAreas</title>");  
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet ConfirmBook at " + request.getContextPath () + "</h1>");
+            out.println("<h1>Servlet RemoveServiceAreas at " + request.getContextPath () + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -61,7 +59,22 @@ public class ConfirmBook extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-        processRequest(request, response);
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            User user = (User) session.getAttribute("user");
+            if (user.getRole().equals("staff")) {
+                int areaServiceID = Integer.parseInt(request.getParameter("areaServiceID"));
+                String area_id = request.getParameter("area_id");
+                Service_BranchDAO areasServiceDAO = new Service_BranchDAO();
+                areasServiceDAO.removeServiceFromArea(areaServiceID);
+
+                response.sendRedirect("detailBranch?area_id=" + area_id);
+            } else {
+                response.sendError(403);
+            }
+        } else {
+            response.sendRedirect("login");
+        }
     } 
 
     /** 
@@ -74,47 +87,8 @@ public class ConfirmBook extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-       HttpSession session = request.getSession();
-        User user = (User) session.getAttribute("user");
-
-        if (user == null) {
-            response.sendRedirect("login");
-            return;
-        }
-
-        try {
-            int userId = user.getUser_Id();
-            int courtId = Integer.parseInt(request.getParameter("courtId"));
-            String dateStr = request.getParameter("date");
-            String startTimeStr = request.getParameter("startTime");
-            String endTimeStr = request.getParameter("endTime");
-            LocalDate date = LocalDate.parse(dateStr);
-            Time startTime = Time.valueOf(startTimeStr);
-            Time endTime = Time.valueOf(endTimeStr);
-            String[] selectedServices = request.getParameterValues("selectedServices");
-
-            BookingDAO bookingDAO = new BookingDAO();
-            int bookingId = bookingDAO.insertBooking1(userId, courtId, date, startTime, endTime, "pending");
-            BookingServiceDAO bookingserviceDao = new BookingServiceDAO();
-            
-            if (selectedServices != null && bookingId != -1) {
-                for (String serviceIdStr : selectedServices) {
-                    int serviceId = Integer.parseInt(serviceIdStr);
-                    bookingserviceDao.addServiceToBooking(bookingId, serviceId);
-                }
-            }
-
-            request.setAttribute("success", "Đặt sân thành công. Vui lòng đợi admin duyệt!");
-            response.sendRedirect("booking-list");
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            request.setAttribute("error", "Đã xảy ra lỗi khi đặt sân.");
-            request.getRequestDispatcher("confirm_booking.jsp").forward(request, response);
-        }
+        processRequest(request, response);
     }
-    
-    
 
     /** 
      * Returns a short description of the servlet.

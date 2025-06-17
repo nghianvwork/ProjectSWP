@@ -47,6 +47,11 @@ public class Service_Branch {
     public void setArea_id(int area_id) {
         this.area_id = area_id;
     }
+
+    @Override
+    public String toString() {
+        return "Service_Branch{" + "serviceID=" + serviceID + ", serviceBranchID=" + serviceBranchID + ", area_id=" + area_id + '}';
+    }
  
     
 }

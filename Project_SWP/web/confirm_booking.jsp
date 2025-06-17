@@ -147,7 +147,7 @@
             <input type="hidden" name="startTime" value="${startTime}">
             <input type="hidden" name="endTime" value="${endTime}">
 
-            <!-- Dịch vụ đi kèm -->
+          
             <div class="court-info">
                 <h5 class="court-name">Dịch vụ đi kèm</h5>
                 <div class="form-group">

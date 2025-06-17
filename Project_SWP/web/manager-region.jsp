@@ -63,7 +63,7 @@
 
 
             <div class="ml-auto">
-                <a class="btn btn-outline-danger" href="login">Log out</a>
+                <a class="btn btn-outline-danger" href="login">Đăng xuất</a>
             </div>
         </nav>
 
@@ -74,11 +74,11 @@
                 </div>
                 <div class="col-md-10">
                     <div class="main-content">
-                        <h3 class="mb-4 text-primary">🏙 Quản lí địa điểm</h3>
+                        <h3 class="mb-4 text-primary">🏙 Quản lí khu vực</h3>
 
                         <!-- Search Bar -->
                         <form action="search-branch" method="POST" class="form-inline mb-4">
-                            <input type="text" name="searchInput" value="${searchKeyword}" class="form-control mr-2 w-50" placeholder="🔍 Search by branch name">
+                            <input type="text" name="searchInput" value="${searchKeyword}" class="form-control mr-2 w-50" placeholder="🔍 Tìm kiếm theo tên khu vực">
                             <button type="submit" class="btn btn-primary">Tìm kiếm</button>
                         </form>
 
@@ -94,7 +94,7 @@
                                         <th class="col-time">Thời gian mở cửa</th>
                                         <th class="col-time">Thời gian đóng cửa</th>
                                         <th class="col-description">Mô tả</th>
-                                        <th style="width: 220px;">Action</th>
+                                        <th style="width: 220px;">Hành động</th>
                                     </tr>
                                 </thead>
 
@@ -108,10 +108,10 @@
                                             <td>${a.closeTime}</td>
                                             <td>${a.description}</td>
                                             <td>
-                                                <button class="btn btn-warning btn-sm" data-toggle="modal" data-target="#updateModal${loop.index}">Update</button>
+                                                <button class="btn btn-warning btn-sm" data-toggle="modal" data-target="#updateModal${loop.index}">Cập nhật</button>
                                                 <a href="detailBranch?area_id=${a.area_id}" class="btn btn-info btn-sm">Detail</a>
 
-                                                <a href="delete?regionId=${a.area_id}" class="btn btn-danger btn-sm" onclick="return confirmDelete()">Delete</a>
+                                                <a href="delete?regionId=${a.area_id}" class="btn btn-danger btn-sm" onclick="return confirmDelete()">Xóa</a>
 
 
                                                 <div class="modal fade" id="updateModal${loop.index}" tabindex="-1" role="dialog">
