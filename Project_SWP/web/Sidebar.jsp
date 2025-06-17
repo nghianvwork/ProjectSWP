@@ -79,13 +79,7 @@
                     <a class="nav-link " href="view-region">REGION MANAGEMENT</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="courts">COURT MANAGEMENT</a>
-                </li>
-                <li class="nav-item">
                     <a class="nav-link" href="ViewService">SERVICE MANAGEMENT</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="manage-request">COURT REQUEST</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="manager-booking-schedule">BOOKING SCHEDULE</a>
