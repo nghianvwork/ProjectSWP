@@ -49,7 +49,7 @@
         </div>
         <div class="col-md-4">
             <label class="form-label">Date</label>
-            <input type="date" name="date" class="form-control" required>
+            <input type="date" name="booking_date" min="<%= new java.text.SimpleDateFormat("yyyy-MM-dd").format(new java.util.Date()) %>" required>
         </div>
         <div class="col-md-4">
             <label class="form-label">Start Time</label>
@@ -59,10 +59,19 @@
             <label class="form-label">End Time</label>
             <input type="time" name="endTime" class="form-control" required>
         </div>
-                        <div class="col-12">
-                            <button type="submit" class="btn btn-primary">Save</button>
-                            <a href="manager-booking-schedule" class="btn btn-secondary">Cancel</a>
-                        </div>
+        <div class="col-md-12">
+            <label class="form-label">Services</label>
+            <c:forEach var="s" items="${services}">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="selectedServices" value="${s.service_id}" id="service${s.service_id}">
+                    <label class="form-check-label" for="service${s.service_id}">${s.name} - ${s.price}</label>
+                </div>
+            </c:forEach>
+        </div>
+        <div class="col-12">
+            <button type="submit" class="btn btn-primary">Save</button>
+            <a href="manager-booking-schedule" class="btn btn-secondary">Cancel</a>
+        </div>
                     </form>
                 </div>
             </div>
