@@ -7,6 +7,7 @@ import java.util.List;
 import Model.User;
 
 public class UserDAO extends DBContext {
+
     private Connection conn;
 
     // Constructor để khởi tạo kết nối
@@ -21,7 +22,9 @@ public class UserDAO extends DBContext {
     // Đảm bảo đóng kết nối khi đối tượng bị hủy
     public void finalize() {
         try {
-            if (conn != null) conn.close();
+            if (conn != null) {
+                conn.close();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -58,22 +61,23 @@ public class UserDAO extends DBContext {
         return list;
     }
 
-    // Thêm user mới
-    public void insertUser(User u) {
-        String sql = "INSERT INTO Users (username, password, email, phone_number, role, created_at) VALUES (?, ?, ?, ?, ?, ?)";
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, u.getUsername());
-            ps.setString(2, u.getPassword());
-            ps.setString(3, u.getEmail());
-            ps.setString(4, u.getPhone_number());
-            ps.setString(5, u.getRole());
-            ps.setTimestamp(6, Timestamp.valueOf(u.getCreatedAt()));
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            System.err.println("Lỗi thêm user: " + e);
-        }
+public void insertUser(User u) {
+    String sql = "INSERT INTO Users (username, password, email, phone_number, role, status, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        ps.setString(1, u.getUsername());
+        ps.setString(2, u.getPassword());
+        ps.setString(3, u.getEmail());
+        ps.setString(4, u.getPhone_number());
+        ps.setString(5, u.getRole());
+        ps.setString(6, "active"); // trạng thái
+        ps.setTimestamp(7, Timestamp.valueOf(u.getCreatedAt()));
+        ps.executeUpdate();
+    } catch (SQLException e) {
+        System.err.println("Lỗi thêm user: " + e);
     }
+}
 
+    
     // Cập nhật user
     public void updateUser(User u) {
         String sql = "UPDATE Users SET username = ?, password = ?, email = ?, phone_number = ?, role = ? WHERE user_id = ?";
@@ -133,24 +137,60 @@ public class UserDAO extends DBContext {
     }
 
     // Đăng ký tài khoản
-    public boolean register(User user) {
-        if (getUserByUsernameOrEmail(user.getUsername(), user.getEmail()) != null) {
-            return false;
-        }
-        String sql = "INSERT INTO Users (username, password, email, phone_number, role) VALUES (?, ?, ?, ?, ?)";
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, user.getUsername());
-            ps.setString(2, user.getPassword());
-            ps.setString(3, user.getEmail());
-            ps.setString(4, user.getPhone_number());
-            ps.setString(5, user.getRole());
-            ps.executeUpdate();
-            return true;
-        } catch (SQLException e) {
-            System.err.println("Lỗi đăng ký user: " + e);
-        }
+public boolean register(User user) {
+    if (getUserByUsernameOrEmail(user.getUsername(), user.getEmail()) != null) {
         return false;
     }
+
+    String sql = "INSERT INTO Users (username, password, email, phone_number, role) VALUES (?, ?, ?, ?, ?)";
+    try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        ps.setString(1, user.getUsername());
+        ps.setString(2, user.getPassword());
+        ps.setString(3, user.getEmail());
+        ps.setString(4, user.getPhone_number());
+        ps.setString(5, user.getRole());
+        ps.executeUpdate();
+        return true;
+    } catch (SQLException e) {
+        System.err.println("Lỗi đăng ký user: " + e);
+    }
+    return false;
+}
+
+
+public Object[] checkUserByUsernameOrEmail(String username, String email) {
+    User foundUserUsername = null;
+    User foundUserEmail = null;
+
+    try {
+        // Check username
+        String sqlUsername = "SELECT * FROM Users WHERE username = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sqlUsername)) {
+            ps.setString(1, username);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                foundUserUsername = extractUserFromResultSet(rs);
+            }
+        }
+
+        // Check email
+        String sqlEmail = "SELECT * FROM Users WHERE email = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sqlEmail)) {
+            ps.setString(1, email);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                foundUserEmail = extractUserFromResultSet(rs);
+            }
+        }
+
+        return new Object[]{foundUserUsername, foundUserEmail};
+
+    } catch (SQLException e) {
+        System.err.println("Lỗi kiểm tra username/email: " + e);
+        return new Object[]{null, null};
+    }
+}
+
 
     // Lưu token quên mật khẩu
     public void saveResetToken(int userId, String token) {
@@ -206,6 +246,7 @@ public class UserDAO extends DBContext {
 
     public void updatePassword(User us) {
         String sql = "UPDATE Users SET password = ? WHERE user_id = ?";
+        System.out.println(us.getPassword());
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, us.getPassword());
             ps.setInt(2, us.getUser_Id());
@@ -229,6 +270,21 @@ public class UserDAO extends DBContext {
         return null;
     }
 
+    public boolean isPhoneExists(String phoneNumber) {
+        String sql = "SELECT COUNT(*) FROM Users WHERE phone_number = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, phoneNumber);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                int count = rs.getInt(1);
+                return count > 0;
+            }
+        } catch (SQLException e) {
+            System.err.println("Lỗi kiểm tra trùng số điện thoại: " + e.getMessage());
+        }
+        return false;
+    }
+
     public User getUserByUsername(String username) {
         String sql = "SELECT * FROM Users WHERE username = ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -245,12 +301,14 @@ public class UserDAO extends DBContext {
 
     private User extractUserFromResultSet(ResultSet rs) throws SQLException {
         User user = new User();
-        user.setUser_Id((rs.getInt("user_id")));
+        user.setUser_Id(rs.getInt("user_id"));
         user.setUsername(rs.getString("username"));
         user.setPassword(rs.getString("password"));
         user.setEmail(rs.getString("email"));
         user.setPhone_number(rs.getString("phone_number"));
         user.setRole(rs.getString("role"));
+        user.setStatus(rs.getString("status"));
+        user.setNote(rs.getString("note"));
         Timestamp ts = rs.getTimestamp("created_at");
         if (ts != null) {
             user.setCreatedAt(ts.toLocalDateTime());
@@ -258,12 +316,205 @@ public class UserDAO extends DBContext {
         return user;
     }
 
-    // Hàm test main
-    public static void main(String[] args) {
-        UserDAO dao = new UserDAO();
-        List<User> list = dao.getAllUsers();
-        for (User u : list) {
-            System.out.println(u);
+//    public boolean registerStaff(Staff newStaff) {
+//        String sql = "INSERT INTO Staff (user_id, full_name, gender, date_of_birth, address, phone_number, id_card_number, education_level, personal_notes) "
+//                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+//        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+//            ps.setInt(1, newStaff.getUserId().getUser_Id());
+//            ps.setString(2, newStaff.getFullName());
+//            ps.setString(3, newStaff.getGender());
+//            if (newStaff.getDateOfBirth() != null) {
+//                ps.setDate(4, newStaff.getDateOfBirth());
+//            } else {
+//                ps.setNull(4, java.sql.Types.DATE);
+//            }
+//            ps.setString(5, newStaff.getAddress());
+//            ps.setString(6, newStaff.getPhoneNumber());
+//            ps.setString(7, newStaff.getIdCardNumber());
+//            ps.setString(8, newStaff.getEducationLevel());
+//            ps.setString(9, newStaff.getPersonalNotes());
+//
+//            int rowsInserted = ps.executeUpdate();
+//            return rowsInserted > 0;
+//        } catch (SQLException e) {
+//            System.err.println("Lỗi thêm Staff: " + e.getMessage());
+//        }
+//        return false;
+//    }
+    public List<User> getUsersByRole(String role) {
+        List<User> list = new ArrayList<>();
+        String sql = "SELECT * FROM Users WHERE role = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, role);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                User user = extractUserFromResultSet(rs);
+                user.setStatus(rs.getString("status")); // Thêm dòng này vì có cột status
+                list.add(user);
+            }
+        } catch (SQLException e) {
+            System.err.println("Lỗi getUsersByRole: " + e.getMessage());
+        }
+        return list;
+    }
+
+    public void updateUserStatus(int userId, String newStatus) {
+        String sql = "UPDATE Users SET status = ? WHERE user_id = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, newStatus);
+            ps.setInt(2, userId);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("Lỗi cập nhật trạng thái user: " + e.getMessage());
         }
     }
+
+    // Đếm tổng số user
+    public int countUsers() {
+        String sql = "SELECT COUNT(*) FROM Users";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            System.err.println("Lỗi đếm tổng user: " + e.getMessage());
+        }
+        return 0;
+    }
+
+// Lấy user theo trang (page bắt đầu từ 1)
+    public List<User> getUsersByPage(int page, int PAGE_SIZE) {
+        List<User> list = new ArrayList<>();
+        String sql = "SELECT * FROM Users ORDER BY user_id OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            int offset = (page - 1) * PAGE_SIZE;
+            ps.setInt(1, offset);
+            ps.setInt(2, PAGE_SIZE);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                list.add(extractUserFromResultSet(rs));
+            }
+        } catch (SQLException e) {
+            System.err.println("Lỗi lấy user theo trang: " + e.getMessage());
+        }
+        return list;
+    }
+
+    public void updateUserStatusAndNote(int userId, String newStatus, String note) {
+        String sql = "UPDATE Users SET status = ?, note = ? WHERE user_id = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, newStatus);
+            ps.setString(2, note);
+            ps.setInt(3, userId);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("Lỗi cập nhật trạng thái và note user: " + e.getMessage());
+        }
+    }
+
+// Đếm tổng số user theo keyword và status
+    public int countUsersByFilter(String keyword, String status) {
+        StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM Users WHERE 1=1");
+        List<Object> params = new ArrayList<>();
+
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            sql.append(" AND (username LIKE ? OR email LIKE ? OR phone_number LIKE ?)");
+            String likeKeyword = "%" + keyword.trim() + "%";
+            params.add(likeKeyword);
+            params.add(likeKeyword);
+            params.add(likeKeyword);
+        }
+        if (status != null && !status.trim().isEmpty()) {
+            sql.append(" AND status = ?");
+            params.add(status.trim());
+        }
+
+        try (PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+            for (int i = 0; i < params.size(); i++) {
+                ps.setObject(i + 1, params.get(i));
+            }
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            System.err.println("Lỗi countUsersByFilter: " + e.getMessage());
+        }
+        return 0;
+    }
+
+// Lấy danh sách user có phân trang và lọc search, status
+    public List<User> getUsersByPageAndFilter(int page, int PAGE_SIZE, String keyword, String status) {
+        List<User> list = new ArrayList<>();
+        StringBuilder sql = new StringBuilder("SELECT * FROM Users WHERE 1=1");
+        List<Object> params = new ArrayList<>();
+
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            sql.append(" AND (username LIKE ? OR email LIKE ? OR phone_number LIKE ?)");
+            String likeKeyword = "%" + keyword.trim() + "%";
+            params.add(likeKeyword);
+            params.add(likeKeyword);
+            params.add(likeKeyword);
+        }
+        if (status != null && !status.trim().isEmpty()) {
+            sql.append(" AND status = ?");
+            params.add(status.trim());
+        }
+        sql.append(" ORDER BY user_id OFFSET ? ROWS FETCH NEXT ? ROWS ONLY");
+        int offset = (page - 1) * PAGE_SIZE;
+        params.add(offset);
+        params.add(PAGE_SIZE);
+
+        try (PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+            for (int i = 0; i < params.size(); i++) {
+                ps.setObject(i + 1, params.get(i));
+            }
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                list.add(extractUserFromResultSet(rs));
+            }
+        } catch (SQLException e) {
+            System.err.println("Lỗi getUsersByPageAndFilter: " + e.getMessage());
+        }
+        return list;
+    }
+
+    public List<User> getUsersByRoleAndPage(String role, int offset, int pageSize) {
+        List<User> list = new ArrayList<>();
+        String sql = "SELECT * FROM Users WHERE (? = '' OR role = ?) ORDER BY user_id OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, role);
+            ps.setString(2, role);
+            ps.setInt(3, offset);
+            ps.setInt(4, pageSize);
+
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                list.add(extractUserFromResultSet(rs));
+            }
+        } catch (SQLException e) {
+            System.err.println("Lỗi getUsersByRoleAndPage: " + e.getMessage());
+        }
+        return list;
+    }
+
+    public int countUsersByRole(String role) {
+        String sql = "SELECT COUNT(*) FROM Users WHERE (? = '' OR role = ?)";
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, role);
+            ps.setString(2, role);
+
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            System.err.println("Lỗi countUsersByRole: " + e.getMessage());
+        }
+        return 0;
+    }
+
 }

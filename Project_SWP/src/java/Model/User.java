@@ -18,8 +18,20 @@ public class User {
     private String phone_number ;
     private String role;
     private  LocalDateTime createdAt = LocalDateTime.now();
+    private String status;
+    private String note;
 
     public User() {
+    }
+
+    public User(int user_Id, String username, String password, String email, String phone_number, String role, String status) {
+        this.user_Id = user_Id;
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.phone_number = phone_number;
+        this.role = role;
+        this.status = status;
     }
 
     public User(int user_Id, String username, String password, String email, String phone_number, String role) {
@@ -31,11 +43,37 @@ public class User {
         this.role = role;
     }
 
-    @Override
-    public String toString() {
-        return "User{" + "user_Id=" + user_Id + ", username=" + username + ", password=" + password + ", email=" + email + ", phone_number=" + phone_number + ", role=" + role + ", createdAt=" + createdAt + '}';
+    public User(int user_Id, String username, String password, String email, String phone_number, String role, String status, String note) {
+        this.user_Id = user_Id;
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.phone_number = phone_number;
+        this.role = role;
+        this.status = status;
+        this.note = note;
+    }
+    
+
+    public String getStatus() {
+        return status;
     }
 
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
+    }
+
+   
+
+ 
     public int getUser_Id() {
         return user_Id;
     }
@@ -90,6 +128,11 @@ public class User {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" + "user_Id=" + user_Id + ", username=" + username + ", password=" + password + ", email=" + email + ", phone_number=" + phone_number + ", role=" + role + ", createdAt=" + createdAt + ", status=" + status + '}';
     }
     
 }

@@ -9,14 +9,17 @@ import Model.User;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import utils.PasswordUtil;
 
 /**
  *
  * @author admin
  */
+@WebServlet(name = "Change_pass", urlPatterns = {"/change-pass"})
 public class ChangePassword extends HttpServlet {
 
     /**
@@ -57,7 +60,7 @@ public class ChangePassword extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+       request.getRequestDispatcher("ChangePassword.jsp").forward(request, response);
     }
 
     /**
@@ -69,31 +72,54 @@ public class ChangePassword extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        String username = request.getParameter("username");
-        String oldPass = request.getParameter("old-password");
-        String newPass = request.getParameter("new-password");
-        String confirmPass = request.getParameter("confirm-password");
 
+protected void doPost(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException {
+    String username = request.getParameter("username");
+    String oldPass = request.getParameter("old-password");
+    String newPass = request.getParameter("new-password");
+    String confirmPass = request.getParameter("confirm-password");
 
-        if (!newPass.equals(confirmPass)) {
-            request.setAttribute("error", "mismatch");
-            request.getRequestDispatcher("ChangePassword.jsp").forward(request, response);
-            return;
-        }
-        User user = new UserDAO().getUserByUsername(username);
-        if(user != null){
-            user.setPassword(newPass);
-            new UserDAO().updatePassword(user);
-            response.sendRedirect("login");
-        }else{
-            request.setAttribute("error", "username");
-            request.getRequestDispatcher("forgotPassword.jsp").forward(request, response);
-        }
-        
+    UserDAO dao = new UserDAO();
+    User user = dao.getUserByUsername(username);
 
+    if (user == null) {
+        request.setAttribute("error", "username"); 
+        request.getRequestDispatcher("forgotPassword.jsp").forward(request, response);
+        return;
     }
+
+   
+    String hashedOldPass = PasswordUtil.hashPassword(oldPass);
+    if (!user.getPassword().equals(hashedOldPass)) {
+        request.setAttribute("error", "Wrong old password"); 
+        request.getRequestDispatcher("ChangePassword.jsp").forward(request, response);
+        return;
+    }
+   
+
+
+
+    if (!newPass.equals(confirmPass)) {
+        request.setAttribute("error", "Mismatch"); 
+        request.getRequestDispatcher("ChangePassword.jsp").forward(request, response);
+        return;
+    }
+
+    
+    String hashedNewPass = PasswordUtil.hashPassword(newPass);
+    if (hashedNewPass.equals(user.getPassword())) {
+    request.setAttribute("error", "New password must be different from old password"); 
+    request.getRequestDispatcher("ChangePassword.jsp").forward(request, response);
+    return;
+}
+    user.setPassword(hashedNewPass);
+    dao.updatePassword(user);
+    
+    response.sendRedirect("login");
+}
+
+
 
     /**
      * Returns a short description of the servlet.

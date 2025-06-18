@@ -1,116 +1,104 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
- */
-
 package controller.user;
 
 import DAO.UserDAO;
+import Model.User;
+import utils.PasswordUtil;
+
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.time.LocalDateTime;
+
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.time.LocalDateTime;
-import Model.User;
 
-
-@WebServlet(name="RegisterController", urlPatterns={"/register"})
+@WebServlet(name = "RegisterController", urlPatterns = {"/register"})
 public class RegisterController extends HttpServlet {
-   
-    /** 
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet RegisterController</title>");  
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet RegisterController at " + request.getContextPath () + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        }
-    } 
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /** 
-     * Handles the HTTP <code>GET</code> method.
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
+            throws ServletException, IOException {
         request.getRequestDispatcher("register.jsp").forward(request, response);
-    } 
+    }
 
-    /** 
-     * Handles the HTTP <code>POST</code> method.
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
-      protected void doPost(HttpServletRequest request, HttpServletResponse response)
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
+        // Lấy dữ liệu từ form
         String username = request.getParameter("username");
         String password = request.getParameter("password");
+        String confirmPassword = request.getParameter("confirm_password");
         String email = request.getParameter("email");
         String phoneNumber = request.getParameter("phone_number");
-        String role = request.getParameter("role");
 
-        // Validate và mặc định role nếu không hợp lệ
-        if (role == null || (!role.equalsIgnoreCase("user") && !role.equalsIgnoreCase("staff"))) {
-            role = "user";
+        // Validate password
+        String passwordPattern = "^(?=.*[A-Z])(?=.*\\d)(?=.*[^a-zA-Z0-9]).{6,}$";
+        if (password == null || !password.matches(passwordPattern)) {
+            request.setAttribute("error", "Password must be at least 6 characters, with at least 1 uppercase letter, 1 number and 1 special character.");
+            request.getRequestDispatcher("register.jsp").forward(request, response);
+            return;
+        }
+
+        // Validate username
+        if (username == null || username.trim().isEmpty() || !username.matches("^[a-zA-Z0-9_\\.]{3,20}$")) {
+            request.setAttribute("error", "Invalid username! Only letters, numbers, underscores (_) and dots (.) are allowed. Length 3-20 characters.");
+            request.getRequestDispatcher("register.jsp").forward(request, response);
+            return;
+        }
+
+        // Validate phone number
+        if (phoneNumber == null || phoneNumber.trim().isEmpty()) {
+            request.setAttribute("error", "Phone number is required!");
+            request.getRequestDispatcher("register.jsp").forward(request, response);
+            return;
+        }
+
+        if (!phoneNumber.matches("^(09|03)\\d{8}$")) {
+            request.setAttribute("error", "Invalid phone number! Only numbers starting with 09 or 03 and exactly 10 digits are allowed.");
+            request.getRequestDispatcher("register.jsp").forward(request, response);
+            return;
+        }
+
+        // Check if phone number already exists
+        UserDAO userDAO = new UserDAO();
+        if (userDAO.isPhoneExists(phoneNumber)) {
+            request.setAttribute("error", "Phone number already exists! Please use another phone number.");
+            request.getRequestDispatcher("register.jsp").forward(request, response);
+            return;
+        }
+
+        // Validate password confirm
+        if (password == null || confirmPassword == null || !password.equals(confirmPassword)) {
+            request.setAttribute("error", "Passwords do not match!");
+            request.getRequestDispatcher("register.jsp").forward(request, response);
+            return;
         }
 
         // Tạo đối tượng User
         User newUser = new User();
         newUser.setUsername(username);
-        newUser.setPassword(password);
+        newUser.setPassword(PasswordUtil.hashPassword(password));
         newUser.setEmail(email != null ? email : "");
-        newUser.setPhone_number(phoneNumber != null ? phoneNumber : "");
-        newUser.setRole(role.toLowerCase());
+        newUser.setPhone_number(phoneNumber);
+        newUser.setRole("user");
         newUser.setCreatedAt(LocalDateTime.now());
 
-        // Gọi DAO để đăng ký
-        UserDAO ud = new UserDAO();
-        boolean checkRegister = ud.register(newUser);
+        // Đăng ký User
+        boolean checkRegister = userDAO.register(newUser);
 
         if (checkRegister) {
-            // Đăng ký thành công → chuyển hướng
             request.getSession().setAttribute("message", "Registration successful! You can now login.");
             response.sendRedirect("login");
         } else {
-            // Đăng ký thất bại → hiển thị thông báo
-            request.setAttribute("error", "Username already exists, please enter another username!");
+            request.setAttribute("error", "Username or email already exists, please enter another!");
             request.getRequestDispatcher("register.jsp").forward(request, response);
         }
     }
 
-    /** 
-     * Returns a short description of the servlet.
-     * @return a String containing servlet description
-     */
     @Override
     public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
-
+        return "RegisterController - handles user registration only (no staff)";
+    }
 }

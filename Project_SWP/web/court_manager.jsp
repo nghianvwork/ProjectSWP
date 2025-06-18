@@ -1,140 +1,416 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="DAO.CourtDAO,java.util.List,Model.Courts" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%
+    if (request.getAttribute("courts") == null) {
+        CourtDAO dao = new CourtDAO();
+        List<Courts> courts = dao.getAllCourts();
+        request.setAttribute("courts", courts);
+    }
+%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Court Management</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <title>Quản Lý Sân Cầu Lông</title>
+    <!-- Bootstrap + Font -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <style>
         body {
-            background-color: #f4f6f9;
+            background-color: #eef1f7;
+            font-family: 'Roboto', sans-serif;
         }
+
         .main-content {
             padding: 30px;
-            background-color: #ffffff;
+            background-color: #fff;
+            margin-top: 20px;
             border-radius: 15px;
-            box-shadow: 0 0 15px rgba(0,0,0,0.05);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
         }
-        .form-inline input {
-            border-radius: 10px;
+
+        .search-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
         }
-        .btn {
-            border-radius: 10px;
-        }
+
         .table th, .table td {
             vertical-align: middle;
+            text-align: center;
+            padding: 12px;
         }
+
+        .table-hover tbody tr:hover {
+            background-color: #f1f3f5;
+        }
+
         .modal-content {
-            border-radius: 12px;
+            border-radius: 10px;
         }
+
         .modal-header {
             background-color: #007bff;
             color: #fff;
-            border-top-left-radius: 12px;
-            border-top-right-radius: 12px;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
         }
-        .navbar-custom {
-            background-color: #ffffff;
-            padding: 10px 20px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-        }
-        .navbar-custom .btn {
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            min-width: 300px;
+            padding: 15px 20px;
             border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            display: none;
+            animation: slideInRight 0.3s ease-out;
+        }
+
+        .notification.success {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+
+        .notification.error {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+
+        .notification .close-btn {
+            float: right;
+            background: none;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            color: inherit;
+            padding: 0;
+            margin-left: 10px;
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOutRight {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 15px;
+            }
+            .search-bar {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .search-bar .form-inline {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+            .notification {
+                right: 10px;
+                left: 10px;
+                min-width: auto;
+            }
         }
     </style>
 </head>
-<body class="bg-light">
-<nav class="navbar navbar-expand-lg navbar-custom">
-    <a class="navbar-brand font-weight-bold" href="#">🏠 Region Admin</a>
-    <div class="ml-auto">
-        <a class="btn btn-outline-danger" href="login">Log out</a>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">Manager</a>
+        <div class="d-flex">
+            <a class="nav-link text-light" href="login">Logout</a>
+        </div>
     </div>
 </nav>
+
 <div class="container-fluid">
     <div class="row mt-4">
-        <div class="col-md-2">
+        <div class="col-md-2 mb-4">
             <jsp:include page="Sidebar.jsp" />
         </div>
         <div class="col-md-10">
+            <!-- Thông báo -->
+            <c:if test="${not empty sessionScope.successMessage}">
+                <div id="notification" class="notification success">
+                    <i class="fas fa-check-circle"></i> ${sessionScope.successMessage}
+                    <button class="close-btn" onclick="closeNotification()">&times;</button>
+                </div>
+            </c:if>
+
+            <c:if test="${not empty sessionScope.errorMessage}">
+                <div id="notification" class="notification error">
+                    <i class="fas fa-exclamation-circle"></i> ${sessionScope.errorMessage}
+                    <button class="close-btn" onclick="closeNotification()">&times;</button>
+                </div>
+            </c:if>
+
             <div class="main-content">
-                <h3 class="mb-4 text-primary">🏙 Court Management</h3>
-                <div class="form-inline mb-4">
-                    <input type="text" id="searchInput" class="form-control mr-2 w-50" placeholder="🔍 Search by court number">
-                    <button class="btn btn-primary" onclick="searchCourts()">Search</button>
-                </div>
+    <h1 class="text-center mb-4"><i class="fas fa-building"></i> Quản Lý Sân Cầu Lông</h1>
 
-                <div class="mb-4">
-                    <button class="btn btn-success" data-toggle="modal" data-target="#courtModal">+ Add Court</button>
-                </div>
+    <div class="search-bar">
+        <div class="form-inline">
+            <input type="text" id="searchInput" class="form-control mr-2" placeholder="Tìm kiếm theo số sân">
+            <button class="btn btn-outline-primary" onclick="searchCourts()"><i class="fas fa-search"></i> Tìm kiếm</button>
+        </div>
+        <button class="btn btn-success" data-toggle="modal" data-target="#addCourtModal"><i class="fas fa-plus"></i> Thêm Sân</button>
+    </div>
 
-                <div class="modal fade" id="courtModal" tabindex="-1" role="dialog">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <form id="courtForm" action="courts" method="post">
-                                <div class="modal-header">
-                                    <h5 class="modal-title">${court != null ? 'Update Court' : 'Add Court'}</h5>
-                                    <button type="button" class="close text-white" data-dismiss="modal">&times;</button>
-                                </div>
-                                <div class="modal-body">
-                                    <input type="hidden" name="action" value="${court != null ? 'update' : 'add'}">
-                                    <input type="hidden" name="courtId" value="${court != null ? court.court_id : ''}">
-                                    <div class="form-group">
-                                        <label for="courtNumber">Court Number</label>
-                                        <input type="text" class="form-control" id="courtNumber" name="courtNumber" value="${court != null ? court.court_number : ''}" required>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="status">Status</label>
-                                        <input type="text" class="form-control" id="status" name="status" value="${court != null ? court.status : ''}" required>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="areaId">Area ID</label>
-                                        <input type="number" class="form-control" id="areaId" name="areaId" value="${court != null ? court.area_id : ''}" required>
-                                    </div>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="submit" class="btn btn-success">${court != null ? 'Update' : 'Save'}</button>
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                                </div>
-                            </form>
+    <!-- Modal thêm sân -->
+    <div class="modal fade" id="addCourtModal" tabindex="-1" aria-labelledby="addCourtModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-plus-circle"></i> Thêm Sân</h5>
+                    <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <form action="courts" method="post" enctype="multipart/form-data">
+                        <input type="hidden" name="action" value="add">
+                        <c:if test="${not empty areaId}">
+                            <input type="hidden" name="redirectAreaId" value="${areaId}">
+                        </c:if>
+                        <div class="form-group">
+                            <label>Tên Sân</label>
+                            <input type="text" class="form-control" name="courtNumber" required>
                         </div>
-                    </div>
+                        <div class="form-group">
+                            <label>Loại Sân</label>
+                            <input type="text" class="form-control" name="type">
+                        </div>
+                        <div class="form-group">
+                            <label>Chất Liệu Sàn</label>
+                            <input type="text" class="form-control" name="floorMaterial">
+                        </div>
+                        <div class="form-group">
+                            <label>Hệ Thống Chiếu Sáng</label>
+                            <input type="text" class="form-control" name="lighting">
+                        </div>
+                        <div class="form-group">
+                            <label>Giá</label>
+                            <input type="number" step="0.01" class="form-control" name="price" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Mô Tả</label>
+                            <input type="text" class="form-control" name="description">
+                        </div>
+                        <div class="form-group">
+                            <label>Ảnh</label>
+                            <input type="file" class="form-control" name="image" accept="image/*">
+                        </div>
+                        <div class="form-group">
+                            <label>Trạng Thái</label>
+                            <select class="form-control" name="status" required>
+                                <option value="available">Available</option>
+                                <option value="maintenance">Maintenance</option>
+                                <option value="booked">Booked</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Khu Vực ID</label>
+                            <input type="number" class="form-control" id="addAreaId" name="areaId" required min="1" value="${areaId}">
+                            <small class="form-text text-muted">Nhập ID khu vực hợp lệ</small>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-success">Lưu</button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                        </div>
+                    </form>
                 </div>
-
-                <div class="table-responsive">
-                    <table class="table table-hover table-bordered">
-                        <thead class="thead-dark">
-                        <tr>
-                            <th>ID</th>
-                            <th>Court Number</th>
-                            <th>Status</th>
-                            <th>Area ID</th>
-                            <th style="width: 180px;">Action</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <c:forEach var="court" items="${courts}">
-                            <tr>
-                                <td>${court.court_id}</td>
-                                <td>${court.court_number}</td>
-                                <td>${court.status}</td>
-                                <td>${court.area_id}</td>
-                                <td>
-                                    <a href="courts?action=edit&courtId=${court.court_id}" class="btn btn-warning btn-sm">Update</a>
-                                    <button class="btn btn-danger btn-sm delete-btn" data-id="${court.court_id}">Delete</button>
-                                </td>
-                            </tr>
-                        </c:forEach>
-                        </tbody>
-                    </table>
-                </div>
-
             </div>
         </div>
     </div>
+
+    <!-- Modal sửa sân -->
+    <div class="modal fade" id="updateCourtModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-edit"></i> Sửa Sân</h5>
+                    <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <form action="courts" method="post" enctype="multipart/form-data">
+                        <input type="hidden" name="action" value="update">
+                        <c:if test="${not empty areaId}">
+                            <input type="hidden" name="redirectAreaId" value="${areaId}">
+                        </c:if>
+                        <input type="hidden" name="courtId" id="updateCourtId">
+                        <div class="form-group">
+                            <label>Tên Sân</label>
+                            <input type="text" class="form-control" id="updateCourtNumber" name="courtNumber" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Loại Sân</label>
+                            <input type="text" class="form-control" id="updateType" name="type">
+                        </div>
+                        <div class="form-group">
+                            <label>Chất Liệu Sàn</label>
+                            <input type="text" class="form-control" id="updateFloorMaterial" name="floorMaterial">
+                        </div>
+                        <div class="form-group">
+                            <label>Hệ Thống Chiếu Sáng</label>
+                            <input type="text" class="form-control" id="updateLighting" name="lighting">
+                        </div>
+                        <div class="form-group">
+                            <label>Giá</label>
+                            <input type="number" step="0.01" class="form-control" id="updatePrice" name="price" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Mô Tả</label>
+                            <input type="text" class="form-control" id="updateDescription" name="description">
+                        </div>
+                        <input type="hidden" name="currentImage" id="currentImage">
+                        <div class="form-group">
+                            <label>Ảnh</label>
+                            <input type="file" class="form-control" id="updateImage" name="image" accept="image/*">
+                        </div>
+                        <div class="form-group">
+                            <label>Trạng Thái</label>
+                            <select class="form-control" id="updateStatus" name="status" required>
+                                <option value="available">Available</option>
+                                <option value="maintenance">Maintenance</option>
+                                <option value="booked">Booked</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Khu Vực ID</label>
+                            <input type="number" class="form-control" id="updateAreaId" name="areaId" required min="1">
+                            <small class="form-text text-muted">Nhập ID khu vực hợp lệ</small>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-success">Cập Nhật</button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Danh sách sân -->
+    <div class="card">
+        <div class="card-header"><h4 class="mb-0">Danh Sách Sân</h4></div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover">
+                    <thead class="thead-light">
+                    <tr>
+                        <th>Mã Sân</th>
+                        <th>Tên Sân</th>
+                        <th>Loại</th>
+                        <th>Chất Liệu</th>
+                        <th>Chiếu Sáng</th>
+                        <th>Giá</th>
+                        <th>Mô Tả</th>
+                        <th>Trạng Thái</th>
+                        <th>Khu Vực ID</th>
+                        <th>Hành Động</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <c:forEach var="court" items="${courts}">
+                        <tr>
+                            <td>${court.court_id}</td>
+                            <td><a href="staff-court-detail?courtId=${court.court_id}">${court.court_number}</a></td>
+                            <td>${court.type}</td>
+                            <td>${court.floor_material}</td>
+                            <td>${court.lighting}</td>
+                            <td>${court.price}</td>
+                            <td>${court.description}</td>
+                            <td>${court.status}</td>
+                            <td>${court.area_id}</td>
+                            <td>
+                                <button class="btn btn-sm btn-warning edit-btn"
+                                        data-id="${court.court_id}"
+                                        data-number="${court.court_number}"
+                                        data-type="${court.type}"
+                                        data-floor="${court.floor_material}"
+                                        data-lighting="${court.lighting}"
+                                        data-description="${court.description}"
+                                        data-status="${court.status}"
+                                        data-area="${court.area_id}"
+                                        data-price="${court.price}"
+                                        ><i class="fas fa-edit"></i> Sửa</button>
+                                <form action="courts" method="post" style="display: inline;">
+                                    <input type="hidden" name="action" value="delete">
+                                    <c:if test="${not empty areaId}">
+                                        <input type="hidden" name="redirectAreaId" value="${areaId}">
+                                    </c:if>
+                                    <input type="hidden" name="courtId" value="${court.court_id}">
+                                    <button type="submit" class="btn btn-sm btn-danger"
+                                            onclick="return confirm('Bạn có chắc muốn xóa sân này?')">
+                                        <i class="fas fa-trash-alt"></i> Xóa
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    </c:forEach>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+        </div>
+    </div>
 </div>
+
+<!-- Scripts -->
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
+    window.onload = function() {
+        const notification = document.getElementById('notification');
+        if (notification) {
+            notification.style.display = 'block';
+            // Tự động ẩn sau 5 giây
+            setTimeout(() => {
+                closeNotification();
+            }, 5000);
+        }
+    };
+
+    // Đóng thông báo
+    function closeNotification() {
+        const notification = document.getElementById('notification');
+        if (notification) {
+            notification.style.animation = 'slideOutRight 0.3s ease-out';
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 300);
+        }
+    }
+    
+    
+    
+
     function searchCourts() {
         let input = document.getElementById("searchInput").value.toUpperCase();
         let rows = document.querySelectorAll("table tbody tr");
@@ -144,20 +420,21 @@
         });
     }
 
-    document.querySelectorAll('.delete-btn').forEach(button => {
+    document.querySelectorAll('.edit-btn').forEach(button => {
         button.addEventListener('click', function () {
-            if (confirm('Do you want to delete this court?')) {
-                const courtId = this.getAttribute('data-id');
-                fetch('courts', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: `action=delete&courtId=${courtId}`
-                }).then(() => location.reload());
-            }
+            document.getElementById('updateCourtId').value = this.dataset.id;
+            document.getElementById('updateCourtNumber').value = this.dataset.number;
+            document.getElementById('updateType').value = this.dataset.type || '';
+            document.getElementById('updateFloorMaterial').value = this.dataset.floor || '';
+            document.getElementById('updateLighting').value = this.dataset.lighting || '';
+            document.getElementById('updateDescription').value = this.dataset.description || '';
+            document.getElementById('currentImage').value = this.dataset.image || '';
+            document.getElementById('updateStatus').value = this.dataset.status;
+            document.getElementById('updatePrice').value = this.dataset.price;
+            document.getElementById('updateAreaId').value = this.dataset.area;
+            $('#updateCourtModal').modal('show');
         });
     });
 </script>
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

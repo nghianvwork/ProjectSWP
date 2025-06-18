@@ -4,15 +4,16 @@ public class Equipments {
     private int equipment_id;
     private String name;
     private double price;
-    private int quantity;
+    
+    
 
     public Equipments() {}
 
-    public Equipments(int equipment_id, String name, double price, int quantity) {
+    public Equipments(int equipment_id, String name, double price) {
         this.equipment_id = equipment_id;
         this.name = name;
         this.price = price;
-        this.quantity = quantity;
+        
     }
 
     public int getEquipment_id() {
@@ -39,11 +40,5 @@ public class Equipments {
         this.price = price;
     }
 
-    public int getQuantity() {
-        return quantity;
-    }
 
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
-    }
 }

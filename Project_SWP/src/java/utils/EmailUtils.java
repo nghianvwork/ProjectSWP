@@ -7,8 +7,8 @@ import java.util.Properties;
 public class EmailUtils {
 
     public static boolean sendEmail(String to, String subject, String content) {
-        final String fromEmail = "hoangtanbaobg@gmail.com"; // Gmail bạn
-        final String appPassword = "prqt bioz vsxl ccas";  // Mật khẩu ứng dụng Gmail
+        final String fromEmail = "hoangtanbaobg@gmail.com";
+        final String appPassword = "prqt bioz vsxl ccas";  
 
         Properties props = new Properties();
         props.put("mail.smtp.host", "smtp.gmail.com");
@@ -25,7 +25,7 @@ public class EmailUtils {
 
         try {
             Message message = new MimeMessage(session);
-            message.setFrom(new InternetAddress(fromEmail, "Support Team"));
+            message.setFrom(new InternetAddress(fromEmail, "Badminton Team"));
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to));
             message.setSubject(MimeUtility.encodeText(subject, "UTF-8", "B"));
             message.setContent(content, "text/html; charset=UTF-8");

@@ -3,135 +3,154 @@
 
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="UTF-8">
-        <title>Register</title>
-        <style>
-            body {
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                height: 100vh;
-                margin: 0;
-                font-family: Arial, sans-serif;
-                background: #f0f0f0;
-            }
-            .register-container {
-                background: rgba(255, 255, 255, 0.9);
-                padding: 20px;
-                border-radius: 15px;
-                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-                width: 300px;
-                text-align: center;
-            }
-            h2 {
-                margin-bottom: 20px;
-                color: #333;
-                font-size: 24px;
-            }
-            .input-group {
-                position: relative;
-                margin-bottom: 15px;
-                text-align: left;
-            }
-            .input-field, select {
-                width: 100%;
-                padding: 10px 10px 10px 40px;
-                border: 1px solid #ccc;
-                border-radius: 25px;
-                box-sizing: border-box;
-                font-size: 14px;
-            }
-            .input-field:focus, select:focus {
-                outline: none;
-                border-color: #1da1f2;
-            }
-            .input-icon {
-                position: absolute;
-                left: 10px;
-                top: 50%;
-                transform: translateY(-50%);
-                color: #666;
-                font-size: 16px;
-            }
-            .btn {
-                width: 100%;
-                padding: 10px;
-                background-color: #1da1f2;
-                color: #fff;
-                border: none;
-                border-radius: 25px;
-                cursor: pointer;
-                font-size: 16px;
-                font-weight: bold;
-            }
-            .btn:hover {
-                background-color: #1a91da;
-            }
-            .error-message {
-                color: red;
-                margin-bottom: 15px;
-                font-size: 14px;
-            }
-            .login-link {
-                margin-top: 15px;
-                font-size: 14px;
-                color: #1da1f2;
-                text-decoration: none;
-            }
-            .login-link:hover {
-                text-decoration: underline;
-            }
+<head>
+    <meta charset="UTF-8">
+    <title>Register</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #1da1f2;
+        }
 
+        .register-container {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+            width: 400px;
+            text-align: center;
+        }
 
-        </style>
-    </head>
-    <body>
+        h2 {
+            margin-bottom: 20px;
+            color: #333;
+            font-size: 28px;
+        }
 
-        <div class="notification-wrapper" style="
-             position: fixed;
-             top: 20px;
-             right: 20px;
-             z-index: 9999;
-             ">
-            <c:import url="notification.jsp" />
+        .input-group {
+            position: relative;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 12px 12px 12px 40px;
+            border: 1px solid #ccc;
+            border-radius: 25px;
+            box-sizing: border-box;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: #1da1f2;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+            font-size: 16px;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            background-color: #1da1f2;
+            color: #fff;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: background-color 0.3s;
+            margin-top: 10px;
+        }
+
+        .btn:hover {
+            background-color: #1a91da;
+        }
+
+        .login-link {
+            margin-top: 15px;
+            font-size: 14px;
+            color: #1da1f2;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .login-link:hover {
+            text-decoration: underline;
+        }
+
+        .error-message {
+            color: red;
+            font-weight: bold;
+            margin-top: 10px;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+<div class="register-container">
+    <h2>Register</h2>
+
+    <form action="register" method="post">
+        <!-- Username -->
+        <div class="input-group">
+            <span class="input-icon">&#128100;</span>
+            <input type="text" class="input-field" name="username" placeholder="Username" required>
         </div>
 
-        <div class="register-container">
-            <h2>Đăng Kí</h2>
-
-            <form action="register" method="post">
-              <div class="input-group">
-                    <span class="input-icon">&#128100;</span>
-                    <input type="text" class="input-field" name="username" placeholder="Username" >
-                </div>
-
-                <div class="input-group">
-                    <span class="input-icon">&#128274;</span>
-                    <input type="password" class="input-field" name="password" placeholder="Password">
-                </div>
-                <div class="input-group">
-                    <span class="input-icon">&#9993;</span>
-                    <input type="email" class="input-field" name="email" placeholder="Email" required>
-                </div>
-                <div class="input-group" style="padding-left: 40px;">
-                    <label for="role">Vai trò:</label>
-                    <div style="margin-top: 5px; font-size: 14px;">
-                        <label style="margin-right: 15px;">
-                            <input type="radio" name="role" value="user" required checked style="margin-right: 5px;">
-                            Người dùng
-                        </label>
-                        <label>
-                            <input type="radio" name="role" value="staff" required style="margin-right: 5px;">
-                            Chủ sân
-                        </label>
-                    </div>
-
-                </div>
-                <button type="submit" class="btn">Đăng kí</button>
-
-            </form>
-            <a href="login" class="login-link">Đăng nhập</a>
+        <!-- Password -->
+        <div class="input-group">
+            <span class="input-icon">&#128274;</span>
+            <input type="password" class="input-field" name="password" placeholder="Password" required>
         </div>
-    </body>
+
+        <!-- Confirm Password -->
+        <div class="input-group">
+            <span class="input-icon">&#128274;</span>
+            <input type="password" class="input-field" name="confirm_password" placeholder="Confirm Password" required>
+        </div>
+
+        <!-- Email -->
+        <div class="input-group">
+            <span class="input-icon">&#9993;</span>
+            <input type="email" class="input-field" name="email" placeholder="Email" required>
+        </div>
+
+        <!-- Phone -->
+        <div class="input-group">
+            <span class="input-icon">&#128222;</span>
+            <input type="text" class="input-field" name="phone_number" placeholder="Phone Number" required>
+        </div>
+
+        <!-- Hidden role -->
+        <input type="hidden" name="role" value="user"/>
+
+        <!-- Submit -->
+        <button type="submit" class="btn">Register</button>
+    </form>
+
+    <!-- Error message -->
+    <c:if test="${not empty error}">
+        <span class="error-message">${error}</span>
+    </c:if>
+
+    <!-- Login -->
+    <a href="login" class="login-link">Login here</a>
+</div>
+
+</body>
 </html>
