@@ -6,7 +6,7 @@ package controller.user;
 
 import DAO.BookingDAO;
 import DAO.CourtDAO;
-import DAO.CourtPricingDAO;
+
 import DAO.Service_BranchDAO;
 import Model.Branch_Service;
 import Model.Courts;
@@ -148,8 +148,8 @@ int areaId = court.getArea_id();
             return;
         }
 
-        CourtPricingDAO pricingDAO = new CourtPricingDAO();
-        int totalPrice = pricingDAO.calculatePrice(court.getCourt_id(), startTime, endTime);
+        
+//        int totalPrice = pricingDAO.calculatePrice(court.getCourt_id(), startTime, endTime);
         Service_BranchDAO sDao = new Service_BranchDAO();
         List<Branch_Service> availableServices = sDao.getAllAreaServices(areaId);
         request.setAttribute("availableServices", availableServices);
@@ -158,7 +158,7 @@ int areaId = court.getArea_id();
         request.setAttribute("date", date);
         request.setAttribute("startTime", startTime);
         request.setAttribute("endTime", endTime);
-        request.setAttribute("totalPrice", totalPrice);
+//        request.setAttribute("totalPrice", totalPrice);
         request.getRequestDispatcher("confirm_booking.jsp").forward(request, response);
     }
 

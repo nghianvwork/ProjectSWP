@@ -61,7 +61,11 @@ public class ListCourt extends HttpServlet {
     throws ServletException, IOException {
         AreaDAO areaDAO = new AreaDAO();
         List<Branch> listCourt = areaDAO.getAllAreas();
+
         System.out.println(">>>>>Lít"+listCourt.size());
+
+        System.out.println("List"+listCourt.size());
+
         request.setAttribute("listCourt", listCourt);
         request.getRequestDispatcher("listCourt.jsp").forward(request, response);
 

@@ -40,6 +40,8 @@ CREATE TABLE Areas
     open_time TIME NOT NULL,
     close_time TIME NOT NULL,
     descriptions NVARCHAR(MAX),
+	[phone_area] [varchar](20) NULL,
+	nameStaff NVARCHAR(100) NOT NULL,
    FOREIGN KEY (manager_id) REFERENCES Users(user_id),
 
     CONSTRAINT chk_area_time CHECK (open_time < close_time)
@@ -55,6 +57,7 @@ CREATE TABLE Area_Image
 );
 
 -- ==========================
+
 -- BẢNG SÂN
 -- ==========================
 CREATE TABLE Courts

@@ -18,6 +18,7 @@ import Dal.DBContext;
 import Model.BookingScheduleDTO;
 import Model.Bookings;
 
+
 /**
  *
  * @author admin
@@ -132,17 +133,21 @@ public class BookingDAO extends DBContext {
         return false;
     }
 
-    public int insertBooking1(int userId, int courtId, LocalDate date, Time startTime, Time endTime, String status) {
-        String sql = "INSERT INTO Bookings (user_id, court_id, date, start_time, end_time, status) VALUES (?, ?, ?, ?, ?, ?)";
-        int bookingId = -1;
 
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, userId);
-            ps.setInt(2, courtId);
-            ps.setDate(3, java.sql.Date.valueOf(date));
-            ps.setTime(4, startTime);
-            ps.setTime(5, endTime);
-            ps.setString(6, status); // e.g., "pending"
+public int insertBooking1(int userId, int courtId, LocalDate date, Time startTime, Time endTime, String status) {
+    String sql = "INSERT INTO Bookings (user_id, court_id, date, start_time, end_time, status, total_price) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    int bookingId = -1;
+
+    try (PreparedStatement ps = conn.prepareStatement(sql )) {
+        ps.setInt(1, userId);
+        ps.setInt(2, courtId);
+        ps.setDate(3, java.sql.Date.valueOf(date));
+        ps.setTime(4, startTime);
+        ps.setTime(5, endTime);
+        ps.setString(6, status); // e.g., "pending"
+       
+        
+
 
             int affectedRows = ps.executeUpdate();
 
@@ -160,19 +165,20 @@ public class BookingDAO extends DBContext {
         return bookingId;
     }
 
-    public boolean insertBooking(int userId, int courtId, LocalDate date, Time startTime, Time endTime, String status) {
-        String sql = "INSERT INTO Bookings (user_id, court_id, date, start_time, end_time, status) VALUES (?, ?, ?, ?, ?, ?)";
-        int bookingId = -1;
+   
+public boolean insertBooking(int userId, int courtId, LocalDate date, Time startTime, Time endTime, String status) {
+    String sql = "INSERT INTO Bookings (user_id, court_id, date, start_time, end_time, status, total_price) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    int bookingId = -1;
 
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, userId);
-            ps.setInt(2, courtId);
-            ps.setDate(3, java.sql.Date.valueOf(date));
-            ps.setTime(4, startTime);
-            ps.setTime(5, endTime);
-            ps.setString(6, status); // e.g., "pending"
-
-            int affectedRows = ps.executeUpdate();
+    try (PreparedStatement ps = conn.prepareStatement(sql )) {
+        ps.setInt(1, userId);
+        ps.setInt(2, courtId);
+        ps.setDate(3, java.sql.Date.valueOf(date));
+        ps.setTime(4, startTime);
+        ps.setTime(5, endTime);
+        ps.setString(6, status); // e.g., "pending"
+         int affectedRows = ps.executeUpdate();
+        
 
             if (affectedRows > 0) {
                 try (ResultSet rs = ps.getGeneratedKeys()) {
@@ -228,6 +234,7 @@ public Bookings getBookingById(int bookingId) {
             b.setEnd_time(rs.getTime("end_time"));
             b.setStatus(rs.getString("status"));
             b.setRating(rs.getInt("rating"));
+            b.setTotal_price(rs.getDouble("total_price"));
             return b;
 
         }
@@ -252,6 +259,7 @@ public List<Bookings> getBookingsByUserId(int userId) {
             b.setEnd_time(rs.getTime("end_time"));
             b.setStatus(rs.getString("status"));
             b.setRating(rs.getInt("rating"));
+            b.setTotal_price(rs.getDouble("total_price"));
             list.add(b);
 
         }
@@ -327,6 +335,7 @@ public List<Bookings> getBookingsByUserId(int userId) {
                 dto.setCourtNumber(rs.getString("court_number"));
                 dto.setArea_id(rs.getInt("area_id"));
                 dto.setAreaName(rs.getString("area_name"));
+               
                 list.add(dto);
             }
         } catch (SQLException e) {
@@ -348,12 +357,18 @@ public List<Bookings> getBookingsByUserId(int userId) {
     }
 
     public boolean updateBooking(int bookingId, LocalDate date, Time startTime, Time endTime, String status) {
-        String sql = "UPDATE Bookings SET date = ?, start_time = ?, end_time = ?, status = ? WHERE booking_id = ?";
+        String sql = "UPDATE Bookings SET date = ?, start_time = ?, end_time = ?, status = ?, total_price = ? WHERE booking_id = ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setDate(1, Date.valueOf(date));
             ps.setTime(2, startTime);
             ps.setTime(3, endTime);
             ps.setString(4, status);
+
+            // Recalculate price based on the new time range
+            Bookings current = getBookingById(bookingId);
+            int areaId = new CourtDAO().getCourtById(current.getCourt_id()).getArea_id();
+          
+
             ps.setInt(5, bookingId);
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {

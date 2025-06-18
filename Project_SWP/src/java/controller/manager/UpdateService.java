@@ -4,9 +4,8 @@
  */
 package controller.manager;
 
-import DAO.AreaDAO;
-import Model.Branch;
-import Model.User;
+import DAO.ServiceDAO;
+import Model.Service;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -14,15 +13,13 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
-import java.sql.Time;
 
 /**
  *
  * @author admin
  */
-@WebServlet(name = "AddRegionController", urlPatterns = {"/add-region"})
-public class AddBranch extends HttpServlet {
+@WebServlet(name = "UpdateService", urlPatterns = {"/UpdateService"})
+public class UpdateService extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -41,10 +38,10 @@ public class AddBranch extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet AddRegion</title>");
+            out.println("<title>Servlet UpdateService</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet AddRegion at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet UpdateService at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -62,7 +59,20 @@ public class AddBranch extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        int service_id = Integer.parseInt(request.getParameter("id"));
+        Service service = null;
+        for (Service s : ServiceDAO.getAllService()) {
+            if (s.getService_id() == service_id) {
+                service = s;
+                break;
+            }
+        }
+        if (service == null) {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND, "Không tìm thấy dịch vụ.");
+            return;
+        }
+        request.setAttribute("service", service);
+        request.getRequestDispatcher("editService.jsp").forward(request, response);
     }
 
     /**
@@ -76,56 +86,25 @@ public class AddBranch extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
-        HttpSession session = request.getSession(false);
-        if (session == null) {
-            response.sendRedirect("login");
-            return;
-        }
-
-        User user = (User) session.getAttribute("user");
-        if (user == null || !user.getRole().equals("staff")) {
-            response.sendRedirect("login");
-            return;
-        }
-
-        String name = request.getParameter("regionName");
-        String address = request.getParameter("address");
-
-        Time openTime = Time.valueOf(request.getParameter("openTime") + ":00");
-        Time closeTime = Time.valueOf(request.getParameter("closeTime") + ":00");
-        String description = request.getParameter("description");
-       
-        String nameStaff = request.getParameter("nameStaff");
-                String phone_branch= request.getParameter("phone_branch");
-        int empty = 0;
-
         try {
-           
-            empty = Integer.parseInt(request.getParameter("emptyCourt"));
-        } catch (NumberFormatException e) {
-            System.out.println("Lỗi chuyển đổi số lượng sân: " + e.getMessage());
-        }
-        Branch area = new Branch();
-        area.setName(name);
-        area.setLocation(address);
-        area.setEmptyCourt(empty);
-        area.setOpenTime(openTime);
-        area.setCloseTime(closeTime);
-        area.setDescription(description);
-        area.setManager_id(user.getUser_Id()); 
-        area.setNameStaff(nameStaff);
-        area.setPhone_branch(phone_branch);
+            int service_id = Integer.parseInt(request.getParameter("service_id"));
+            String name = request.getParameter("name");
+            double price = Double.parseDouble(request.getParameter("price"));
+            String description = request.getParameter("description");
+            String image_url = request.getParameter("image_url");
+            String status = request.getParameter("status");
 
-        AreaDAO dao = new AreaDAO();
-        boolean exists = dao.isRegionNameExist(name, user.getUser_Id());
-        if (exists) {
-            session.setAttribute("error", "Tồn tại địa điểm rồi!");
-        } else {
-            dao.addRegion(area);
-        }
+            Service service = new Service(service_id, name, price, description, image_url, status);
 
-        response.sendRedirect("view-region");
+            boolean result = ServiceDAO.updateService(service);
+
+            
+            response.sendRedirect("serviceList"); 
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Lỗi khi cập nhật dịch vụ.");
+        }
     }
 
     /**

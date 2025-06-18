@@ -94,7 +94,11 @@
                                         <th class="col-time">Thời gian mở cửa</th>
                                         <th class="col-time">Thời gian đóng cửa</th>
                                         <th class="col-description">Mô tả</th>
+                                        
+                                        <th class="col-small">Tên quản lí </th>
+                                        <th class="col-small">Số điện thoại quản lí </th>
                                         <th style="width: 220px;">Hành động</th>
+                                        
                                     </tr>
                                 </thead>
 
@@ -109,6 +113,8 @@
                                             <td>${a.openTime}</td>
                                             <td>${a.closeTime}</td>
                                             <td>${a.description}</td>
+                                            <td>${a.nameStaff}</td>
+                                            <td>${a.phone_branch}</td>
                                             <td>
                                                 <button class="btn btn-warning btn-sm" data-toggle="modal" data-target="#updateModal${loop.index}">Cập nhật</button>
                                                 <a href="detailBranch?area_id=${a.area_id}" class="btn btn-info btn-sm">Detail</a>
@@ -148,6 +154,14 @@
                                                                     <div class="form-group">
                                                                         <label>Mô tả </label>
                                                                         <input type="text" name="description" class="form-control" value="${a.description}">
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label>Tên quản lí </label>
+                                                                        <input type="text" name="nameStaff" class="form-control" value="${a.nameStaff}">
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label>Số điện thoại quản lí </label>
+                                                                        <input type="text" name="phone_branch" class="form-control" value="${a.phone_branch}">
                                                                     </div>
 
                                                                 </div>
@@ -216,7 +230,14 @@
                                                 <label>Mô tả</label>
                                                 <input type="text" name="description" class="form-control" required>
                                             </div>
-
+                                            <div class="form-group">
+                                                <label>Tên quản lí </label>
+                                                <input type="text" name="nameStaff" class="form-control" required="">
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Số điện thoại quản lí </label>
+                                                <input type="text" name="phone_branch" class="form-control" required="">
+                                            </div>
                                         </div>
                                         <div class="modal-footer">
                                             <button type="submit" class="btn btn-success">Thêm</button>
