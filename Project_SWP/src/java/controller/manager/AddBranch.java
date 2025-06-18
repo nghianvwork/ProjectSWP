@@ -123,6 +123,7 @@ public class AddBranch extends HttpServlet {
             session.setAttribute("error", "Tồn tại địa điểm rồi!");
         } else {
             dao.addRegion(area);
+            session.setAttribute("success", "Thêm khu vực thành công!");
         }
 
         response.sendRedirect("view-region");

@@ -53,6 +53,34 @@
             .col-description {
                 width: 250px;
             }
+            .notification.success {
+                background-color: #4CAF50;
+                color: white;
+                padding: 15px;
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                border-radius: 10px;
+                z-index: 9999;
+                animation: fadeIn 0.5s;
+            }
+
+            @keyframes fadeIn {
+                from {
+                    opacity: 0;
+                }
+                to {
+                    opacity: 1;
+                }
+            }
+
+            .close-btn {
+                border: none;
+                background: transparent;
+                color: white;
+                font-size: 18px;
+                cursor: pointer;
+            }
         </style>
     </head>
     <body>
@@ -94,14 +122,19 @@
                                         <th class="col-time">Thời gian mở cửa</th>
                                         <th class="col-time">Thời gian đóng cửa</th>
                                         <th class="col-description">Mô tả</th>
-                                        
+
                                         <th class="col-small">Tên quản lí </th>
                                         <th class="col-small">Số điện thoại quản lí </th>
                                         <th style="width: 220px;">Hành động</th>
-                                        
+
                                     </tr>
                                 </thead>
-
+                                <c:if test="${not empty sessionScope.success}">
+                                    <div id="notification" class="notification success">
+                                        <i class="fas fa-check-circle"></i> ${sessionScope.success}
+                                        <button class="close-btn" onclick="closeNotification()">&times;</button>
+                                    </div>
+                                </c:if>
                                 <tbody>
                                     <c:forEach var="a" items="${area}" varStatus="loop">
                                         <tr>
@@ -117,7 +150,7 @@
                                             <td>${a.phone_branch}</td>
                                             <td>
                                                 <button class="btn btn-warning btn-sm" data-toggle="modal" data-target="#updateModal${loop.index}">Cập nhật</button>
-                                                <a href="detailBranch?area_id=${a.area_id}" class="btn btn-info btn-sm">Detail</a>
+                                                <a href="detailBranch?area_id=${a.area_id}" class="btn btn-info btn-sm">Chi tiết</a>
 
                                                 <a href="delete?regionId=${a.area_id}" class="btn btn-danger btn-sm" onclick="return confirmDelete()">Xóa</a>
 
@@ -140,7 +173,7 @@
                                                                         <label>Địa chỉ</label>
                                                                         <input type="text" name="address" class="form-control" value="${a.location}">
                                                                     </div>
-                                                                    
+
                                                                     <div class="form-group">
                                                                         <label>Giờ mở cửa</label>
                                                                         <input type="time" name="openTime" class="form-control" value="${a.openTime}">
@@ -217,7 +250,7 @@
                                                 <label>Địa chỉ</label>
                                                 <input type="text" name="address" class="form-control">
                                             </div>
-                                           
+
                                             <div class="form-group">
                                                 <label>Giờ mở cửa</label>
                                                 <input type="time" name="openTime" class="form-control" required>
@@ -262,9 +295,18 @@
     </script>-->
 
         <script>
-           
+
             function confirmDelete() {
                 return confirm("Do you want to delete this?");
+            }
+            function closeNotification() {
+                const notification = document.getElementById('notification');
+                if (notification) {
+                    notification.style.animation = 'slideOutRight 0.3s ease-out';
+                    setTimeout(() => {
+                        notification.style.display = 'none';
+                    }, 300);
+                }
             }
         </script>
         <c:if test="${not empty error}">
@@ -276,6 +318,7 @@
                 });
             </script>
         </c:if>
+
         <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
     </body>

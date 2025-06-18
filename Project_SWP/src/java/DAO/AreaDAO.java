@@ -94,6 +94,8 @@ public Branch getAreaByIdWithManager(int area_id) {
             area.setOpenTime(rs.getTime("open_time"));
             area.setCloseTime(rs.getTime("close_time"));
             area.setDescription(rs.getString("descriptions"));
+            area.setPhone_branch(rs.getString("phone_area"));
+            area.setNameStaff(rs.getString("nameStaff"));
            
             return area;
         }

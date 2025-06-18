@@ -76,7 +76,9 @@
                                 </div>
                                 <div class="col-md-6">
                                     <p><strong>Mô tả:</strong> ${areaDetail.description}</p>
-
+                                     <p><strong>Tên quản lí:</strong> ${areaDetail.nameStaff}</p>
+                                      <p><strong>Số điện thoại:</strong> ${areaDetail.phone_branch}</p>
+                                    
                                 </div>
                             </div>
                         </div>
