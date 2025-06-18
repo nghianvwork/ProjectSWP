@@ -247,13 +247,13 @@
                                         <thead class="table-light">
                                             <tr class="text-center">
                                                 <th style="width: 50px;">ID</th>
-                                                <th style="width: 120px;">Username</th>
+                                                <th style="width: 120px;">Tên đăng nhập</th>
                                                 <th style="width: 150px;">Email</th>
                                                 <th style="width: 100px;">SĐT</th>
-                                                <th style="width: 80px;">Role</th>
+                                                <th style="width: 80px;">Vai trò</th>
                                                 <th style="width: 100px;">Ngày tạo</th>
-                                                <th style="width: 80px;">Status</th>
-                                                <th style="width: 100px;">Note</th>
+                                                <th style="width: 80px;">Trạng thái</th>
+                                                <th style="width: 100px;">Ghi kí</th>
                                                 <th class="action-column">Hành động</th>
                                             </tr>
                                         </thead>
@@ -275,17 +275,17 @@
                                                         <c:choose>
                                                             <c:when test="${user.role eq 'admin'}">
                                                                 <span class="role-badge" style="background: #ff9800; color: white;">
-                                                                    Admin
+                                                                    Quản lí
                                                                 </span>
                                                             </c:when>
                                                             <c:when test="${user.role eq 'staff'}">
                                                                 <span class="role-badge" style="background: #17a2b8; color: white;">
-                                                                    Staff
+                                                                    Nhân Viên
                                                                 </span>
                                                             </c:when>
                                                             <c:otherwise>
                                                                 <span class="role-badge" style="background: #6c757d; color: white;">
-                                                                    User
+                                                                    Người dùng
                                                                 </span>
                                                             </c:otherwise>
                                                         </c:choose>
@@ -343,7 +343,7 @@
                                                                     data-email="${user.email}"
                                                                     data-phone="${user.phone_number}"
                                                                     data-role="${user.role}">
-                                                                <i class="fas fa-edit"></i>Edit
+                                                                <i class="fas fa-edit"></i>Chỉnh
                                                             </button>
 
                                                             <!-- Nút Delete -->
@@ -351,7 +351,7 @@
                                                                 <input type="hidden" name="action" value="delete">
                                                                 <input type="hidden" name="userId" value="${user.user_Id}">
                                                                 <button type="submit" class="btn btn-danger">
-                                                                    <i class="fas fa-trash"></i>Del
+                                                                    <i class="fas fa-trash"></i>Xoá
                                                                 </button>
                                                             </form>
 
@@ -363,7 +363,7 @@
                                                                             data-bs-target="#banUserModal"
                                                                             data-userid="${user.user_Id}"
                                                                             data-username="${user.username}">
-                                                                        <i class="fas fa-ban"></i>Ban
+                                                                        <i class="fas fa-ban"></i>Chặn
                                                                     </button>
                                                                 </c:when>
                                                                 <c:otherwise>
@@ -371,7 +371,7 @@
                                                                         <input type="hidden" name="action" value="unban">
                                                                         <input type="hidden" name="userId" value="${user.user_Id}">
                                                                         <button type="submit" class="btn btn-success">
-                                                                            <i class="fas fa-check"></i>Unban
+                                                                            <i class="fas fa-check"></i>Gỡ chặn
                                                                         </button>
                                                                     </form>
                                                                 </c:otherwise>
