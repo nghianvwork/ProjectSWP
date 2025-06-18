@@ -351,7 +351,7 @@ public Branch getAreaByIdWithManager(int area_id) {
 
     System.out.println("Cập nhật thông tin khu vực thành công!");
          
-         
+          
          
          
         List<Branch> aa = areaDAO.getAreasByManager(2);
