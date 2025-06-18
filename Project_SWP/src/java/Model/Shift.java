@@ -11,44 +11,79 @@ import java.sql.Time;
  * @author admin
  */
 public class Shift {
-     private int shift_id;
-    private Time start_time;
-    private Time end_time;
+     private int shiftId;
+    private int areaId;
+    private String shiftName;
+    private Time startTime;
+    private Time endTime;
 
+    // Constructors
     public Shift() {}
 
-    public Shift(int shift_id, Time start_time, Time end_time) {
-        this.shift_id = shift_id;
-        this.start_time = start_time;
-        this.end_time = end_time;
+    public Shift(int areaId, String shiftName, Time startTime, Time endTime) {
+        this.areaId = areaId;
+        this.shiftName = shiftName;
+        this.startTime = startTime;
+        this.endTime = endTime;
     }
 
-    public int getShift_id() {
-        return shift_id;
+    public Shift(int shiftId, int areaId, String shiftName, Time startTime, Time endTime) {
+        this.shiftId = shiftId;
+        this.areaId = areaId;
+        this.shiftName = shiftName;
+        this.startTime = startTime;
+        this.endTime = endTime;
     }
 
-    public void setShift_id(int shift_id) {
-        this.shift_id = shift_id;
+    // Getter and Setter methods
+    public int getShiftId() {
+        return shiftId;
     }
 
-    public Time getStart_time() {
-        return start_time;
+    public void setShiftId(int shiftId) {
+        this.shiftId = shiftId;
     }
 
-    public void setStart_time(Time start_time) {
-        this.start_time = start_time;
+    public int getAreaId() {
+        return areaId;
     }
 
-    public Time getEnd_time() {
-        return end_time;
+    public void setAreaId(int areaId) {
+        this.areaId = areaId;
     }
 
-    public void setEnd_time(Time end_time) {
-        this.end_time = end_time;
+    public String getShiftName() {
+        return shiftName;
+    }
+
+    public void setShiftName(String shiftName) {
+        this.shiftName = shiftName;
+    }
+
+    public Time getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(Time startTime) {
+        this.startTime = startTime;
+    }
+
+    public Time getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(Time endTime) {
+        this.endTime = endTime;
     }
 
     @Override
     public String toString() {
-        return "Shift{" + "shift_id=" + shift_id + ", start_time=" + start_time + ", end_time=" + end_time + '}';
+        return "Shift{" +
+                "shiftId=" + shiftId +
+                ", areaId=" + areaId +
+                ", shiftName='" + shiftName + '\'' +
+                ", startTime=" + startTime +
+                ", endTime=" + endTime +
+                '}';
     }
 }

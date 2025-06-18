@@ -83,7 +83,70 @@
                             </div>
                         </div>
                     </div>
+                <!-- Bảng Shift -->
+<h4 class="mt-5">Danh sách ca (Shift)</h4>
+<button type="button" class="btn btn-primary mb-3" data-toggle="modal" data-target="#addShiftModal">+ Thêm ca</button>
+<table id="shiftTable" class="table table-bordered">
+    <thead>
+        <tr>
+            
+            <th>Tên ca</th>
+            <th>Thời gian bắt đầu</th>
+            <th>Thời gian kết thúc</th>
+            <th>Hành động</th>
+        </tr>
+    </thead>
+    <tbody>
+        <c:forEach var="shift" items="${areaShifts}" varStatus="loop">
+            <tr>
+                <td>${loop.count}</td>
+                <td>${shift.shiftName}</td>
+                <td>${shift.startTime}</td>
+                <td>${shift.endTime}</td>
+                <td>
+                    <a href="delete-shift?shiftId=${shift.shiftId}&area_id=${area_id}" onclick="return confirmDelete()" class="btn btn-danger">Xóa</a>
+                </td>
+            </tr>
+        </c:forEach>
+    </tbody>
+</table>
 
+<!-- Add Shift Modal -->
+<div class="modal fade" id="addShiftModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <form action="add-shift" method="post" class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Thêm ca mới</h5>
+                <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" name="area_id" value="${area_id}" />
+                <div class="form-group">
+                    <label>Tên ca</label>
+                    <input type="text" name="shiftName" class="form-control" required />
+                </div>
+                <div class="form-group">
+                    <label>Thời gian bắt đầu</label>
+                    <input type="time" name="startTime" class="form-control" required />
+                </div>
+                <div class="form-group">
+                    <label>Thời gian kết thúc</label>
+                    <input type="time" name="endTime" class="form-control" required />
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-primary">Thêm</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('#shiftTable').DataTable({pageLength: 5, lengthChange: false});
+    });
+</script>
                     <!-- Images -->
                     <h4>Ảnh của khu vực</h4>
                     <button type="button" class="btn btn-primary mb-3" data-toggle="modal" data-target="#addImageModal">+ Thêm ảnh</button>
@@ -108,7 +171,7 @@
                             </c:forEach>
                         </tbody>
                     </table>
-
+               
                     <!-- Services -->
                     <h4 class="mt-5">Danh sách dịch vụ khu vực</h4>
                     <button type="button" class="btn btn-primary mb-3" data-toggle="modal" data-target="#addServiceModal">+ Thêm dịch vụ</button>
@@ -226,7 +289,12 @@
         <div class="loading-overlay">
             <div class="spinner"></div>
         </div>
-
+                                    <c:if test="${not empty param.message}">
+                                        <div class="alert alert-warning">${param.message}</div>
+                                    </c:if>
+                                    <c:if test="${not empty message}">
+                                        <div class="alert alert-warning">${message}</div>
+                                    </c:if>
         <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
         <script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>

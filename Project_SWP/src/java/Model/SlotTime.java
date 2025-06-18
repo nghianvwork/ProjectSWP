@@ -18,8 +18,8 @@ public class SlotTime {
     public static List<Slot> generateSlots(Shift shift, List<Bookings> bookings, int slotMinutes) {
         List<Slot> result = new ArrayList<>();
 
-        LocalTime current = shift.getStart_time().toLocalTime();
-        LocalTime end = shift.getEnd_time().toLocalTime();
+        LocalTime current = shift.getStartTime().toLocalTime();
+        LocalTime end = shift.getEndTime().toLocalTime();
 
         while (current.plusMinutes(slotMinutes).compareTo(end) <= 0) {
             LocalTime slotStart = current;

@@ -75,6 +75,39 @@ public class BookingDAO extends DBContext {
 
         return 0;
     }
+public List<Bookings> getBookingsByCourtAndDate(int courtId, LocalDate date) {
+    List<Bookings> bookings = new ArrayList<>();
+    String sql = "SELECT * FROM Bookings WHERE court_id = ? AND date = ? AND status NOT IN ('cancelled', 'rejected')";
+
+    try (
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+
+        ps.setInt(1, courtId);
+        ps.setDate(2, java.sql.Date.valueOf(date));
+
+        ResultSet rs = ps.executeQuery();
+
+        while (rs.next()) {
+            Bookings booking = new Bookings();
+            booking.setBooking_id(rs.getInt("booking_id"));
+            booking.setUser_id(rs.getInt("user_id"));
+            booking.setCourt_id(rs.getInt("court_id"));
+            booking.setDate(rs.getDate("date").toLocalDate());
+            booking.setStart_time(rs.getTime("start_time"));
+            booking.setEnd_time(rs.getTime("end_time"));
+            booking.setStatus(rs.getString("status"));
+            booking.setRating(rs.getInt("rating"));
+            booking.setTotal_price(rs.getDouble("total_price"));
+
+            bookings.add(booking);
+        }
+
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+
+    return bookings;
+}
 
     public boolean checkSlotAvailable(int courtId, LocalDate date, Time startTime, Time endTime) {
        String sql = "SELECT * FROM Bookings " +

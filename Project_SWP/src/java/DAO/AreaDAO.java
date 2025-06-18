@@ -31,6 +31,23 @@ public class AreaDAO extends DBContext {
             System.out.println("Connect failed");
         }
     }
+    public Time[] getAreaOpenAndCloseTime(int areaId) {
+    String sql = "SELECT open_time, close_time FROM Areas WHERE area_id = ?";
+    try (
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+        ps.setInt(1, areaId);
+        ResultSet rs = ps.executeQuery();
+        if (rs.next()) {
+            Time openTime = rs.getTime("open_time");
+            Time closeTime = rs.getTime("close_time");
+            return new Time[]{openTime, closeTime};
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return null;
+}
+
 public List<Branch> searchAreaByName(String keyword) {
     List<Branch> areas = new ArrayList<>();
     String sql = "SELECT * FROM Areas WHERE name LIKE ?";
