@@ -103,7 +103,9 @@
                                         <tr>
                                             <td>${a.name}</td>
                                             <td>${a.location}</td>
-                                            <td>${a.emptyCourt}</td>
+                                            <td>
+                                                <a href="courts?area_id=${a.area_id}">${a.emptyCourt}</a>
+                                            </td>
                                             <td>${a.openTime}</td>
                                             <td>${a.closeTime}</td>
                                             <td>${a.description}</td>
@@ -132,10 +134,7 @@
                                                                         <label>Địa chỉ</label>
                                                                         <input type="text" name="address" class="form-control" value="${a.location}">
                                                                     </div>
-                                                                    <div class="form-group">
-                                                                        <label>Số lượng sân</label>
-                                                                        <input type="number" name="empty" class="form-control" value="${a.emptyCourt}">
-                                                                    </div>
+                                                                    
                                                                     <div class="form-group">
                                                                         <label>Giờ mở cửa</label>
                                                                         <input type="time" name="openTime" class="form-control" value="${a.openTime}">
@@ -204,10 +203,7 @@
                                                 <label>Địa chỉ</label>
                                                 <input type="text" name="address" class="form-control">
                                             </div>
-                                            <div class="form-group">
-                                                <label>Số lượng sân</label>
-                                                <input type="number" name="emptyCourt" class="form-control" value="0" min="0">
-                                            </div>
+                                           
                                             <div class="form-group">
                                                 <label>Giờ mở cửa</label>
                                                 <input type="time" name="openTime" class="form-control" required>

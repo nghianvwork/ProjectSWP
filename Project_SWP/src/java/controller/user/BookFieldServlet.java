@@ -7,6 +7,8 @@ package controller.user;
 import DAO.BookingDAO;
 import DAO.CourtDAO;
 import DAO.CourtPricingDAO;
+import DAO.Service_BranchDAO;
+import Model.Branch_Service;
 import Model.Courts;
 import Model.User;
 import java.io.IOException;
@@ -19,7 +21,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.sql.Time;
 import java.time.LocalDate;
-
+import java.util.List;
 /**
  *
  * @author admin
@@ -118,10 +120,18 @@ public class BookFieldServlet extends HttpServlet {
         BookingDAO bookingDAO = new BookingDAO();
         CourtDAO courtDAO = new CourtDAO();
         Courts court = courtDAO.getCourtById(courtId);
-        Time startTime,endTime;
-        
-try {
-             startTime = Time.valueOf(request.getParameter("startTime") + ":00");
+        Time startTime, endTime;
+        LocalDate today = LocalDate.now();
+
+        if (date.isBefore(today)) {
+            request.setAttribute("message", "Không thể đặt lịch cho ngày đã qua.");
+            request.setAttribute("court", court);
+            request.getRequestDispatcher("book_field.jsp").forward(request, response);
+            return;
+        }
+int areaId = court.getArea_id();
+        try {
+            startTime = Time.valueOf(request.getParameter("startTime") + ":00");
             endTime = Time.valueOf(request.getParameter("endTime") + ":00");
         } catch (Exception e) {
             request.setAttribute("message", "Lỗi định dạng giờ. Vui lòng kiểm tra lại.");
@@ -130,7 +140,7 @@ try {
             return;
         }
         boolean isAvailable = bookingDAO.checkSlotAvailable(courtId, date, startTime, endTime);
-        System.out.println(">>>isAvai: "+isAvailable);
+
         if (!isAvailable) {
             request.setAttribute("message", "Khoảng thời gian này đã có người đặt.");
             request.setAttribute("court", court);
@@ -139,8 +149,11 @@ try {
         }
 
         CourtPricingDAO pricingDAO = new CourtPricingDAO();
-        int totalPrice = pricingDAO.calculatePrice(court.getArea_id(), startTime, endTime);
-
+        int totalPrice = pricingDAO.calculatePrice(court.getCourt_id(), startTime, endTime);
+        Service_BranchDAO sDao = new Service_BranchDAO();
+        List<Branch_Service> availableServices = sDao.getAllAreaServices(areaId);
+        request.setAttribute("availableServices", availableServices);
+        System.out.println(">>>>>>>>>>>>>>>>>" + availableServices);
         request.setAttribute("court", court);
         request.setAttribute("date", date);
         request.setAttribute("startTime", startTime);

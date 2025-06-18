@@ -24,19 +24,19 @@ public class CourtPricingDAO extends DBContext{
             System.out.println("Connect failed");
         }
     }
-    public int calculatePrice(int areaId, Time start, Time end) {
+    public int calculatePrice(int courtId, Time start, Time end) {
     int total = 0;
     try {
-        String sql = "SELECT * FROM Court_Pricing WHERE area_id = ?";
+        String sql = "SELECT * FROM Court_Pricing WHERE court_id = ?";
         PreparedStatement ps = conn.prepareStatement(sql);
-        ps.setInt(1, areaId);
+        ps.setInt(1, courtId);
         ResultSet rs = ps.executeQuery();
+
         while (rs.next()) {
             Time pricingStart = rs.getTime("start_time");
             Time pricingEnd = rs.getTime("end_time");
             int price = rs.getInt("price");
 
-            // Nếu khoảng thời gian nằm trong khung giá
             if (!(end.before(pricingStart) || start.after(pricingEnd))) {
                 long minutes = (Math.min(end.getTime(), pricingEnd.getTime()) - 
                                 Math.max(start.getTime(), pricingStart.getTime())) / 60000;

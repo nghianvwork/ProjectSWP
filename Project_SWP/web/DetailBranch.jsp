@@ -88,7 +88,7 @@
                     <table id="table" class="table table-bordered">
                         <thead>
                             <tr>
-                                <th>ImageID</th>
+                               
                                 <th>Ảnh</th>
                                 <th>Hành động</th>
                             </tr>
@@ -96,7 +96,7 @@
                         <tbody>
                             <c:forEach var="image" items="${areaImages}">
                                 <tr>
-                                    <td>${image.image_id}</td>
+                                  
                                     <td><img src="${image.imageURL}" alt="Branch Image" width="120"></td>
                                     <td>
                                         <a href="delete-image?image_id=${image.image_id}&area_id=${image.area_id}" onclick="return confirmDelete()" class="btn btn-danger">Xóa</a>

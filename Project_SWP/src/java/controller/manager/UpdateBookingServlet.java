@@ -15,6 +15,8 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.sql.Time;
 import java.time.LocalDate;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 @WebServlet("/update-booking")
 public class UpdateBookingServlet extends HttpServlet {
@@ -122,7 +124,8 @@ public class UpdateBookingServlet extends HttpServlet {
             }
 
             // 5. Kiểm tra trùng lịch (loại trừ chính booking này)
-            if (!dao.checkSlotAvailableForUpdate(bookingId, courtId, date, startTime, endTime)) {
+            boolean slotAvailable = dao.checkSlotAvailableForUpdate(bookingId, courtId, date, startTime, endTime);
+            if (!slotAvailable) {
                 request.setAttribute("error", "Khung giờ này đã có người đặt, vui lòng chọn khung giờ khác.");
                 request.setAttribute("booking", currentBooking);
                 request.setAttribute("court", new CourtDAO().getCourtById(courtId));
@@ -135,7 +138,8 @@ public class UpdateBookingServlet extends HttpServlet {
             boolean updateSuccess = dao.updateBooking(bookingId, date, startTime, endTime, status);
 
             if (updateSuccess) {
-                response.sendRedirect("manager_booking_schedule.jsp?msg=Cập nhật thành công!");
+                String msg = URLEncoder.encode("Cập nhật thành công!", StandardCharsets.UTF_8);
+                response.sendRedirect("manager-booking-schedule?msg=" + msg);
             } else {
                 request.setAttribute("error", "Cập nhật thất bại! Vui lòng thử lại.");
                 request.setAttribute("booking", currentBooking);

@@ -123,13 +123,13 @@ public class BookingDAO extends DBContext {
             ps.setTime(4, startTime);  // end_time > startTime mới
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                // Nếu count > 0 nghĩa là ĐÃ CÓ booking giao nhau => KHÔNG AVAILABLE
-                return rs.getInt(1) > 0;
+                // Trả về true nếu không có bản ghi giao nhau
+                return rs.getInt(1) == 0;
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return true;
+        return false;
     }
 
     public int insertBooking1(int userId, int courtId, LocalDate date, Time startTime, Time endTime, String status) {
@@ -188,7 +188,8 @@ public class BookingDAO extends DBContext {
         return true;
     }
 
-    public Bookings getBookingById(int bookingId) {
+
+    public Bookings getBookingById1(int bookingId) {
         String sql = "SELECT * FROM Bookings WHERE booking_id = ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, bookingId);
@@ -206,32 +207,61 @@ public class BookingDAO extends DBContext {
             }
         } catch (Exception e) {
             e.printStackTrace();
-        }
-        return null;
+
+    
+}return null;
     }
 
-    public List<Bookings> getBookingsByUserId(int userId) {
-        List<Bookings> list = new ArrayList<>();
-        String sql = "SELECT * FROM Bookings b JOIN Courts c ON b.court_id = c.court_id WHERE b.user_id = ?";
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, userId);
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                Bookings b = new Bookings();
-                b.setBooking_id(rs.getInt("booking_id"));
-                b.setCourt_id(rs.getInt("court_id"));
-                b.setDate(rs.getDate("date").toLocalDate());
-                b.setStart_time(rs.getTime("start_time"));
-                b.setEnd_time(rs.getTime("end_time"));
-                b.setStatus(rs.getString("status"));
-                list.add(b);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return list;
-    }
 
+public Bookings getBookingById(int bookingId) {
+    String sql = "SELECT * FROM Bookings WHERE booking_id = ?";
+    try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        ps.setInt(1, bookingId);
+        ResultSet rs = ps.executeQuery();
+        if (rs.next()) {
+            Bookings b = new Bookings();
+            b.setBooking_id(rs.getInt("booking_id"));
+            b.setUser_id(rs.getInt("user_id"));
+            b.setCourt_id(rs.getInt("court_id"));
+            b.setDate(rs.getDate("date").toLocalDate());
+            b.setStart_time(rs.getTime("start_time"));
+            b.setEnd_time(rs.getTime("end_time"));
+            b.setStatus(rs.getString("status"));
+            b.setRating(rs.getInt("rating"));
+            return b;
+
+        }
+       
+    }catch(SQLException e){
+        System.out.println(e.getMessage());
+    } return null;
+}
+
+public List<Bookings> getBookingsByUserId(int userId) {
+    List<Bookings> list = new ArrayList<>();
+    String sql = "SELECT * FROM Bookings b JOIN Courts c ON b.court_id = c.court_id WHERE b.user_id = ?";
+    try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        ps.setInt(1, userId);
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            Bookings b = new Bookings();
+            b.setBooking_id(rs.getInt("booking_id"));
+            b.setCourt_id(rs.getInt("court_id"));
+            b.setDate(rs.getDate("date").toLocalDate());
+            b.setStart_time(rs.getTime("start_time"));
+            b.setEnd_time(rs.getTime("end_time"));
+            b.setStatus(rs.getString("status"));
+            b.setRating(rs.getInt("rating"));
+            list.add(b);
+
+        }
+       
+    
+        }catch(SQLException e){
+            System.out.println(e.getMessage());
+        }
+ return list;
+}
     public boolean cancelBookingById(int bookingId) {
     String sql = "UPDATE bookings SET status = ? WHERE booking_id = ?";
     try (
@@ -345,12 +375,59 @@ public class BookingDAO extends DBContext {
             ps.setTime(5, startTime);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                return rs.getInt(1) > 0;
+                // true khi không có booking khác giao nhau
+                return rs.getInt(1) == 0;
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return true;
+        return false;
+    }
+public List<Bookings> getBookingsByCourtId(int courtId) {
+    List<Bookings> list = new ArrayList<>();
+    String sql = "SELECT * FROM Bookings WHERE court_id = ?";
+
+    try (
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+
+        ps.setInt(1, courtId);
+        ResultSet rs = ps.executeQuery();
+
+        while (rs.next()) {
+            Bookings booking = new Bookings();
+            booking.setBooking_id(rs.getInt("booking_id"));
+            booking.setCourt_id(rs.getInt("court_id"));
+            booking.setUser_id(rs.getInt("user_id"));
+            booking.setDate(rs.getDate("date").toLocalDate());
+            booking.setStart_time(rs.getTime("start_time"));
+            booking.setEnd_time(rs.getTime("end_time"));
+            booking.setStatus(rs.getString("status"));
+
+            list.add(booking);
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
     }
 
+    return list;
+}
+
+    public boolean updateRating(int bookingId, int rating) {
+        String sql = "UPDATE Bookings SET rating = ? WHERE booking_id = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, rating);
+            ps.setInt(2, bookingId);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+    public static void main(String[] args) {
+        BookingDAO dao = new  BookingDAO();
+        List<Bookings> list = dao.getBookingsByUserId(2);
+        for(Bookings a : list){
+            System.out.println(a);
+        }
+    }
 }

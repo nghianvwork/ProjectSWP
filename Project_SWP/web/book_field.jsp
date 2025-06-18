@@ -56,10 +56,11 @@
 
     <form action="book-field" method="post">
         <input type="hidden" name="courtId" value="${court.court_id}" />
+<input type="hidden" name="areaId" value="${court.area_id}" />
 
         <div class="mb-3">
             <label for="date">Chọn ngày</label>
-            <input type="date" id="date" name="date" class="form-control" required>
+          <input type="date" name="date" min="<%= java.time.LocalDate.now() %>" required/>
         </div>
 
         <div class="mb-3">
