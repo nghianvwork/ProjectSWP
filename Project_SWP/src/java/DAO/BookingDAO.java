@@ -171,32 +171,46 @@ public int insertBooking1(int userId, int courtId, LocalDate date, Time startTim
     String sql = "INSERT INTO Bookings (user_id, court_id, date, start_time, end_time, status, total_price) VALUES (?, ?, ?, ?, ?, ?, ?)";
     int bookingId = -1;
 
-    try (PreparedStatement ps = conn.prepareStatement(sql )) {
+    try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        // Tính thời gian chênh lệch
+        long durationInMillis = endTime.getTime() - startTime.getTime();
+        double hours = durationInMillis / (1000.0 * 60 * 60);
+
+        // Lấy giá sân
+        double pricePerHour = 0.0;
+        String queryPrice = "SELECT price FROM Courts WHERE court_id = ?";
+        try (PreparedStatement priceStmt = conn.prepareStatement(queryPrice)) {
+            priceStmt.setInt(1, courtId);
+            ResultSet rs = priceStmt.executeQuery();
+            if (rs.next()) {
+                pricePerHour = rs.getDouble("price");
+            }
+        }
+
+        double totalPrice = pricePerHour * hours;
+
         ps.setInt(1, userId);
         ps.setInt(2, courtId);
         ps.setDate(3, java.sql.Date.valueOf(date));
         ps.setTime(4, startTime);
         ps.setTime(5, endTime);
-        ps.setString(6, status); // e.g., "pending"
-       
-        
+        ps.setString(6, status);
+        ps.setDouble(7, totalPrice);
 
-
-            int affectedRows = ps.executeUpdate();
-
-            if (affectedRows > 0) {
-                try (ResultSet rs = ps.getGeneratedKeys()) {
-                    if (rs.next()) {
-                        bookingId = rs.getInt(1); // lấy booking_id vừa tạo
-                    }
+        int affectedRows = ps.executeUpdate();
+        if (affectedRows > 0) {
+            try (ResultSet rs = ps.getGeneratedKeys()) {
+                if (rs.next()) {
+                    bookingId = rs.getInt(1);
                 }
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
-
-        return bookingId;
+    } catch (SQLException e) {
+        e.printStackTrace();
     }
+
+    return bookingId;
+}
 
    
 public boolean insertBooking(int userId, int courtId, LocalDate date, Time startTime, Time endTime, String status) {
