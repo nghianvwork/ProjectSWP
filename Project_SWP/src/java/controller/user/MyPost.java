@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package controller.manager;
+package controller.user;
 
 import DAO.PostDAO;
 import Dal.DBContext;
@@ -11,22 +11,20 @@ import Model.User;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.sql.Connection;
-import java.sql.SQLException;
+import java.util.List;
 
 /**
  *
  * @author admin
  */
-@MultipartConfig
-@WebServlet(name = "AddPostManager", urlPatterns = {"/AddPostManager"})
-public class AddPostManager extends HttpServlet {
+@WebServlet(name = "MyPost", urlPatterns = {"/MyPost"})
+public class MyPost extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -45,10 +43,10 @@ public class AddPostManager extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet AddPostManager</title>");
+            out.println("<title>Servlet MyPost</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet AddPostManager at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet MyPost at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -66,7 +64,45 @@ public class AddPostManager extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("user") == null) {
+            response.sendRedirect("Login.jsp");
+            return;
+        }
+        User user = (User) session.getAttribute("user");
+        int userId = user.getUser_Id();
+
+        String keyword = request.getParameter("search");
+        String type = request.getParameter("type");
+        int page = 1, recordsPerPage = 5;
+        if (request.getParameter("page") != null) {
+            try {
+                page = Integer.parseInt(request.getParameter("page"));
+            } catch (Exception e) {
+            }
+        }
+        int offset = (page - 1) * recordsPerPage;
+        int limit = recordsPerPage;
+
+        try {
+            DBContext db = new DBContext();
+            Connection conn = db.getConnection();
+            PostDAO dao = new PostDAO(conn);
+
+            // Lấy tất cả bài viết của user này, mọi status
+            List<Post> myPosts = dao.getPostsByUser(userId, type, keyword, offset, limit);
+            int totalRecords = dao.getTotalUserPostCount(userId, type, keyword);
+            int totalPages = (int) Math.ceil((double) totalRecords / recordsPerPage);
+
+            request.setAttribute("myPosts", myPosts);
+            request.setAttribute("currentPage", page);
+            request.setAttribute("totalPages", totalPages);
+
+            request.getRequestDispatcher("MyPost.jsp").forward(request, response);
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.sendError(500, "Có lỗi khi lấy danh sách bài viết của bạn.");
+        }
     }
 
     /**
@@ -80,58 +116,7 @@ public class AddPostManager extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String action = request.getParameter("action");
-        if ("add".equals(action)) {
-
-            String title = request.getParameter("title");
-            String content = request.getParameter("content");
-            String type = request.getParameter("type");
-
-            // --- Lấy file ảnh upload (nếu có) ---
-            jakarta.servlet.http.Part filePart = request.getPart("image");
-            String fileName = null;
-            if (filePart != null && filePart.getSize() > 0) {
-                fileName = java.nio.file.Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
-                String uploadPath = getServletContext().getRealPath("") + "uploads";
-                java.io.File uploadDir = new java.io.File(uploadPath);
-                if (!uploadDir.exists()) {
-                    uploadDir.mkdir();
-                }
-                filePart.write(uploadPath + java.io.File.separator + fileName);
-            }
-
-            HttpSession session = request.getSession();
-            Model.User user = (Model.User) session.getAttribute("user");
-            if (user == null) {
-                response.sendRedirect("login.jsp");
-                return;
-            }
-            int createdBy = user.getUser_Id();
-            String role = user.getRole();
-
-            Post post = new Post();
-            post.setTitle(title);
-            post.setContent(content);
-            post.setType(type);
-            post.setCreatedBy(createdBy);
-            post.setStatus("pending");
-            post.setCreatedAt(new java.util.Date());
-            post.setImage(fileName);
-
-            try {
-                DBContext db = new DBContext();
-                Connection conn = db.getConnection();
-                PostDAO postDAO = new PostDAO(conn);
-                postDAO.insertPost(post);
-
-                response.sendRedirect("ViewPostManager");
-            } catch (SQLException e) {
-                e.printStackTrace();
-                response.setContentType("text/plain");
-                response.getWriter().println("SQL lỗi: " + e.getMessage());
-            } catch (Exception e) {
-            }
-        }
+        processRequest(request, response);
     }
 
     /**

@@ -85,6 +85,9 @@
                     <a class="nav-link" href="ViewEquipments">QUẢN LÝ DỊCH VỤ</a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link" href="ViewPostManager">QUẢN LÝ BÀI VIẾT</a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" href="users">QUẢN LÝ NGƯỜI DÙNG</a>
                 </li>
                 <li class="nav-item">

@@ -88,6 +88,7 @@
                         <thead class="table-dark">
                             <tr>
                                 <th style="width:6%;">ID</th>
+                                <th style="width:12%;">Ảnh</th>
                                 <th>Tiêu đề</th>
                                 <th style="width:16%;">Loại</th>
                                 <th style="width:18%;">Người đăng</th>
@@ -105,6 +106,13 @@
                             %>
                             <tr>
                                 <td><%= p.getPostId() %></td>
+                                <td>
+                                    <% if (p.getImage() != null && !p.getImage().isEmpty()) { %>
+                                    <img src="<%= request.getContextPath() %>/uploads/<%= p.getImage() %>" style="width:70px;height:70px;object-fit:cover;border-radius:8px;">
+                                    <% } else { %>
+                                    <span style="color:#ccc;">Không có ảnh</span>
+                                    <% } %>
+                                </td>
                                 <td><%= p.getTitle() %></td>
                                 <td>
                                     <% if ("news".equals(p.getType())) { %>Tin tức
@@ -214,7 +222,7 @@
                     <div class="modal fade" id="addPostModal" tabindex="-1" aria-labelledby="addPostModalLabel" aria-hidden="true">
                         <div class="modal-dialog modal-lg">
                             <div class="modal-content">
-                                <form action="AddPostManager" method="post">
+                                <form action="AddPostManager" method="post" enctype="multipart/form-data">
                                     <input type="hidden" name="action" value="add">
                                     <div class="modal-header">
                                         <h5 class="modal-title" id="addPostModalLabel">Đăng bài viết mới</h5>
@@ -230,7 +238,12 @@
                                             <textarea class="form-control" name="content" rows="5" required></textarea>
                                         </div>
                                         <div class="mb-3">
+                                            <label class="form-label">Ảnh bài viết (không bắt buộc)</label>
+                                            <input type="file" class="form-control" name="image" accept="image/*">
+                                        </div>
+                                        <div class="mb-3">
                                             <label class="form-label">Loại bài viết</label>
+
                                             <select class="form-select" name="type" required>
                                                 <option value="news">Tin tức</option>
                                                 <option value="common">Phổ thông</option>

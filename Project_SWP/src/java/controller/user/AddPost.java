@@ -10,12 +10,16 @@ import Model.Post;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig;
 //import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.Part;
+import java.io.File;
+import java.nio.file.Paths;
 //import jakarta.servlet.http.Part;
 //import java.io.File;
 //import java.nio.file.Paths;
@@ -26,7 +30,7 @@ import java.sql.Connection;
  *
  * @author admin
  */
-//@MultipartConfig
+@MultipartConfig
 @WebServlet(name = "AddPost", urlPatterns = {"/AddPost"})
 public class AddPost extends HttpServlet {
 
@@ -85,8 +89,8 @@ public class AddPost extends HttpServlet {
         String title = request.getParameter("title");
         String content = request.getParameter("content");
         String isPartner = request.getParameter("isPartner");
-
         String postType = "common";
+
         if ("true".equals(isPartner)) {
             postType = "partner";
         }
@@ -98,20 +102,21 @@ public class AddPost extends HttpServlet {
         Model.User user = (Model.User) session.getAttribute("user");
         int userId = user.getUser_Id();
 
-//        Part filePart = request.getPart("image");
-//        String fileName = null;
+        Part filePart = request.getPart("image");
+        String fileName = null;
+        if (filePart != null && filePart.getSize() > 0) {
+            fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
 
-//        if (filePart != null && filePart.getSize() > 0) {
-//            fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
-//
-//            String uploadPath = getServletContext().getRealPath("") + "uploads";
-//            File uploadDir = new File(uploadPath);
-//            if (!uploadDir.exists()) {
-//                uploadDir.mkdir();
-//            }
-//
-//            filePart.write(uploadPath + File.separator + fileName);
-//        }
+            // Lưu ảnh vào thư mục web/uploads (luôn tồn tại khi build)
+            String uploadPath = getServletContext().getRealPath("/uploads");
+            File uploadDir = new File(uploadPath);
+            if (!uploadDir.exists()) {
+                uploadDir.mkdir();
+            }
+
+            filePart.write(uploadPath + File.separator + fileName);
+        }
+
         try {
             // Kết nối CSDL
             DBContext db = new DBContext(); // dùng DAL riêng của bạn
@@ -125,10 +130,11 @@ public class AddPost extends HttpServlet {
             post.setCreatedBy(userId);
             post.setType(postType);
             post.setStatus(status);
-//            post.setImage(fileName);
+            post.setImage(fileName);
 
             dao.insertPost(post);
-            response.sendRedirect("PostView.jsp");
+            session.setAttribute("postStatus", "Bài viết của bạn đã được gửi và đang chờ duyệt!");
+            response.sendRedirect("PostView");
 
         } catch (Exception e) {
             e.printStackTrace();
