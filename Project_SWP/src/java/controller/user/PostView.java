@@ -17,6 +17,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -79,7 +80,8 @@ public class PostView extends HttpServlet {
         }
 
         int offset = (page - 1) * recordsPerPage;
-
+        int limit = recordsPerPage;
+        
         try {
             DBContext db = new DBContext();
             Connection conn = db.getConnection();
@@ -95,10 +97,29 @@ public class PostView extends HttpServlet {
             int totalRecords = dao.getTotalApprovedPostCount(type, keyword);
             int totalPages = (int) Math.ceil((double) totalRecords / recordsPerPage);
 
-            request.setAttribute("posts", posts);
             request.setAttribute("currentPage", page);
             request.setAttribute("totalPages", totalPages);
 
+            if (type == null || type.isEmpty()) {
+                
+                List<Post> latestNews = dao.getLatestNews(1); 
+                Post newsFeatured = latestNews.isEmpty() ? null : latestNews.get(0);
+                
+                List<Post> allPosts = dao.getPostsForUser(null, keyword, userId, offset, limit);
+
+                List<Post> otherPosts = new ArrayList<>();
+                for (Post p : allPosts) {
+                    if (newsFeatured == null || p.getPostId() != newsFeatured.getPostId()) {
+                        otherPosts.add(p);
+                    }
+                }
+
+                request.setAttribute("newsFeatured", newsFeatured);
+                request.setAttribute("otherPosts", otherPosts);
+
+            } else {
+                request.setAttribute("posts", posts);
+            }
             request.getRequestDispatcher("PostView.jsp").forward(request, response);
 
         } catch (Exception e) {
