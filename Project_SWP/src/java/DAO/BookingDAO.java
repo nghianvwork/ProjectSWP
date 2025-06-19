@@ -10,6 +10,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Time;
+import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +20,10 @@ import DAO.CourtDAO;
 import Dal.DBContext;
 import Model.BookingScheduleDTO;
 import Model.Bookings;
+import Model.Courts;
+import Model.Service;
+import DAO.ServiceDAO;
+import DAO.BookingServiceDAO;
 
 
 /**
@@ -206,38 +211,39 @@ public int insertBooking1(int userId, int courtId, LocalDate date, Time startTim
     }
 
    
-public boolean insertBooking(int userId, int courtId, LocalDate date, Time startTime, Time endTime, String status) {
+public int insertBooking(int userId, int courtId, LocalDate date, Time startTime, Time endTime, String status) {
     String sql = "INSERT INTO Bookings (user_id, court_id, date, start_time, end_time, status, total_price) VALUES (?, ?, ?, ?, ?, ?, ?)";
     int bookingId = -1;
 
-    try (PreparedStatement ps = conn.prepareStatement(sql )) {
+    try (PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
         ps.setInt(1, userId);
         ps.setInt(2, courtId);
         ps.setDate(3, java.sql.Date.valueOf(date));
         ps.setTime(4, startTime);
         ps.setTime(5, endTime);
-        ps.setString(6, status); // e.g., "pending"
-        try {
-            int areaId = new CourtDAO().getCourtById(courtId).getArea_id();
-        } catch (Exception e) {
-            ps.setDouble(7, 0);
-        }
-        int affectedRows = ps.executeUpdate();
-        
+        ps.setString(6, status);
 
-            if (affectedRows > 0) {
-                try (ResultSet rs = ps.getGeneratedKeys()) {
-                    if (rs.next()) {
-                        bookingId = rs.getInt(1); // lấy booking_id vừa tạo
-                    }
+        double totalPrice = 0;
+        Courts c = new CourtDAO().getCourtById(courtId);
+        if (c != null) {
+            totalPrice = c.getPrice();
+        }
+        ps.setDouble(7, totalPrice);
+
+        int affectedRows = ps.executeUpdate();
+        if (affectedRows > 0) {
+            try (ResultSet rs = ps.getGeneratedKeys()) {
+                if (rs.next()) {
+                    bookingId = rs.getInt(1);
                 }
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
-
-        return true;
+    } catch (SQLException e) {
+        e.printStackTrace();
     }
+
+    return bookingId;
+}
 
 
     public Bookings getBookingById1(int bookingId) {
@@ -401,7 +407,8 @@ public List<Bookings> getBookingsByUserId(int userId) {
         return false;
     }
 
-    public boolean updateBooking(int bookingId, LocalDate date, Time startTime, Time endTime, String status) {
+    public boolean updateBooking(int bookingId, LocalDate date, Time startTime, Time endTime,
+                                 String status, List<Integer> serviceIds) {
         String sql = "UPDATE Bookings SET date = ?, start_time = ?, end_time = ?, status = ?, total_price = ? WHERE booking_id = ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setDate(1, Date.valueOf(date));
@@ -409,38 +416,66 @@ public List<Bookings> getBookingsByUserId(int userId) {
             ps.setTime(3, endTime);
             ps.setString(4, status);
 
-            // Recalculate price based on the new time range
+            // Recalculate price based on court and services
             Bookings current = getBookingById(bookingId);
-            int areaId = new CourtDAO().getCourtById(current.getCourt_id()).getArea_id();
-
+            double total = 0;
+            Courts court = new CourtDAO().getCourtById(current.getCourt_id());
+            if (court != null) {
+                total += court.getPrice();
+            }
+            if (serviceIds != null) {
+                for (int sid : serviceIds) {
+                    Service s = ServiceDAO.getServiceById(sid);
+                    if (s != null) {
+                        total += s.getPrice();
+                    }
+                }
+            }
+            ps.setDouble(5, total);
             ps.setInt(6, bookingId);
-            return ps.executeUpdate() > 0;
+
+            int rows = ps.executeUpdate();
+            if (rows > 0) {
+                BookingServiceDAO bsDao = new BookingServiceDAO();
+                bsDao.removeServicesByBookingId(bookingId);
+                if (serviceIds != null) {
+                    for (int sid : serviceIds) {
+                        bsDao.addServiceToBooking(bookingId, sid);
+                    }
+                }
+                return true;
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return false;
     }
 
-    public boolean checkSlotAvailableForUpdate(int bookingId, int courtId, LocalDate date, Time startTime, Time endTime) {
+    public boolean checkSlotAvailableForUpdate(int bookingId, int courtId, LocalDate date,
+                                              Time startTime, Time endTime) {
+        // Use the same overlap logic as when creating a new booking and exclude the
+        // current booking by its id. Also ignore cancelled or rejected bookings.
         String sql = "SELECT COUNT(*) FROM Bookings "
                 + "WHERE court_id = ? AND date = ? AND booking_id <> ? "
-                + "AND start_time < ? AND end_time > ? "
-                + "AND status <> 'cancelled'";
+                + "AND status NOT IN ('cancelled', 'rejected') "
+                + "AND NOT (end_time <= ? OR start_time >= ?)";
+
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, courtId);
             ps.setDate(2, Date.valueOf(date));
             ps.setInt(3, bookingId);
-            ps.setTime(4, endTime);
-            ps.setTime(5, startTime);
+            ps.setTime(4, startTime);  // compare new slot with existing ones
+            ps.setTime(5, endTime);
+
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                // true khi không có booking khác giao nhau
-                return rs.getInt(1) == 0;
+                // Slot is available when there is no overlapping booking
+                return rs.getInt(1) > 0;
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return false;
+        return true;
     }
 public List<Bookings> getBookingsByCourtId(int courtId) {
     List<Bookings> list = new ArrayList<>();
