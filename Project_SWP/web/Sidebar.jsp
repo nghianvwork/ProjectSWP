@@ -79,7 +79,7 @@
                     <a class="nav-link" href="view-region">QUẢN LÝ KHU VỰC</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="manager-booking-schedule">QUẢN LÝ SÂN</a>
+                    <a class="nav-link" href="manager-booking-schedule">QUẢN LÝ ĐẶT LỊCH</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="ViewEquipments">QUẢN LÝ DỊCH VỤ</a>
