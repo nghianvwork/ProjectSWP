@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import DAO.CourtDAO;
-import DAO.CourtPricingDAO;
 
 import Dal.DBContext;
 import Model.BookingScheduleDTO;
@@ -183,8 +182,6 @@ public int insertBooking1(int userId, int courtId, LocalDate date, Time startTim
         ps.setString(6, status); // e.g., "pending"
         try {
             int areaId = new CourtDAO().getCourtById(courtId).getArea_id();
-            double totalPrice = new CourtPricingDAO().calculatePrice(areaId, startTime, endTime);
-            ps.setDouble(7, totalPrice);
         } catch (Exception e) {
             ps.setDouble(7, 0);
         }
@@ -222,8 +219,6 @@ public boolean insertBooking(int userId, int courtId, LocalDate date, Time start
         ps.setString(6, status); // e.g., "pending"
         try {
             int areaId = new CourtDAO().getCourtById(courtId).getArea_id();
-            double totalPrice = new CourtPricingDAO().calculatePrice(areaId, startTime, endTime);
-            ps.setDouble(7, totalPrice);
         } catch (Exception e) {
             ps.setDouble(7, 0);
         }
@@ -417,9 +412,7 @@ public List<Bookings> getBookingsByUserId(int userId) {
             // Recalculate price based on the new time range
             Bookings current = getBookingById(bookingId);
             int areaId = new CourtDAO().getCourtById(current.getCourt_id()).getArea_id();
-            double totalPrice = new CourtPricingDAO().calculatePrice(areaId, startTime, endTime);
 
-            ps.setDouble(5, totalPrice);
             ps.setInt(6, bookingId);
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
