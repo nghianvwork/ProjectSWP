@@ -61,6 +61,7 @@ public class PostDAO {
             p.setCreatedAt(rs.getTimestamp("created_at"));
             p.setStatus(rs.getString("status"));
             p.setCreatedByName(rs.getString("createdByName"));
+            p.setImage(rs.getString("image"));
             list.add(p);
         }
         return list;
@@ -110,6 +111,7 @@ public class PostDAO {
             p.setType(rs.getString("type"));
             p.setCreatedBy(rs.getInt("created_by"));
             p.setCreatedAt(rs.getTimestamp("created_at"));
+            p.setImage(rs.getString("image"));
             return p;
         }
         return null;
@@ -148,6 +150,7 @@ public class PostDAO {
             p.setCreatedBy(rs.getInt("created_by"));
             p.setCreatedAt(rs.getTimestamp("created_at"));
             p.setStatus(rs.getString("status"));
+            p.setImage(rs.getString("image"));
             list.add(p);
         }
         return list;
@@ -194,6 +197,7 @@ public class PostDAO {
             p.setCreatedBy(rs.getInt("created_by"));
             p.setCreatedAt(rs.getTimestamp("created_at"));
             p.setStatus(rs.getString("status"));
+            p.setImage(rs.getString("image"));
             list.add(p);
         }
         return list;
@@ -233,6 +237,7 @@ public class PostDAO {
             p.setCreatedBy(rs.getInt("created_by"));
             p.setCreatedAt(rs.getTimestamp("created_at"));
             p.setStatus(rs.getString("status"));
+            p.setImage(rs.getString("image"));
             list.add(p);
         }
         return list;

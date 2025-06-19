@@ -120,7 +120,7 @@
                                     <% } else if ("common".equals(p.getType())) { %>Phổ thông
                                     <% } else { %><%= p.getType() %><% } %>
                                 </td>
-                                <td><%= p.getCreatedByName() %></td> <!-- sửa lại nếu có phương thức lấy tên -->
+                                <td><%= p.getCreatedByName() %></td>
                                 <td><%= df.format(p.getCreatedAt()) %></td>
                                 <td>
                                     <% if ("pending".equals(p.getStatus())) { %>Chờ duyệt
@@ -164,12 +164,12 @@
                                             </div>
                                             <p><strong>Người đăng:</strong> <%=p.getCreatedByName()%></p>
                                             <p><strong>Ngày tạo:</strong> <%= df.format(p.getCreatedAt()) %></p>
-                                            <p><strong>Trạng thái:</strong>
-                                                <% if ("pending".equals(p.getStatus())) { %>Chờ duyệt
-                                                <% } else if ("approved".equals(p.getStatus())) { %>Đã duyệt
-                                                <% } else if ("rejected".equals(p.getStatus())) { %>Từ chối
-                                                <% } else { %><%= p.getStatus() %><% } %>
-                                            </p>
+                                            <select class="form-select me-2" style="width: 130px;" name="status">
+    <option value="">Tất cả trạng thái</option>
+    <option value="pending" <%= "pending".equals(request.getParameter("status")) ? "selected" : "" %>>Chờ duyệt</option>
+    <option value="approved" <%= "approved".equals(request.getParameter("status")) ? "selected" : "" %>>Đã duyệt</option>
+    <option value="rejected" <%= "rejected".equals(request.getParameter("status")) ? "selected" : "" %>>Từ chối</option>
+</select>
                                         </div>
                                         <div class="modal-footer">
                                             <button type="submit" class="btn btn-primary">Lưu thay đổi</button>

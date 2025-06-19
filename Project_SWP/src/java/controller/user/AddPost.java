@@ -90,11 +90,10 @@ public class AddPost extends HttpServlet {
         String content = request.getParameter("content");
         String isPartner = request.getParameter("isPartner");
         String postType = "common";
-
         if ("true".equals(isPartner)) {
             postType = "partner";
         }
-
+        
         String status = "pending";
 
         // Lấy ID người dùng từ session (giả định đã đăng nhập)
@@ -106,8 +105,6 @@ public class AddPost extends HttpServlet {
         String fileName = null;
         if (filePart != null && filePart.getSize() > 0) {
             fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
-
-            // Lưu ảnh vào thư mục web/uploads (luôn tồn tại khi build)
             String uploadPath = getServletContext().getRealPath("/uploads");
             File uploadDir = new File(uploadPath);
             if (!uploadDir.exists()) {
@@ -118,8 +115,8 @@ public class AddPost extends HttpServlet {
         }
 
         try {
-            // Kết nối CSDL
-            DBContext db = new DBContext(); // dùng DAL riêng của bạn
+            
+            DBContext db = new DBContext(); 
             Connection conn = db.getConnection();
 
             PostDAO dao = new PostDAO(conn);

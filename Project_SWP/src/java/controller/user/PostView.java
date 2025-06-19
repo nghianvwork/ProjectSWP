@@ -92,7 +92,7 @@ public class PostView extends HttpServlet {
                 User user = (User) session.getAttribute("user");
                 userId = user.getUser_Id();
             }
-            List<Post> posts = dao.getPostsForUser(type, keyword, userId, offset, recordsPerPage);
+            List<Post> posts = dao.getPostsForUser(type, keyword, userId, offset, limit);
 
             int totalRecords = dao.getTotalApprovedPostCount(type, keyword);
             int totalPages = (int) Math.ceil((double) totalRecords / recordsPerPage);

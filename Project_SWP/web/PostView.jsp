@@ -51,36 +51,34 @@
         SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm");
     %>
 
-    <%-- Nếu không chọn loại (Tất cả), chia 2 cột --%>
+    
     <% if (typeParam == null || typeParam.isEmpty()) { %>
     <div class="row">
         <!-- Cột to bên trái: bài tin tức mới nhất -->
         <div class="col-md-6">
-            <% if (newsFeatured != null) { %>
+            <% Post n = newsFeatured; %>
+            <% if (n != null) { %>
             <div class="card mb-4 shadow" style="overflow:hidden;">
                 <div class="card-body" style="padding:0;">
-                    <%
-                    String imgNewsSrc = (newsFeatured != null && newsFeatured.getImage() != null && !newsFeatured.getImage().isEmpty())
-                        ? request.getContextPath() + "/uploads/" + newsFeatured.getImage()
-                        : request.getContextPath() + "/images/no-image.png";
-                    %>
-                    <img src="<%= imgNewsSrc %>" 
-                         style="width:100%;height:240px;object-fit:cover;display:block;"
-                         onerror="this.onerror=null;this.src='<%=request.getContextPath()%>/images/no-image.png';">
+                    
+                    <% if (n != null && n.getImage() != null && !n.getImage().isEmpty()) { %>
+                    <img src="<%= request.getContextPath() + "/uploads/" + n.getImage() %>" 
+                         style="width:100%;height:240px;object-fit:cover;display:block;">
+                    <% } %>
                     <div style="padding:20px 20px 10px 20px;">
                         <span class="badge bg-primary mb-2">Tin tức mới nhất</span>
                         <h2 class="card-title" style="color:#e63946;">
-                            <a href="PostDetail?id=<%= newsFeatured.getPostId() %>" style="color:#e63946;text-decoration:none;">
-                                <%= newsFeatured.getTitle() %>
+                            <a href="PostDetail?id=<%= n.getPostId() %>" style="color:#e63946;text-decoration:none;">
+                                <%= n.getTitle() %>
                             </a>
                         </h2>
                         <div style="font-size:14px;color:#888;margin-bottom:8px;">
-                            📅 <%= df.format(newsFeatured.getCreatedAt()) %> | 🏷️ <%= newsFeatured.getType() %>
+                            📅 <%= df.format(n.getCreatedAt()) %> | 🏷️ <%= n.getType() %>
                         </div>
                         <p style="color:#333;">
-                            <%= newsFeatured.getContent().length() > 200 ? newsFeatured.getContent().substring(0, 200) + "..." : newsFeatured.getContent() %>
+                            <%= n.getContent().length() > 200 ? n.getContent().substring(0, 200) + "..." : n.getContent() %>
                         </p>
-                        <a href="PostDetail?id=<%= newsFeatured.getPostId() %>" style="color:#e63946;font-weight:bold;">Xem chi tiết</a>
+                        <a href="PostDetail?id=<%= n.getPostId() %>" style="color:#e63946;font-weight:bold;">Xem chi tiết</a>
                     </div>
                 </div>
             </div>
@@ -94,9 +92,10 @@
                 for (Post p : otherPosts) { %>
             <div class="card mb-3 shadow-sm" style="overflow:hidden;">
                 <div class="card-body p-2" style="display:flex;align-items:center;gap:15px;">
-                    <img src="<%= (p.getImage() != null && !p.getImage().isEmpty()) ? request.getContextPath() + "/uploads/" + p.getImage() : request.getContextPath() + "/images/no-image.png" %>" 
-                         style="width:70px;height:70px;object-fit:cover;border-radius:8px;"
-                         onerror="this.onerror=null;this.src='<%=request.getContextPath()%>/images/no-image.png';">
+                    <% if (p.getImage() != null && !p.getImage().isEmpty()) { %>
+                    <img src="<%= request.getContextPath() + "/uploads/" + p.getImage() %>"
+                         style="width:70px;height:70px;object-fit:cover;border-radius:8px;">
+                    <% } %>
                     <div style="flex:1;">
                         <h6 class="card-title" style="margin-bottom:5px;">
                             <a href="PostDetail?id=<%= p.getPostId() %>" style="color:#e63946;text-decoration:none;"><%= p.getTitle() %></a>
@@ -140,7 +139,7 @@
     <% } %>
     <% } %>
 
-    <div style="margin-left: 250px; margin-top: 10px;">
+    <div style="margin-top: 10px;">
         <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#createPostModal">
             + Đăng bài viết
         </button>
