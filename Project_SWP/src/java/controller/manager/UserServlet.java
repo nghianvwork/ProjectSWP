@@ -84,6 +84,21 @@ protected void doPost(HttpServletRequest request, HttpServletResponse response)
         } else if (phoneExists) {
             request.setAttribute("error", "Số điện thoại đã tồn tại.");
         }
+// Kiểm tra số điện thoại
+
+        String phoneRegex = "^0\\d{9}$";  // Số điện thoại bắt đầu bằng '0' và có 10 chữ số
+
+        if (!phone.matches(phoneRegex)) {
+            request.setAttribute("error", "Số điện thoại phải bắt đầu với số 0 và có đúng 10 chữ số.");
+        }
+        // Kiểm tra username không chứa ký tự đặc biệt và có ít nhất 6 ký tự
+
+        String usernameRegex = "^[a-zA-Z0-9]{6,20}$";  // Chỉ cho phép chữ cái và số, độ dài >= 6
+
+        if (!username.matches(usernameRegex)) {
+            request.setAttribute("error", "Username phải có ít nhất 6 ký tự và chỉ chứa chữ cái và số.");
+        }
+
 
         if (request.getAttribute("error") != null) {
             List<User> users = userDAO.getUsersByPage(1, 5);

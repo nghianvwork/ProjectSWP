@@ -9,6 +9,7 @@ import jakarta.servlet.annotation.*;
 import java.io.IOException;
 import java.util.List;
 
+
 @WebServlet("/notification_list")
 public class AdminNotificationListServlet extends HttpServlet {
     @Override
@@ -30,6 +31,15 @@ public class AdminNotificationListServlet extends HttpServlet {
         List<Notification> list = dao.searchNotifications(keyword, offset, size);
         int total = dao.countNotifications(keyword);
         int totalPages = (int) Math.ceil((double) total / size);
+
+        // Lọc các thông báo đã gửi để không cho phép sửa
+        for (Notification notification : list) {
+            if ("sent".equals(notification.getStatus())) {
+                notification.setEditable(false);  // Bạn có thể thêm một thuộc tính để đánh dấu không thể sửa
+            } else {
+                notification.setEditable(true);
+            }
+        }
 
         request.setAttribute("notifications", list);
         request.setAttribute("keyword", keyword);

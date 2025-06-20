@@ -3,8 +3,9 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <title>Danh sách thông báo</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet"/>
@@ -99,16 +100,36 @@
                                         </td>
                                         <td>${n.createdAt}</td>
                                         <td>
-                                            <a href="${pageContext.request.contextPath}/edit-notification?id=${n.notificationId}" class="btn btn-warning btn-sm">
-                                                <i class="bi bi-pencil-square"></i> Sửa
-                                            </a>
+                                            <!-- Kiểm tra nếu thông báo đã gửi thì chỉ cho phép xem -->
+                                            <c:choose>
+                                                <c:when test="${n.status eq 'sent'}">
+                                                    <!-- Nút "Xem lại" cho thông báo đã gửi -->
+                                                    <a href="${pageContext.request.contextPath}/view-notification?id=${n.notificationId}" class="btn btn-info btn-sm">
+                                                        <i class="bi bi-eye"></i> Xem lại
+                                                    </a>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <!-- Nút sửa chỉ dành cho các thông báo chưa gửi -->
+                                                    <a href="${pageContext.request.contextPath}/edit-notification?id=${n.notificationId}" class="btn btn-warning btn-sm">
+                                                        <i class="bi bi-pencil-square"></i> Sửa
+                                                    </a>
+                                                </c:otherwise>
+                                            </c:choose>
                                         </td>
                                         <td>
-                                            <a href="${pageContext.request.contextPath}/send-notification?nId=${n.notificationId}" 
-                                               class="btn btn-primary btn-sm"
-                                               onclick="return confirm('Bạn có chắc muốn gửi thông báo này không?');">
-                                                <i class="bi bi-send"></i> Gửi
-                                            </a>
+                                            <!-- Nếu thông báo đã gửi, chỉ hiển thị "Đã gửi", không cho phép gửi lại -->
+                                            <c:choose>
+                                                <c:when test="${n.status eq 'sent'}">
+                                                    <span class="text-muted">Đã gửi</span>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <a href="${pageContext.request.contextPath}/send-notification?nId=${n.notificationId}" 
+                                                       class="btn btn-primary btn-sm"
+                                                       onclick="return confirm('Bạn có chắc muốn gửi thông báo này không?');">
+                                                        <i class="bi bi-send"></i> Gửi
+                                                    </a>
+                                                </c:otherwise>
+                                            </c:choose>
                                         </td>
                                     </tr>
 
