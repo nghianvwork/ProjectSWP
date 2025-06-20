@@ -1,11 +1,12 @@
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Register</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng Ký</title>
     <style>
         body {
             display: flex;
@@ -103,25 +104,25 @@
 <body>
 
 <div class="register-container">
-    <h2>Register</h2>
+    <h2>Đăng Ký</h2>
 
     <form action="register" method="post">
-        <!-- Username -->
+        <!-- Tên đăng nhập -->
         <div class="input-group">
             <span class="input-icon">&#128100;</span>
-            <input type="text" class="input-field" name="username" placeholder="Username" required>
+            <input type="text" class="input-field" name="username" placeholder="Tên đăng nhập" required>
         </div>
 
-        <!-- Password -->
+        <!-- Mật khẩu -->
         <div class="input-group">
             <span class="input-icon">&#128274;</span>
-            <input type="password" class="input-field" name="password" placeholder="Password" required>
+            <input type="password" class="input-field" name="password" placeholder="Mật khẩu" required>
         </div>
 
-        <!-- Confirm Password -->
+        <!-- Xác nhận mật khẩu -->
         <div class="input-group">
             <span class="input-icon">&#128274;</span>
-            <input type="password" class="input-field" name="confirm_password" placeholder="Confirm Password" required>
+            <input type="password" class="input-field" name="confirm_password" placeholder="Xác nhận mật khẩu" required>
         </div>
 
         <!-- Email -->
@@ -130,26 +131,26 @@
             <input type="email" class="input-field" name="email" placeholder="Email" required>
         </div>
 
-        <!-- Phone -->
+        <!-- Số điện thoại -->
         <div class="input-group">
             <span class="input-icon">&#128222;</span>
-            <input type="text" class="input-field" name="phone_number" placeholder="Phone Number" required>
+            <input type="text" class="input-field" name="phone_number" placeholder="Số điện thoại" required>
         </div>
 
-        <!-- Hidden role -->
+        <!-- Vai trò người dùng -->
         <input type="hidden" name="role" value="user"/>
 
-        <!-- Submit -->
-        <button type="submit" class="btn">Register</button>
+        <!-- Nút gửi -->
+        <button type="submit" class="btn">Đăng Ký</button>
     </form>
 
-    <!-- Error message -->
+    <!-- Thông báo lỗi -->
     <c:if test="${not empty error}">
         <span class="error-message">${error}</span>
     </c:if>
 
-    <!-- Login -->
-    <a href="login" class="login-link">Login here</a>
+    <!-- Liên kết đăng nhập -->
+    <a href="login" class="login-link">Đã có tài khoản? Đăng nhập ngay</a>
 </div>
 
 </body>

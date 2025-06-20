@@ -6,6 +6,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Danh sách thông báo</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet"/>
@@ -15,7 +16,7 @@
 <!-- Navbar -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
-        <a class="navbar-brand" href="#">Quản lý</a>
+        <a class="navbar-brand" href="#">Quản lý Thông Báo</a>
         <div class="d-flex">
             <a class="nav-link text-light" href="login">Đăng xuất</a>
         </div>
@@ -40,12 +41,26 @@
                     </a>
                 </div>
 
-                <!-- Form tìm kiếm -->
+                <!-- Form tìm kiếm và lọc -->
                 <form class="mb-3 d-flex" method="get" action="notification_list">
                     <input type="text" name="keyword" value="${keyword}" class="form-control me-2" placeholder="Tìm kiếm theo tiêu đề...">
+                    <select name="status" class="form-control me-2">
+                        <option value="">Tất cả trạng thái</option>
+                        <option value="sent" ${status == 'sent' ? 'selected' : ''}>Đã gửi</option>
+                        <option value="scheduled" ${status == 'scheduled' ? 'selected' : ''}>Đã lên lịch</option>
+                        <option value="draft" ${status == 'draft' ? 'selected' : ''}>Bản nháp</option>
+                    </select>
                     <button class="btn btn-outline-secondary" type="submit"><i class="bi bi-search"></i></button>
                 </form>
 
+                <!-- Hiển thị thông báo lỗi nếu không có kết quả -->
+                <c:if test="${not empty error}">
+                    <div class="alert alert-danger">
+                        ${error}
+                    </div>
+                </c:if>
+
+                <!-- Bảng thông báo -->
                 <div class="card shadow-sm">
                     <div class="card-body p-0">
                         <div class="table-responsive">
@@ -163,7 +178,7 @@
                     <ul class="pagination">
                         <c:forEach var="i" begin="1" end="${totalPages}">
                             <li class="page-item ${i == currentPage ? 'active' : ''}">
-                                <a class="page-link" href="notification_list?page=${i}&keyword=${fn:escapeXml(keyword)}">${i}</a>
+                                <a class="page-link" href="notification_list?page=${i}&keyword=${fn:escapeXml(keyword)}&status=${status}">${i}</a>
                             </li>
                         </c:forEach>
                     </ul>

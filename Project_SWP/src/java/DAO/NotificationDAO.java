@@ -59,6 +59,8 @@ public class NotificationDAO extends DBContext {
     }
 
     
+
+   
     
     public boolean createNotification(Notification n) {
         String sql = "INSERT INTO Notification (title, content, image_url, created_by, scheduled_time, sent_time, status, created_at) "
@@ -290,5 +292,61 @@ public class NotificationDAO extends DBContext {
             System.err.println("Lỗi insertReceiver: " + e.getMessage());
         }
     }
+
+    
+    
+public List<Notification> searchNotificationsByStatus(String keyword, String status, int offset, int limit) throws ClassNotFoundException {
+    List<Notification> list = new ArrayList<>();
+    String sql = "SELECT * FROM Notification "
+            + "WHERE title LIKE ? "
+            + "AND (status = ? OR ? = '') "  // Lọc theo trạng thái, nếu không có trạng thái thì không lọc theo trạng thái
+            + "ORDER BY scheduled_time DESC "
+            + "OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";  // Phân trang
+
+    try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+        ps.setString(1, "%" + keyword + "%");  // Tìm kiếm theo từ khóa trong tiêu đề
+        ps.setString(2, status);  // Trạng thái (có thể là 'sent', 'scheduled', 'draft', ...)
+        ps.setString(3, status);  // Nếu không có trạng thái, lấy tất cả
+        ps.setInt(4, offset);  // Vị trí bắt đầu phân trang
+        ps.setInt(5, limit);  // Số lượng bản ghi trả về
+
+        try (ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                Notification noti = new Notification();
+                noti.setNotificationId(rs.getInt("notification_id"));
+                noti.setTitle(rs.getString("title"));
+                noti.setContent(rs.getString("content"));
+                noti.setImageUrl(rs.getString("image_url"));
+
+                UserDAO udao = new UserDAO();
+                noti.setCreatedBy(udao.getUserById(rs.getInt("created_by")));
+
+                Timestamp scheduled = rs.getTimestamp("scheduled_time");
+                if (scheduled != null) {
+                    noti.setScheduledTime(scheduled.toLocalDateTime());
+                }
+
+                Timestamp sent = rs.getTimestamp("sent_time");
+                if (sent != null) {
+                    noti.setSentTime(sent.toLocalDateTime());
+                }
+
+                noti.setStatus(rs.getString("status"));
+
+                Timestamp created = rs.getTimestamp("created_at");
+                if (created != null) {
+                    noti.setCreatedAt(created.toLocalDateTime());
+                }
+
+                list.add(noti);
+            }
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();  // Log error if any
+    }
+    return list;  // If no notifications, this will return an empty list, not null
+}
+
+
 
 }
