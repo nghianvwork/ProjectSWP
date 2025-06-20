@@ -37,17 +37,26 @@
                     <input type="hidden" name="questionId" value="${question.questionId}"/>
                     <input type="hidden" name="answerId" id="answerId"/>
 
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Answer Content</label>
-                        <textarea id="editor" name="content"></textarea>
-                    </div>
+                    <c:if test="${not empty answerList}">
+                        <div class="alert alert-warning">
+                            This question already has an answer. You can only add one answer per question.
+                        </div>
+                    </c:if>
 
-                    <div class="d-flex gap-2">
-                        <button type="submit" class="btn btn-primary" id="submitBtn">
-                            <i class="fas fa-paper-plane"></i> Submit Answer
-                        </button>
-                        <a href="faq-list" class="btn btn-secondary">Back</a>
-                    </div>
+                    <c:if test="${empty answerList}">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Answer Content</label>
+                            <textarea id="editor" name="content"></textarea>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary" id="submitBtn">
+                                <i class="fas fa-paper-plane"></i> Submit Answer
+                            </button>
+                            <!-- Nút Quay lại -->
+                            <a href="faq-list" class="btn btn-secondary">Quay lại danh sách câu hỏi</a>
+                        </div>
+                    </c:if>
                 </form>
 
                 <!-- Danh sách các Answer -->
@@ -78,14 +87,13 @@
                                             </form>
 
                                             <!-- Sửa -->
-                                           <button type="button"
-        class="btn btn-sm btn-warning mt-1"
-        data-id="${ans.answerId}"
-        data-content="${fn:escapeXml(ans.content)}"
-        onclick="handleEditButton(this)">
-    <i class="fas fa-edit"></i>
-</button>
-
+                                            <button type="button"
+                                                    class="btn btn-sm btn-warning mt-1"
+                                                    data-id="${ans.answerId}"
+                                                    data-content="${fn:escapeXml(ans.content)}"
+                                                    onclick="handleEditButton(this)">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
                                         </div>
                                     </div>
                                 </li>
@@ -96,6 +104,8 @@
                         <div class="alert alert-warning">No answers yet for this question.</div>
                     </c:otherwise>
                 </c:choose>
+                <!-- Nút quay lại sau danh sách câu trả lời -->
+                <a href="faq-list" class="btn btn-secondary mt-3">Quay lại danh sách câu hỏi</a>
             </div>
         </div>
     </div>
