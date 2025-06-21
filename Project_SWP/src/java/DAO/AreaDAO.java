@@ -73,6 +73,61 @@ public class AreaDAO extends DBContext {
         }
         return areas;
     }
+    
+    public List<Branch> searchAreaByFilters(String areaName, String location, String timePeriod) {
+        List<Branch> areas = new ArrayList<>();
+        String sql = "SELECT * FROM Areas WHERE name LIKE ? AND location LIKE ?";
+
+        if (timePeriod != null && !"Tất cả".equals(timePeriod)) {
+            switch (timePeriod) {
+                case "Sáng (6h-12h)":
+                    sql += " AND open_time <= '12:00:00' AND close_time >= '06:00:00'";
+                    break;
+                case "Chiều (12h-18h)":
+                    sql += " AND open_time <= '18:00:00' AND close_time >= '12:00:00'";
+                    break;
+                case "Tối (18h-22h)":
+                    sql += " AND open_time <= '22:00:00' AND close_time >= '18:00:00'";
+                    break;
+            }
+        }
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, "%" + (areaName == null ? "" : areaName) + "%");
+            ps.setString(2, "%" + (location == null || "Tất cả".equals(location) ? "" : location) + "%");
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Branch area = new Branch();
+                area.setArea_id(rs.getInt("area_id"));
+                area.setName(rs.getString("name"));
+                area.setLocation(rs.getString("location"));
+                area.setEmptyCourt(rs.getInt("court"));
+                area.setOpenTime(rs.getTime("open_time"));
+                area.setCloseTime(rs.getTime("close_time"));
+                area.setDescription(rs.getString("descriptions"));
+                area.setPhone_branch(rs.getString("phone_area"));
+                area.setNameStaff(rs.getString("nameStaff"));
+                areas.add(area);
+            }
+        } catch (Exception e) {
+            System.out.println("searchAreaByFilters error: " + e.getMessage());
+        }
+        return areas;
+    }
+
+    public List<String> getDistinctLocations() {
+        List<String> locations = new ArrayList<>();
+        String sql = "SELECT DISTINCT location FROM Areas";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                locations.add(rs.getString("location"));
+            }
+        } catch (Exception e) {
+            System.out.println("getDistinctLocations error: " + e.getMessage());
+        }
+        return locations;
+    }
 
     public void addRegion(Branch re) {
         String sql = "INSERT INTO [dbo].[Areas] "

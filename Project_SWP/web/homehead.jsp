@@ -69,7 +69,7 @@
                 outline: none;
             }
 
-            .search-btn {
+            .search-header {
                 position: absolute;
                 right: 5px;
                 top: 50%;
@@ -161,9 +161,9 @@
                 <div class="logo">BadmintonCourt</div>
                 <div class="search-bar">
 
-                    <form action="SearchUser" method="POST" class="form-inline mb-4">
-                        <input type="text" name="searchInput" value="${searchKeyword}" placeholder="Tìm khu vực sân cầu lông...">
-                        <button class="search-btn" type="submit" >Tìm</button>
+                    <form action="SearchUser" method="GET" class="form-inline mb-4">
+                        <input type="text" name="areaName" value="${areaName != null ? areaName : ''}" placeholder="Tên khu vực">
+                        <button class="search-header" type="submit" >Tìm</button>
                     </form>
 
                 </div>
