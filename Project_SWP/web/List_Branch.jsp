@@ -350,7 +350,6 @@
                             <p>Giờ mở cửa: ${area.openTime} - ${area.closeTime}</p>
                             <p>Mô tả: ${area.description}</p>
                             <a href="AreaDetail?area_id=${area.area_id}" class="book-btn btn" >Xem chi tiết</a>
-
                         </div>
                     </div>
                 </c:forEach>

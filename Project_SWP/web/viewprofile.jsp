@@ -119,7 +119,7 @@
         <div class="container">
             <div class="sidebar">
                 <div class="user-info">
-                    <img src="./images/avt/avt.jpg" alt="avt" />
+                    <img src="./uploads/avt.jpg" alt="avt" />
 <!--                    <p class="userName">Sáng Nguyễn</p>-->
                     <span><b><%=user.getUsername()%></b></span>
                 </div>
@@ -155,7 +155,7 @@
                         </form>
                     </div>
                     <div class="avt-view-profile">
-                        <img src="./images/avt/avt.jpg" alt="avt" />
+                        <img src="./uploads/avt.jpg" alt="avt" />
                     </div>
                 </div>
             </div>

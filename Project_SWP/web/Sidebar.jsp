@@ -71,7 +71,7 @@
         <div class="sidebar">
             <div class="sidebar-logo">
                 <a href="host_dashboard.jsp">
-                    <img src="badminton.jpg" alt="Logo">
+                    <img src="./uploads/Badminton.jpg" alt="Logo">
                 </a> 
             </div>
             <ul>

@@ -112,7 +112,7 @@
         <main class="main">
 
             <div class="hero-banner">
-                <img src="./images/logo/hinh_nen.jpg" alt="Badminton Court Banner" />
+                <img src="./uploads/hinh_nen.jpg" alt="Badminton Court Banner" />
             </div>
 
             <div class="title">
