@@ -227,9 +227,9 @@
                             <div class="col-md-3">
                                 <select name="status" class="form-select form-select-sm">
                                     <option value="">Tất cả trạng thái</option>
-                                    <option value="Active" ${param.status == 'Active' ? 'selected' : ''}>Active</option>
+                                    <option value="Active" ${param.status == 'Active' ? 'selected' : ''}>Hoạt động</option>
                                     
-                                    <option value="banned" ${param.status == 'banned' ? 'selected' : ''}>Banned</option>
+                                    <option value="banned" ${param.status == 'banned' ? 'selected' : ''}>Đã cấm</option>
                                    
                                 </select>
                             </div>
@@ -253,7 +253,7 @@
                                                 <th style="width: 80px;">Vai trò</th>
                                                 <th style="width: 100px;">Ngày tạo</th>
                                                 <th style="width: 80px;">Trạng thái</th>
-                                                <th style="width: 100px;">Ghi kí</th>
+                                                <th style="width: 100px;">Ghi chú</th>
                                                 <th class="action-column">Hành động</th>
                                             </tr>
                                         </thead>
@@ -273,11 +273,7 @@
                                                     <td>${user.phone_number}</td>
                                                     <td>
                                                         <c:choose>
-                                                            <c:when test="${user.role eq 'admin'}">
-                                                                <span class="role-badge" style="background: #ff9800; color: white;">
-                                                                    Quản lí
-                                                                </span>
-                                                            </c:when>
+                                                            
                                                             <c:when test="${user.role eq 'staff'}">
                                                                 <span class="role-badge" style="background: #17a2b8; color: white;">
                                                                     Nhân Viên
@@ -306,7 +302,7 @@
                                                         <c:choose>
                                                             <c:when test="${user.status eq 'Active'}">
                                                                 <span class="status-badge" style="background: #28a745; color: white;">
-                                                                    Active
+                                                                    Hoạt động
                                                                 </span>
                                                             </c:when>
                                                             <c:when test="${user.status eq 'Suspended'}">
@@ -316,7 +312,7 @@
                                                             </c:when>
                                                             <c:when test="${user.status eq 'banned'}">
                                                                 <span class="status-badge" style="background: #dc3545; color: white;">
-                                                                    Banned
+                                                                    Bị cấm
                                                                 </span>
                                                             </c:when>
                                                             <c:when test="${user.status eq 'pending'}">
@@ -465,7 +461,7 @@
                                         <select name="role" class="form-select" required>
                                             <option value="user">Người dùng</option>
                                             <option value="staff">Nhân viên</option>
-                                            <option value="admin">Quản lí</option>
+                                           
                                         </select>
                                     </div>
                                 </div>
@@ -505,7 +501,7 @@
                                         <select name="role" id="editRole" class="form-select" required>
                                             <option value="user">Người dùng</option>
                                             <option value="staff">Nhân viên</option>
-                                            <option value="admin">Quản lí</option>
+                                            
                                         </select>
                                     </div>
                                 </div>
