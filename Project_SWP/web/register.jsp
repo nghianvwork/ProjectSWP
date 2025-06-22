@@ -942,7 +942,6 @@
     </div>
 </div>
 
-
                     <button type="submit" class="register-button" id="registerBtn">
                         Tạo tài khoản
                     </button>
