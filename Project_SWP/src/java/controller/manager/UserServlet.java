@@ -9,6 +9,11 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.sql.Date;
+import java.time.LocalDateTime;
+import java.util.Random;
+import utils.EmailUtils;
+import utils.PasswordUtil;
 
 @WebServlet("/users")
 public class UserServlet extends HttpServlet {
@@ -23,7 +28,7 @@ public class UserServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-        throws ServletException, IOException {
+            throws ServletException, IOException {
 
         String pageStr = request.getParameter("page");
         int page = 1;
@@ -50,147 +55,209 @@ public class UserServlet extends HttpServlet {
     }
 
     @Override
-  
-protected void doPost(HttpServletRequest request, HttpServletResponse response)
-        throws ServletException, IOException {
 
-    String action = request.getParameter("action");
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
 
-    if ("ban".equals(action)) {
-        int userId = Integer.parseInt(request.getParameter("userId"));
-        String note = request.getParameter("note");
-        userDAO.updateUserStatusAndNote(userId, "banned", note);
+        String action = request.getParameter("action");
 
-    } else if ("unban".equals(action)) {
-        int userId = Integer.parseInt(request.getParameter("userId"));
-        userDAO.updateUserStatusAndNote(userId, "Active", "");
+        if ("ban".equals(action)) {
+            int userId = Integer.parseInt(request.getParameter("userId"));
+            String note = request.getParameter("note");
+            userDAO.updateUserStatusAndNote(userId, "banned", note);
 
-    } else if ("add".equals(action)) {
-        String username = request.getParameter("username");
-        String password = request.getParameter("password");
-        String email = request.getParameter("email");
-        String phone = request.getParameter("phone_number");
-        String role = request.getParameter("role");
+        } else if ("unban".equals(action)) {
+            int userId = Integer.parseInt(request.getParameter("userId"));
+            userDAO.updateUserStatusAndNote(userId, "Active", "");
 
-        Object[] checkResult = userDAO.checkUserByUsernameOrEmail(username, email);
-        User userByUsername = (User) checkResult[0];
-        User userByEmail = (User) checkResult[1];
-        boolean phoneExists = userDAO.isPhoneExists(phone);
+        } else if ("add".equals(action)) {
+            // Lấy dữ liệu từ form
+            String username = request.getParameter("username");
+            String password = generateRandomPassword();
+            String email = request.getParameter("email");
+            String phone = request.getParameter("phone_number");
+            String role = request.getParameter("role");
+            String gender = request.getParameter("gender");
+            String firstname = request.getParameter("firstname");
+            String lastname = request.getParameter("lastname");
+            String status = request.getParameter("status");
+            String note = request.getParameter("note");
+            String dobStr = request.getParameter("date_of_birth");
 
-        if (userByUsername != null) {
-            request.setAttribute("error", "Tên đăng nhập đã tồn tại.");
-        } else if (userByEmail != null) {
-            request.setAttribute("error", "Email đã tồn tại.");
-        } else if (phoneExists) {
-            request.setAttribute("error", "Số điện thoại đã tồn tại.");
-        }
-// Kiểm tra số điện thoại
+          // Kiểm tra trùng username / email / phone
+Object[] checkResult = userDAO.checkUserByUsernameOrEmail(username, email);
 
-        String phoneRegex = "^0\\d{9}$";  // Số điện thoại bắt đầu bằng '0' và có 10 chữ số
+// Kiểm tra kiểu dữ liệu trước khi ép kiểu
+User userByUsername = null;
+User userByEmail = null;
 
-        if (!phone.matches(phoneRegex)) {
-            request.setAttribute("error", "Số điện thoại phải bắt đầu với số 0 và có đúng 10 chữ số.");
-        }
-        // Kiểm tra username không chứa ký tự đặc biệt và có ít nhất 6 ký tự
+// Kiểm tra nếu checkResult[0] là kiểu User
+if (checkResult[0] instanceof User) {
+    userByUsername = (User) checkResult[0];
+}
 
-        String usernameRegex = "^[a-zA-Z0-9]{6,20}$";  // Chỉ cho phép chữ cái và số, độ dài >= 6
+// Kiểm tra nếu checkResult[1] là kiểu User
+if (checkResult[1] instanceof User) {
+    userByEmail = (User) checkResult[1];
+}
 
-        if (!username.matches(usernameRegex)) {
-            request.setAttribute("error", "Username phải có ít nhất 6 ký tự và chỉ chứa chữ cái và số.");
-        }
+boolean phoneExists = userDAO.isPhoneExists(phone);
+
+if (userByUsername != null) {
+    request.setAttribute("error", "Tên đăng nhập đã tồn tại.");
+} else if (userByEmail != null) {
+    request.setAttribute("error", "Email đã tồn tại.");
+} else if (phoneExists) {
+    request.setAttribute("error", "Số điện thoại đã tồn tại.");
+}
+
+if (request.getAttribute("error") != null) {
+    List<User> users = userDAO.getUsersByPage(1, 5);
+    request.setAttribute("users", users);
+    request.setAttribute("currentPage", 1);
+    request.setAttribute("totalPages", (int) Math.ceil(userDAO.countUsers() / 5.0));
+    request.getRequestDispatcher("/user_manager.jsp").forward(request, response);
+    return;
+}
 
 
-        if (request.getAttribute("error") != null) {
-            List<User> users = userDAO.getUsersByPage(1, 5);
-            request.setAttribute("users", users);
-            request.setAttribute("currentPage", 1);
-            request.setAttribute("totalPages", (int) Math.ceil(userDAO.countUsers() / 5.0));
-            request.getRequestDispatcher("/user_manager.jsp").forward(request, response);
-            return;
-        }
+            // Hash mật khẩu
+            String hashedPassword = PasswordUtil.hashPassword(password);
 
-        String hashedPassword = utils.PasswordUtil.hashPassword(password);
-
-        User newUser = new User();
-        
-        newUser.setUsername(username);
-        newUser.setPassword(hashedPassword);
-        newUser.setEmail(email);
-        newUser.setPhone_number(phone);
-        newUser.setRole(role);
-        newUser.setStatus("active");
-        newUser.setCreatedAt(java.time.LocalDateTime.now());
-
-        userDAO.insertUser(newUser);
-        
-
-        response.sendRedirect("users");
-        return;
-
-    } else if ("update".equals(action)) {
-        String userIdStr = request.getParameter("userId");
-        String username = request.getParameter("username");
-        String email = request.getParameter("email");
-        String phone = request.getParameter("phone_number");
-        String role = request.getParameter("role");
-
-        int userId = 0;
-        try {
-            userId = Integer.parseInt(userIdStr);
-        } catch (Exception ex) {
-        }
-
-        User oldUser = userDAO.getUserById(userId);
-        if (oldUser != null) {
-
-            boolean phoneExists = userDAO.isPhoneExists(phone);
-            Object[] checkResult = userDAO.checkUserByUsernameOrEmail(username, email);
-            User userByUsername = (User) checkResult[0];
-            User userByEmail = (User) checkResult[1];
-
-            if (userByUsername != null && userByUsername.getUser_Id() != userId) {
-                request.setAttribute("error", "Tên đăng nhập đã tồn tại.");
-            } else if (userByEmail != null && userByEmail.getUser_Id() != userId) {
-                request.setAttribute("error", "Email đã tồn tại.");
-            } else if (phoneExists && !phone.equals(oldUser.getPhone_number())) {
-                request.setAttribute("error", "Số điện thoại đã tồn tại.");
-            }
-
-            if (request.getAttribute("error") != null) {
-                oldUser.setUsername(username);
-                oldUser.setEmail(email);
-                oldUser.setPhone_number(phone);
-                oldUser.setRole(role);
-
-                request.setAttribute("openEditModal", true);
-                request.setAttribute("editUser", oldUser);
-
-                List<User> users = userDAO.getUsersByPage(1, 20);
+            // Parse ngày sinh
+            Date dateOfBirth = null;
+            try {
+                if (dobStr != null && !dobStr.isEmpty()) {
+                    dateOfBirth = Date.valueOf(dobStr);
+                }
+            } catch (IllegalArgumentException e) {
+                request.setAttribute("error", "Ngày sinh không hợp lệ.");
+                List<User> users = userDAO.getUsersByPage(1, 5);
                 request.setAttribute("users", users);
                 request.setAttribute("currentPage", 1);
-                request.setAttribute("totalPages", (int) Math.ceil(userDAO.countUsers() / 20.0));
+                request.setAttribute("totalPages", (int) Math.ceil(userDAO.countUsers() / 5.0));
                 request.getRequestDispatcher("/user_manager.jsp").forward(request, response);
                 return;
             }
 
-            oldUser.setUsername(username);
-            oldUser.setEmail(email);
-            oldUser.setPhone_number(phone);
-            oldUser.setRole(role);
-            userDAO.updateUser(oldUser);
+            // Tạo đối tượng User
+            User newUser = new User();
+            newUser.setUsername(username);
+            newUser.setPassword(hashedPassword);
+            newUser.setEmail(email);
+            newUser.setPhone_number(phone);
+            newUser.setRole(role != null ? role : "user");
+            newUser.setStatus(status != null ? status : "active");
+            newUser.setGender(gender);
+            newUser.setFirstname(firstname);
+            newUser.setLastname(lastname);
+            newUser.setNote(note);
+            newUser.setDateOfBirth(dateOfBirth);
+            newUser.setCreatedAt(LocalDateTime.now());
+
+            // Lưu vào DB
+            boolean inserted = userDAO.insertUser(newUser);
+            if (!inserted) {
+                request.setAttribute("error", "Lỗi khi thêm người dùng vào hệ thống.");
+                List<User> users = userDAO.getUsersByPage(1, 5);
+                request.setAttribute("users", users);
+                request.setAttribute("currentPage", 1);
+                request.setAttribute("totalPages", (int) Math.ceil(userDAO.countUsers() / 5.0));
+                request.getRequestDispatcher("/user_manager.jsp").forward(request, response);
+                return;
+            }
+
+            String subject = "Tài khoản Badminton của bạn đã được tạo";
+            String content = "<h3>Xin chào " + firstname + " " + lastname + ",</h3>"
+                    + "<p>Tài khoản của bạn trên hệ thống đã được tạo thành công.</p>"
+                    + "<p><b>Tên đăng nhập:</b> " + username + "</p>"
+                    + "<p><b>Mật khẩu:</b> " + password + "</p>"
+                    + "<p>Vui lòng đăng nhập và đổi mật khẩu ngay sau lần đăng nhập đầu tiên.</p>"
+                    + "<br><p>Trân trọng,<br>Badminton Management Team</p>";
+
+            EmailUtils.sendEmail(email, subject, content);
+
+            // Chuyển hướng sau khi thêm thành công
+            response.sendRedirect("users");
+            return;
+        } else if ("update".equals(action)) {
+            String userIdStr = request.getParameter("userId");
+            String username = request.getParameter("username");
+            String email = request.getParameter("email");
+            String phone = request.getParameter("phone_number");
+            String role = request.getParameter("role");
+
+            int userId = 0;
+            try {
+                userId = Integer.parseInt(userIdStr);
+            } catch (Exception ex) {
+            }
+
+            User oldUser = userDAO.getUserById(userId);
+            if (oldUser != null) {
+
+                boolean phoneExists = userDAO.isPhoneExists(phone);
+                Object[] checkResult = userDAO.checkUserByUsernameOrEmail(username, email);
+                User userByUsername = (User) checkResult[0];
+                User userByEmail = (User) checkResult[1];
+
+                if (userByUsername != null && userByUsername.getUser_Id() != userId) {
+                    request.setAttribute("error", "Tên đăng nhập đã tồn tại.");
+                } else if (userByEmail != null && userByEmail.getUser_Id() != userId) {
+                    request.setAttribute("error", "Email đã tồn tại.");
+                } else if (phoneExists && !phone.equals(oldUser.getPhone_number())) {
+                    request.setAttribute("error", "Số điện thoại đã tồn tại.");
+                }
+
+                if (request.getAttribute("error") != null) {
+                    oldUser.setUsername(username);
+                    oldUser.setEmail(email);
+                    oldUser.setPhone_number(phone);
+                    oldUser.setRole(role);
+
+                    request.setAttribute("openEditModal", true);
+                    request.setAttribute("editUser", oldUser);
+
+                    List<User> users = userDAO.getUsersByPage(1, 20);
+                    request.setAttribute("users", users);
+                    request.setAttribute("currentPage", 1);
+                    request.setAttribute("totalPages", (int) Math.ceil(userDAO.countUsers() / 20.0));
+                    request.getRequestDispatcher("/user_manager.jsp").forward(request, response);
+                    return;
+                }
+
+                oldUser.setUsername(username);
+                oldUser.setEmail(email);
+                oldUser.setPhone_number(phone);
+                oldUser.setRole(role);
+                userDAO.updateUser(oldUser);
+            }
+
+        } else if ("delete".equals(action)) {
+            String userIdStr = request.getParameter("userId");
+            int userId = 0;
+            try {
+                userId = Integer.parseInt(userIdStr);
+            } catch (Exception ex) {
+            }
+            userDAO.deleteUser(userId);
         }
 
-    } else if ("delete".equals(action)) {
-        String userIdStr = request.getParameter("userId");
-        int userId = 0;
-        try {
-            userId = Integer.parseInt(userIdStr);
-        } catch (Exception ex) {
-        }
-        userDAO.deleteUser(userId);
+        response.sendRedirect("users");
     }
 
-    response.sendRedirect("users");
-}
+    public static String generateRandomPassword() {
+        int length = 6;
+        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        StringBuilder password = new StringBuilder();
+        Random random = new Random();
+
+        for (int i = 0; i < length; i++) {
+            int index = random.nextInt(characters.length());
+            password.append(characters.charAt(index));
+        }
+
+        return password.toString();
+    }
 
 }

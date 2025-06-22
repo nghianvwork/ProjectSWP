@@ -1,12 +1,11 @@
-<%@ page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Đăng Ký</title>
+    <title>Register</title>
     <style>
         body {
             display: flex;
@@ -23,7 +22,7 @@
             padding: 30px;
             border-radius: 15px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
-            width: 400px;
+            width: 450px;
             text-align: center;
         }
 
@@ -35,11 +34,11 @@
 
         .input-group {
             position: relative;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             text-align: left;
         }
 
-        .input-field {
+        .input-field, .select-field {
             width: 100%;
             padding: 12px 12px 12px 40px;
             border: 1px solid #ccc;
@@ -49,7 +48,7 @@
             transition: border-color 0.3s;
         }
 
-        .input-field:focus {
+        .input-field:focus, .select-field:focus {
             outline: none;
             border-color: #1da1f2;
         }
@@ -104,25 +103,54 @@
 <body>
 
 <div class="register-container">
-    <h2>Đăng Ký</h2>
+    <h2>Register</h2>
 
     <form action="register" method="post">
-        <!-- Tên đăng nhập -->
+        <!-- Username -->
         <div class="input-group">
             <span class="input-icon">&#128100;</span>
-            <input type="text" class="input-field" name="username" placeholder="Tên đăng nhập" required>
+            <input type="text" class="input-field" name="username" placeholder="Username" required>
         </div>
 
-        <!-- Mật khẩu -->
+        <!-- Password -->
         <div class="input-group">
             <span class="input-icon">&#128274;</span>
-            <input type="password" class="input-field" name="password" placeholder="Mật khẩu" required>
+            <input type="password" class="input-field" name="password" placeholder="Password" required>
         </div>
 
-        <!-- Xác nhận mật khẩu -->
+        <!-- Confirm Password -->
         <div class="input-group">
             <span class="input-icon">&#128274;</span>
-            <input type="password" class="input-field" name="confirm_password" placeholder="Xác nhận mật khẩu" required>
+            <input type="password" class="input-field" name="confirm_password" placeholder="Confirm Password" required>
+        </div>
+
+        <!-- First Name -->
+        <div class="input-group">
+            <span class="input-icon">&#128221;</span>
+            <input type="text" class="input-field" name="firstname" placeholder="First Name" required>
+        </div>
+
+        <!-- Last Name -->
+        <div class="input-group">
+            <span class="input-icon">&#128221;</span>
+            <input type="text" class="input-field" name="lastname" placeholder="Last Name" required>
+        </div>
+
+        <!-- Gender -->
+        <div class="input-group">
+            <span class="input-icon">&#9794;</span>
+            <select class="select-field" name="gender" required>
+                <option value="" disabled selected>Select Gender</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+            </select>
+        </div>
+
+        <!-- Date of Birth -->
+        <div class="input-group">
+            <span class="input-icon">&#128197;</span>
+            <input type="date" class="input-field" name="date_of_birth" required>
         </div>
 
         <!-- Email -->
@@ -131,26 +159,26 @@
             <input type="email" class="input-field" name="email" placeholder="Email" required>
         </div>
 
-        <!-- Số điện thoại -->
+        <!-- Phone -->
         <div class="input-group">
             <span class="input-icon">&#128222;</span>
-            <input type="text" class="input-field" name="phone_number" placeholder="Số điện thoại" required>
+            <input type="text" class="input-field" name="phone_number" placeholder="Phone Number" required>
         </div>
 
-        <!-- Vai trò người dùng -->
+        <!-- Hidden role -->
         <input type="hidden" name="role" value="user"/>
 
-        <!-- Nút gửi -->
-        <button type="submit" class="btn">Đăng Ký</button>
+        <!-- Submit -->
+        <button type="submit" class="btn">Register</button>
     </form>
 
-    <!-- Thông báo lỗi -->
+    <!-- Error message -->
     <c:if test="${not empty error}">
         <span class="error-message">${error}</span>
     </c:if>
 
-    <!-- Liên kết đăng nhập -->
-    <a href="login" class="login-link">Đã có tài khoản? Đăng nhập ngay</a>
+    <!-- Login -->
+    <a href="login" class="login-link">Login here</a>
 </div>
 
 </body>

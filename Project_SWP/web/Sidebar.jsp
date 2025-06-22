@@ -96,6 +96,9 @@
                 <li class="nav-item">
                     <a class="nav-link" href="faq-list">QUẢN LÝ CÂU HỎI THƯỜNG GẶP</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="revenue-report">BÁO CÁO</a>
+                </li>
             </ul>
         </div>
     </body>

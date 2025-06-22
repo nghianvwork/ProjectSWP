@@ -5,6 +5,10 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import Model.User;
+import java.time.LocalDate;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import utils.PasswordUtil;
 
 public class UserDAO extends DBContext {
 
@@ -61,23 +65,32 @@ public class UserDAO extends DBContext {
         return list;
     }
 
-public void insertUser(User u) {
-    String sql = "INSERT INTO Users (username, password, email, phone_number, role, status, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)";
-    try (PreparedStatement ps = conn.prepareStatement(sql)) {
-        ps.setString(1, u.getUsername());
-        ps.setString(2, u.getPassword());
-        ps.setString(3, u.getEmail());
-        ps.setString(4, u.getPhone_number());
-        ps.setString(5, u.getRole());
-        ps.setString(6, "active"); // trạng thái
-        ps.setTimestamp(7, Timestamp.valueOf(u.getCreatedAt()));
-        ps.executeUpdate();
-    } catch (SQLException e) {
-        System.err.println("Lỗi thêm user: " + e);
-    }
-}
+    public boolean insertUser(User u) {
+        String sql = "INSERT INTO Users (username, password, email, phone_number, role, status, note, gender, firstname, lastname, date_of_birth, created_at) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, GETDATE())";
 
-    
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, u.getUsername());
+            ps.setString(2, u.getPassword());
+            ps.setString(3, u.getEmail());
+            ps.setString(4, u.getPhone_number());
+            ps.setString(5, u.getRole() != null ? u.getRole() : "user");
+            ps.setString(6, u.getStatus() != null ? u.getStatus() : "active");
+            ps.setString(7, u.getNote());
+            ps.setString(8, u.getGender());
+            ps.setString(9, u.getFirstname());
+            ps.setString(10, u.getLastname());
+            ps.setDate(11, u.getDateOfBirth());
+
+            ps.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            System.err.println("❌ Lỗi insertUser: " + e.getMessage());
+        }
+
+        return false;
+    }
+
     // Cập nhật user
     public void updateUser(User u) {
         String sql = "UPDATE Users SET username = ?, password = ?, email = ?, phone_number = ?, role = ? WHERE user_id = ?";
@@ -120,24 +133,15 @@ public void insertUser(User u) {
         return null;
     }
 
-     public User getUserByUsernameOrEmail(String username, String email) {
+    // Tìm user theo username hoặc email
+    public User getUserByUsernameOrEmail(String username, String email) {
         String sql = "SELECT * FROM Users WHERE username = ? OR email = ?";
-        try {
-            PreparedStatement ps = conn.prepareStatement(sql);
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, username);
             ps.setString(2, email);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                User user = new User(
-                      rs.getInt("user_id"),
-                        rs.getString("username"),
-                        rs.getString("password"),
-                        rs.getString("email"),
-                        rs.getString("phone_number"),
-                        rs.getString("role")
-                );
-                user.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
-                return user;
+                return extractUserFromResultSet(rs);
             }
         } catch (SQLException e) {
             System.err.println("Lỗi tìm user theo username hoặc email: " + e);
@@ -145,61 +149,53 @@ public void insertUser(User u) {
         return null;
     }
 
-    // Đăng ký tài khoản
-public boolean register(User user) {
-    if (getUserByUsernameOrEmail(user.getUsername(), user.getEmail()) != null) {
-        return false;
-    }
+    public Object[] checkUserByUsernameOrEmail(String username, String email) {
+        User userByUsername = null;
+        User userByEmail = null;
 
-    String sql = "INSERT INTO Users (username, password, email, phone_number, role) VALUES (?, ?, ?, ?, ?)";
-    try (PreparedStatement ps = conn.prepareStatement(sql)) {
-        ps.setString(1, user.getUsername());
-        ps.setString(2, user.getPassword());
-        ps.setString(3, user.getEmail());
-        ps.setString(4, user.getPhone_number());
-        ps.setString(5, user.getRole());
-        ps.executeUpdate();
-        return true;
-    } catch (SQLException e) {
-        System.err.println("Lỗi đăng ký user: " + e);
-    }
-    return false;
-}
-
-
-public Object[] checkUserByUsernameOrEmail(String username, String email) {
-    User foundUserUsername = null;
-    User foundUserEmail = null;
-
-    try {
-        // Check username
-        String sqlUsername = "SELECT * FROM Users WHERE username = ?";
-        try (PreparedStatement ps = conn.prepareStatement(sqlUsername)) {
-            ps.setString(1, username);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                foundUserUsername = extractUserFromResultSet(rs);
+        try (Connection conn = getConnection()) {
+            // Check username
+            String sqlUsername = "SELECT * FROM Users WHERE username = ?";
+            try (PreparedStatement ps = conn.prepareStatement(sqlUsername)) {
+                ps.setString(1, username);
+                ResultSet rs = ps.executeQuery();
+                if (rs.next()) {
+                    userByUsername = extractUserFromResultSet(rs);
+                }
             }
-        }
 
-        // Check email
-        String sqlEmail = "SELECT * FROM Users WHERE email = ?";
-        try (PreparedStatement ps = conn.prepareStatement(sqlEmail)) {
-            ps.setString(1, email);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                foundUserEmail = extractUserFromResultSet(rs);
+            // Check email
+            String sqlEmail = "SELECT * FROM Users WHERE email = ?";
+            try (PreparedStatement ps = conn.prepareStatement(sqlEmail)) {
+                ps.setString(1, email);
+                ResultSet rs = ps.executeQuery();
+                if (rs.next()) {
+                    userByEmail = extractUserFromResultSet(rs);
+                }
             }
+            int te = userByUsername.getUser_Id();
+            int ss = userByEmail.getUser_Id();
+
+            // Logic xác định kết quả
+            if (userByUsername != null && userByEmail != null) {
+                if (userByUsername.getUser_Id()== userByEmail.getUser_Id()) {
+                    return new Object[]{0, userByUsername}; // cả hai đều đúng và là cùng user
+                } else {
+                    return new Object[]{4, null}; // đúng cả 2 nhưng là 2 người khác nhau (trường hợp bất thường)
+                }
+            } else if (userByUsername != null) {
+                return new Object[]{1, null}; // chỉ username đúng
+            } else if (userByEmail != null) {
+                return new Object[]{2, null}; // chỉ email đúng
+            } else {
+                return new Object[]{3, null}; // không đúng gì cả
+            }
+
+        } catch (Exception e) {
+            System.err.println("Lỗi kiểm tra username/email: " + e.getMessage());
+            return new Object[]{-1, null}; // lỗi DB
         }
-
-        return new Object[]{foundUserUsername, foundUserEmail};
-
-    } catch (SQLException e) {
-        System.err.println("Lỗi kiểm tra username/email: " + e);
-        return new Object[]{null, null};
     }
-}
-
 
     // Lưu token quên mật khẩu
     public void saveResetToken(int userId, String token) {
@@ -318,13 +314,36 @@ public Object[] checkUserByUsernameOrEmail(String username, String email) {
         user.setRole(rs.getString("role"));
         user.setStatus(rs.getString("status"));
         user.setNote(rs.getString("note"));
+        user.setGender(rs.getString("gender"));
+        user.setFirstname(rs.getString("firstname"));
+        user.setLastname(rs.getString("lastname"));
+
+        user.setDateOfBirth(rs.getDate("date_of_birth"));
+
         Timestamp ts = rs.getTimestamp("created_at");
         if (ts != null) {
             user.setCreatedAt(ts.toLocalDateTime());
         }
+
         return user;
     }
 
+//    private User extractUserFromResultSet(ResultSet rs) throws SQLException {
+//        User user = new User();
+//        user.setUser_Id(rs.getInt("user_id"));
+//        user.setUsername(rs.getString("username"));
+//        user.setPassword(rs.getString("password"));
+//        user.setEmail(rs.getString("email"));
+//        user.setPhone_number(rs.getString("phone_number"));
+//        user.setRole(rs.getString("role"));
+//        user.setStatus(rs.getString("status"));
+//        user.setNote(rs.getString("note"));
+//        Timestamp ts = rs.getTimestamp("created_at");
+//        if (ts != null) {
+//            user.setCreatedAt(ts.toLocalDateTime());
+//        }
+//        return user;
+//    }
 //    public boolean registerStaff(Staff newStaff) {
 //        String sql = "INSERT INTO Staff (user_id, full_name, gender, date_of_birth, address, phone_number, id_card_number, education_level, personal_notes) "
 //                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -466,10 +485,12 @@ public Object[] checkUserByUsernameOrEmail(String username, String email) {
             params.add(likeKeyword);
             params.add(likeKeyword);
         }
+
         if (status != null && !status.trim().isEmpty()) {
             sql.append(" AND status = ?");
             params.add(status.trim());
         }
+
         sql.append(" ORDER BY user_id OFFSET ? ROWS FETCH NEXT ? ROWS ONLY");
         int offset = (page - 1) * PAGE_SIZE;
         params.add(offset);
@@ -479,13 +500,16 @@ public Object[] checkUserByUsernameOrEmail(String username, String email) {
             for (int i = 0; i < params.size(); i++) {
                 ps.setObject(i + 1, params.get(i));
             }
+
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 list.add(extractUserFromResultSet(rs));
             }
+
         } catch (SQLException e) {
             System.err.println("Lỗi getUsersByPageAndFilter: " + e.getMessage());
         }
+
         return list;
     }
 
@@ -524,6 +548,37 @@ public Object[] checkUserByUsernameOrEmail(String username, String email) {
             System.err.println("Lỗi countUsersByRole: " + e.getMessage());
         }
         return 0;
+    }
+
+    public boolean register(User user) {
+        // Kiểm tra username hoặc email đã tồn tại
+        if (getUserByUsernameOrEmail(user.getUsername(), user.getEmail()) != null) {
+            return false;
+        }
+
+        String sql = "INSERT INTO Users (username, password, email, phone_number, role, status, note, gender, firstname, lastname, date_of_birth, created_at) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, GETDATE())";
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, user.getUsername());
+            ps.setString(2, user.getPassword());
+            ps.setString(3, user.getEmail());
+            ps.setString(4, user.getPhone_number());
+            ps.setString(5, user.getRole());
+            ps.setString(6, user.getStatus() != null ? user.getStatus() : "Active");
+            ps.setString(7, user.getNote());
+            ps.setString(8, user.getGender());
+            ps.setString(9, user.getFirstname());
+            ps.setString(10, user.getLastname());
+            ps.setDate(11, user.getDateOfBirth());
+
+            ps.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            System.err.println("Lỗi đăng ký user: " + e.getMessage());
+        }
+
+        return false;
     }
 
 }

@@ -348,5 +348,106 @@ public List<Notification> searchNotificationsByStatus(String keyword, String sta
 }
 
 
+public List<NotificationReceiver> getNotificationsForUser(int user_Id, boolean isUnreadOnly) {
+    List<NotificationReceiver> list = new ArrayList<>();
+    String sql = "SELECT nr.*, n.* FROM Notification_Receiver nr " +
+                 "JOIN Notification n ON nr.notification_id = n.notification_id " +
+                 "WHERE nr.user_id = ?";
 
+    if (isUnreadOnly) {
+        sql += " AND nr.is_read = 0";
+    }
+
+    sql += " ORDER BY n.scheduled_time DESC";
+
+    try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+        ps.setInt(1, user_Id);
+        ResultSet rs = ps.executeQuery();
+
+        while (rs.next()) {
+            // Gộp thông tin notification
+            Notification notification = new Notification();
+            notification.setNotificationId(rs.getInt("notification_id"));
+            notification.setTitle(rs.getString("title"));
+            notification.setContent(rs.getString("content"));
+            notification.setImageUrl(rs.getString("image_url"));
+
+            Timestamp scheduled = rs.getTimestamp("scheduled_time");
+            if (scheduled != null) {
+                notification.setScheduledTime(scheduled.toLocalDateTime());
+            }
+
+            Timestamp sent = rs.getTimestamp("sent_time");
+            if (sent != null) {
+                notification.setSentTime(sent.toLocalDateTime());
+            }
+
+            Timestamp created = rs.getTimestamp("created_at");
+            if (created != null) {
+                notification.setCreatedAt(created.toLocalDateTime());
+            }
+
+            notification.setStatus(rs.getString("status"));
+
+            UserDAO userDAO = new UserDAO();
+            User createdBy = userDAO.getUserById(rs.getInt("created_by"));
+            notification.setCreatedBy(createdBy);
+
+            // Gộp thông tin người nhận
+            NotificationReceiver receiver = new NotificationReceiver();
+            receiver.setNotificationId(notification);
+
+            User user = userDAO.getUserById(rs.getInt("user_id"));
+            receiver.setUserId(user);
+
+            receiver.setIsRead(rs.getBoolean("is_read"));
+
+            Timestamp readAt = rs.getTimestamp("read_at");
+            if (readAt != null) {
+                receiver.setReadAt(readAt.toLocalDateTime());
+            }
+
+            Timestamp openedAt = rs.getTimestamp("opened_at");
+            if (openedAt != null) {
+                receiver.setOpenedAt(openedAt.toLocalDateTime());
+            }
+
+            list.add(receiver);
+        }
+    } catch (Exception e) {
+        System.err.println("Lỗi khi lấy danh sách thông báo cho user: " + e.getMessage());
+    }
+
+    return list;
+}
+
+//public static void main(String[] args) {
+//    NotificationDAO dao = new NotificationDAO();
+//
+//    // ID của user cần test (đảm bảo tồn tại trong DB)
+//    int testUserId = 8;
+//
+//    // Lấy tất cả thông báo (bao gồm đã đọc và chưa đọc)
+//    List<NotificationReceiver> allNotifications = dao.getNotificationsForUser(testUserId, false);
+//    System.out.println("=== TẤT CẢ THÔNG BÁO ===");
+//    for (NotificationReceiver r : allNotifications) {
+//        System.out.println("ID: " + r.getNotificationId().getNotificationId());
+//        System.out.println("Tiêu đề: " + r.getNotificationId().getTitle());
+//        System.out.println("Nội dung: " + r.getNotificationId().getContent());
+//        System.out.println("Đã đọc: " + r.isIsRead());
+//        System.out.println("Gửi lúc: " + r.getNotificationId().getScheduledTime());
+//        System.out.println("Tạo bởi: " + r.getNotificationId().getCreatedBy().getUsername());
+//        System.out.println("--------");
+//    }
+//
+//    // Lấy thông báo chưa đọc
+//    List<NotificationReceiver> unread = dao.getNotificationsForUser(testUserId, true);
+//    System.out.println("\n=== THÔNG BÁO CHƯA ĐỌC ===");
+//    for (NotificationReceiver r : unread) {
+//        System.out.println("ID: " + r.getNotificationId().getNotificationId());
+//        System.out.println("Tiêu đề: " + r.getNotificationId().getTitle());
+//        System.out.println("Đã đọc: " + r.isIsRead());
+//        System.out.println("--------");
+//    }
+//}
 }

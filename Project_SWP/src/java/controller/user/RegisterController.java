@@ -5,6 +5,8 @@ import Model.User;
 import utils.PasswordUtil;
 
 import java.io.IOException;
+import java.sql.Date;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import jakarta.servlet.ServletException;
@@ -32,8 +34,12 @@ public class RegisterController extends HttpServlet {
         String confirmPassword = request.getParameter("confirm_password");
         String email = request.getParameter("email");
         String phoneNumber = request.getParameter("phone_number");
+        String gender = request.getParameter("gender");
+        String firstname = request.getParameter("firstname");
+        String lastname = request.getParameter("lastname");
+        String dobStr = request.getParameter("date_of_birth");
 
-        // Validate password
+        // Validate mật khẩu
         String passwordPattern = "^(?=.*[A-Z])(?=.*\\d)(?=.*[^a-zA-Z0-9]).{6,}$";
         if (password == null || !password.matches(passwordPattern)) {
             request.setAttribute("error", "Password must be at least 6 characters, with at least 1 uppercase letter, 1 number and 1 special character.");
@@ -48,7 +54,7 @@ public class RegisterController extends HttpServlet {
             return;
         }
 
-        // Validate phone number
+        // Validate số điện thoại
         if (phoneNumber == null || phoneNumber.trim().isEmpty()) {
             request.setAttribute("error", "Phone number is required!");
             request.getRequestDispatcher("register.jsp").forward(request, response);
@@ -56,22 +62,35 @@ public class RegisterController extends HttpServlet {
         }
 
         if (!phoneNumber.matches("^(09|03)\\d{8}$")) {
-            request.setAttribute("error", "Invalid phone number! Only numbers starting with 09 or 03 and exactly 10 digits are allowed.");
+            request.setAttribute("error", "Invalid phone number! Must start with 09 or 03 and contain exactly 10 digits.");
             request.getRequestDispatcher("register.jsp").forward(request, response);
             return;
         }
 
-        // Check if phone number already exists
+        // Check tồn tại số điện thoại
         UserDAO userDAO = new UserDAO();
         if (userDAO.isPhoneExists(phoneNumber)) {
-            request.setAttribute("error", "Phone number already exists! Please use another phone number.");
+            request.setAttribute("error", "Phone number already exists! Please use another one.");
             request.getRequestDispatcher("register.jsp").forward(request, response);
             return;
         }
 
-        // Validate password confirm
-        if (password == null || confirmPassword == null || !password.equals(confirmPassword)) {
+        // Validate xác nhận mật khẩu
+        if (confirmPassword == null || !confirmPassword.equals(password)) {
             request.setAttribute("error", "Passwords do not match!");
+            request.getRequestDispatcher("register.jsp").forward(request, response);
+            return;
+        }
+
+        // Parse ngày sinh
+        Date dateOfBirth = null;
+        try {
+            if (dobStr != null && !dobStr.isEmpty()) {
+                LocalDate localDate = LocalDate.parse(dobStr);
+                dateOfBirth = Date.valueOf(localDate);
+            }
+        } catch (Exception e) {
+            request.setAttribute("error", "Invalid date of birth format!");
             request.getRequestDispatcher("register.jsp").forward(request, response);
             return;
         }
@@ -84,21 +103,26 @@ public class RegisterController extends HttpServlet {
         newUser.setPhone_number(phoneNumber);
         newUser.setRole("user");
         newUser.setCreatedAt(LocalDateTime.now());
+        newUser.setGender(gender);
+        newUser.setFirstname(firstname);
+        newUser.setLastname(lastname);
+        newUser.setFullname(lastname + " " + firstname);
+        newUser.setDateOfBirth(dateOfBirth);
 
-        // Đăng ký User
-        boolean checkRegister = userDAO.register(newUser);
+        // Đăng ký tài khoản
+        boolean success = userDAO.register(newUser);
 
-        if (checkRegister) {
+        if (success) {
             request.getSession().setAttribute("message", "Registration successful! You can now login.");
             response.sendRedirect("login");
         } else {
-            request.setAttribute("error", "Username or email already exists, please enter another!");
+            request.setAttribute("error", "Username or email already exists, please try another.");
             request.getRequestDispatcher("register.jsp").forward(request, response);
         }
     }
 
     @Override
     public String getServletInfo() {
-        return "RegisterController - handles user registration only (no staff)";
+        return "RegisterController - handles user registration including full user profile";
     }
 }
