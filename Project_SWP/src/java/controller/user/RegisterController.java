@@ -39,50 +39,50 @@ public class RegisterController extends HttpServlet {
         String lastname = request.getParameter("lastname");
         String dobStr = request.getParameter("date_of_birth");
 
-        // Validate mật khẩu
+        // Kiểm tra mật khẩu
         String passwordPattern = "^(?=.*[A-Z])(?=.*\\d)(?=.*[^a-zA-Z0-9]).{6,}$";
         if (password == null || !password.matches(passwordPattern)) {
-            request.setAttribute("error", "Password must be at least 6 characters, with at least 1 uppercase letter, 1 number and 1 special character.");
+            request.setAttribute("error", "Mật khẩu phải có ít nhất 6 ký tự, bao gồm ít nhất 1 chữ cái viết hoa, 1 số và 1 ký tự đặc biệt.");
             request.getRequestDispatcher("register.jsp").forward(request, response);
             return;
         }
 
-        // Validate username
+        // Kiểm tra tên đăng nhập
         if (username == null || username.trim().isEmpty() || !username.matches("^[a-zA-Z0-9_\\.]{3,20}$")) {
-            request.setAttribute("error", "Invalid username! Only letters, numbers, underscores (_) and dots (.) are allowed. Length 3-20 characters.");
+            request.setAttribute("error", "Tên đăng nhập không hợp lệ! Chỉ cho phép chữ cái, số, dấu gạch dưới (_) và dấu chấm (.). Độ dài từ 3-20 ký tự.");
             request.getRequestDispatcher("register.jsp").forward(request, response);
             return;
         }
 
-        // Validate số điện thoại
+        // Kiểm tra số điện thoại
         if (phoneNumber == null || phoneNumber.trim().isEmpty()) {
-            request.setAttribute("error", "Phone number is required!");
+            request.setAttribute("error", "Số điện thoại là bắt buộc!");
             request.getRequestDispatcher("register.jsp").forward(request, response);
             return;
         }
 
         if (!phoneNumber.matches("^(09|03)\\d{8}$")) {
-            request.setAttribute("error", "Invalid phone number! Must start with 09 or 03 and contain exactly 10 digits.");
+            request.setAttribute("error", "Số điện thoại không hợp lệ! Phải bắt đầu bằng 09 hoặc 03 và có chính xác 10 chữ số.");
             request.getRequestDispatcher("register.jsp").forward(request, response);
             return;
         }
 
-        // Check tồn tại số điện thoại
+        // Kiểm tra số điện thoại đã tồn tại
         UserDAO userDAO = new UserDAO();
         if (userDAO.isPhoneExists(phoneNumber)) {
-            request.setAttribute("error", "Phone number already exists! Please use another one.");
+            request.setAttribute("error", "Số điện thoại đã tồn tại");
             request.getRequestDispatcher("register.jsp").forward(request, response);
             return;
         }
 
-        // Validate xác nhận mật khẩu
+        // Kiểm tra xác nhận mật khẩu
         if (confirmPassword == null || !confirmPassword.equals(password)) {
-            request.setAttribute("error", "Passwords do not match!");
+            request.setAttribute("error", "Mật khẩu xác nhận không khớp!");
             request.getRequestDispatcher("register.jsp").forward(request, response);
             return;
         }
 
-        // Parse ngày sinh
+        // Chuyển đổi ngày sinh
         Date dateOfBirth = null;
         try {
             if (dobStr != null && !dobStr.isEmpty()) {
@@ -90,7 +90,7 @@ public class RegisterController extends HttpServlet {
                 dateOfBirth = Date.valueOf(localDate);
             }
         } catch (Exception e) {
-            request.setAttribute("error", "Invalid date of birth format!");
+            request.setAttribute("error", "Định dạng ngày sinh không hợp lệ!");
             request.getRequestDispatcher("register.jsp").forward(request, response);
             return;
         }
@@ -113,16 +113,16 @@ public class RegisterController extends HttpServlet {
         boolean success = userDAO.register(newUser);
 
         if (success) {
-            request.getSession().setAttribute("message", "Registration successful! You can now login.");
+            request.getSession().setAttribute("message", "Đăng ký thành công! Bạn có thể đăng nhập ngay.");
             response.sendRedirect("login");
         } else {
-            request.setAttribute("error", "Username or email already exists, please try another.");
+            request.setAttribute("error", "Tên đăng nhập hoặc email đã tồn tại, vui lòng thử lại.");
             request.getRequestDispatcher("register.jsp").forward(request, response);
         }
     }
 
     @Override
     public String getServletInfo() {
-        return "RegisterController - handles user registration including full user profile";
+        return "RegisterController - xử lý đăng ký người dùng bao gồm đầy đủ thông tin người chơi";
     }
 }

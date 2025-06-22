@@ -877,11 +877,12 @@
                     <div class="form-group">
                         <label class="form-label" for="phone">Số điện thoại</label>
                         <div class="input-container">
-                            <input type="tel" class="form-input" id="phone" name="phone" placeholder="Nhập số điện thoại của bạn" required>
+                            <input type="tel" class="form-input" id="phone" name="phone_number" placeholder="Nhập số điện thoại của bạn" required>
                             <i class="fas fa-phone input-icon"></i>
                         </div>
                         <div class="error-message" id="phoneError">Vui lòng nhập số điện thoại hợp lệ</div>
                     </div>
+
 
                     <div class="form-group">
                         <label class="form-label" for="password">Mật khẩu</label>
@@ -901,7 +902,7 @@
                     <div class="form-group">
                         <label class="form-label" for="confirmPassword">Xác nhận mật khẩu</label>
                         <div class="input-container">
-                            <input type="password" class="form-input" id="confirmPassword" name="confirmPassword" placeholder="Nhập lại mật khẩu" required>
+                            <input type="password" class="form-input" id="confirmPassword" name="confirm_password" placeholder="Nhập lại mật khẩu" required>
                             <i class="fas fa-lock input-icon"></i>
                         </div>
                         <div class="error-message" id="confirmPasswordError">Mật khẩu xác nhận không khớp</div>
@@ -1054,13 +1055,7 @@
                     document.getElementById('emailError').classList.remove('show');
                 }
 
-                // Check phone number
-                if (!validatePhone(inputs.phone.value)) {
-                    document.getElementById('phoneError').classList.add('show');
-                    isValid = false;
-                } else {
-                    document.getElementById('phoneError').classList.remove('show');
-                }
+               
 
                 // Check password
                 if (inputs.password.value.length < 8) {
