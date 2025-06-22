@@ -34,10 +34,10 @@
             width: 100%;
             height: 100%;
             background: 
-                linear-gradient(90deg, transparent 49%, #28a745 49%, #28a745 51%, transparent 51%),
-                linear-gradient(0deg, transparent 49%, #28a745 49%, #28a745 51%, transparent 51%),
-                radial-gradient(circle at 25% 25%, rgba(40, 167, 69, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 75% 75%, rgba(40, 167, 69, 0.1) 0%, transparent 50%),
+                linear-gradient(90deg, transparent 49%, #dc3545 49%, #dc3545 51%, transparent 51%),
+                linear-gradient(0deg, transparent 49%, #dc3545 49%, #dc3545 51%, transparent 51%),
+                radial-gradient(circle at 25% 25%, rgba(220, 53, 69, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 75% 75%, rgba(220, 53, 69, 0.1) 0%, transparent 50%),
                 linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
             animation: courtGlow 4s ease-in-out infinite alternate;
         }
@@ -55,7 +55,7 @@
             left: -50%;
             width: 200%;
             height: 200%;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="2" fill="rgba(40,167,69,0.1)"/></svg>') repeat;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="2" fill="rgba(220,53,69,0.1)"/></svg>') repeat;
             animation: float 20s linear infinite;
         }
 
@@ -103,7 +103,7 @@
         .forgot-icon {
             width: 70px;
             height: 70px;
-            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            background: linear-gradient(135deg, #dc3545 0%, #e3342f 100%);
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -165,13 +165,13 @@
         }
 
         .form-input:focus {
-            border-color: #28a745;
-            box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.1);
+            border-color: #dc3545;
+            box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
             transform: translateY(-2px);
         }
 
         .form-input:focus + .input-icon {
-            color: #28a745;
+            color: #dc3545;
             transform: translateY(-50%) scale(1.1);
         }
 
@@ -188,7 +188,7 @@
         .forgot-button {
             width: 100%;
             padding: 16px;
-            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            background: linear-gradient(135deg, #dc3545 0%, #e3342f 100%);
             color: white;
             border: none;
             border-radius: 12px;
@@ -203,7 +203,7 @@
 
         .forgot-button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 12px 25px rgba(40, 167, 69, 0.2);
+            box-shadow: 0 12px 25px rgba(220, 53, 69, 0.2);
         }
 
         .forgot-button:active {
@@ -239,7 +239,7 @@
             align-items: center;
             gap: 8px;
             font-size: 14px;
-            color: #28a745;
+            color: #dc3545;
             text-decoration: none;
             font-weight: 500;
             transition: all 0.3s ease;
@@ -248,13 +248,13 @@
         }
 
         .back-link:hover {
-            background: rgba(40, 167, 69, 0.1);
+            background: rgba(220, 53, 69, 0.1);
             transform: translateX(-5px);
         }
 
         .info-box {
-            background: linear-gradient(135deg, rgba(40, 167, 69, 0.1) 0%, rgba(32, 201, 151, 0.1) 100%);
-            border: 1px solid rgba(40, 167, 69, 0.2);
+            background: linear-gradient(135deg, rgba(220, 53, 69, 0.1) 0%, rgba(32, 201, 151, 0.1) 100%);
+            border: 1px solid rgba(220, 53, 69, 0.2);
             border-radius: 12px;
             padding: 16px;
             margin-bottom: 30px;
@@ -264,7 +264,7 @@
         }
 
         .info-icon {
-            color: #28a745;
+            color: #dc3545;
             font-size: 18px;
             margin-top: 2px;
         }
@@ -331,7 +331,7 @@
             }
             50% {
                 transform: scale(1.05);
-                box-shadow: 0 25px 50px rgba(40, 167, 69, 0.2);
+                box-shadow: 0 25px 50px rgba(220, 53, 69, 0.2);
             }
             100% {
                 transform: scale(1);
@@ -414,7 +414,7 @@
         // Enhanced input interactions
         document.querySelectorAll('.form-input').forEach(input => {
             input.addEventListener('focus', function() {
-                this.parentElement.parentElement.querySelector('.form-label').style.color = '#28a745';
+                this.parentElement.parentElement.querySelector('.form-label').style.color = '#dc3545';
             });
             
             input.addEventListener('blur', function() {
@@ -424,7 +424,7 @@
             // Add floating label effect
             input.addEventListener('input', function() {
                 if (this.value) {
-                    this.style.borderColor = '#28a745';
+                    this.style.borderColor = '#dc3545';
                 } else {
                     this.style.borderColor = '#dee2e6';
                 }

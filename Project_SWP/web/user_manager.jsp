@@ -183,9 +183,9 @@
         <!-- Navbar -->
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
             <div class="container-fluid">
-                <a class="navbar-brand" href="#">Manager</a>
+                <a class="navbar-brand" href="#">Quản lí</a>
                 <div class="d-flex">
-                    <a class="nav-link text-light" href="login">Logout</a>
+                    <a class="nav-link text-light" href="login">Đăng xuất</a>
                 </div>
             </div>
         </nav>
@@ -229,9 +229,9 @@
                             <div class="col-md-3">
                                 <select name="status" class="form-select form-select-sm">
                                     <option value="">Tất cả trạng thái</option>
-                                    <option value="Active" ${param.status == 'Active' ? 'selected' : ''}>Active</option>
+                                    <option value="Active" ${param.status == 'Active' ? 'selected' : ''}>Hoạt Động </option>
 
-                                    <option value="banned" ${param.status == 'banned' ? 'selected' : ''}>Banned</option>
+                                    <option value="banned" ${param.status == 'banned' ? 'selected' : ''}>Đã chặn</option>
 
                                 </select>
                             </div>
@@ -275,7 +275,7 @@
                                                     <td><i class="fas fa-user-circle text-primary user-icon"></i><strong>${user.username}</strong></td>
                                                     <td>${user.lastname}</td>
                                                     <td>${user.firstname}</td>
-                                                    <td>${user.firstname} ${user.lastname}</td>
+                                                    <td>${user.lastname} ${user.firstname} </td>
                                                     <td>${user.gender}</td>
                                                     <td><fmt:formatDate value="${user.dateOfBirth}" pattern="yyyy-MM-dd"/></td>
                                                     <td class="text-start" style="font-size: 11px;">${user.email}</td>

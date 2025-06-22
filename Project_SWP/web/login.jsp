@@ -32,10 +32,10 @@
                 width: 100%;
                 height: 100%;
                 background: 
-                    linear-gradient(90deg, transparent 49%, #28a745 49%, #28a745 51%, transparent 51%),
-                    linear-gradient(0deg, transparent 49%, #28a745 49%, #28a745 51%, transparent 51%),
-                    radial-gradient(circle at 25% 25%, rgba(40, 167, 69, 0.1) 0%, transparent 50%),
-                    radial-gradient(circle at 75% 75%, rgba(40, 167, 69, 0.1) 0%, transparent 50%),
+                    linear-gradient(90deg, transparent 49%, #dc3545 49%, #dc3545 51%, transparent 51%),
+                    linear-gradient(0deg, transparent 49%, #dc3545 49%, #dc3545 51%, transparent 51%),
+                    radial-gradient(circle at 25% 25%, rgba(220, 53, 69, 0.1) 0%, transparent 50%),
+                    radial-gradient(circle at 75% 75%, rgba(220, 53, 69, 0.1) 0%, transparent 50%),
                     linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
                 animation: courtGlow 4s ease-in-out infinite alternate;
             }
@@ -66,7 +66,7 @@
                 left: -50%;
                 width: 200%;
                 height: 200%;
-                background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="2" fill="rgba(40,167,69,0.1)"/></svg>') repeat;
+                background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="2" fill="rgba(220,53,69,0.1)"/></svg>') repeat;
                 animation: float 20s linear infinite;
             }
 
@@ -85,8 +85,8 @@
             .brand-logo {
                 font-size: 80px;
                 margin-bottom: 20px;
-                color: #28a745;
-                text-shadow: 0 0 30px rgba(40, 167, 69, 0.3);
+                color: #dc3545;
+                text-shadow: 0 0 30px rgba(220, 53, 69, 0.3);
                 animation: pulse 2s ease-in-out infinite;
             }
 
@@ -99,7 +99,7 @@
                 font-size: 42px;
                 font-weight: 700;
                 margin-bottom: 15px;
-                color: #28a745;
+                color: #dc3545;
                 text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
             }
 
@@ -124,7 +124,7 @@
             .feature-icon {
                 font-size: 24px;
                 margin-bottom: 10px;
-                color: #28a745;
+                color: #dc3545;
             }
 
             .feature-text {
@@ -203,12 +203,12 @@
             }
 
             .form-input:focus {
-                border-color: #28a745;
-                box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.1);
+                border-color: #dc3545;
+                box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
             }
 
             .form-input:focus + .input-icon {
-                color: #28a745;
+                color: #dc3545;
             }
 
             .input-icon {
@@ -239,24 +239,24 @@
             .checkbox {
                 width: 18px;
                 height: 18px;
-                accent-color: #28a745;
+                accent-color: #dc3545;
             }
 
             .forgot-password {
-                color: #28a745;
+                color: #dc3545;
                 text-decoration: none;
                 font-weight: 500;
                 transition: color 0.3s ease;
             }
 
             .forgot-password:hover {
-                color: #1e7e34;
+                color: #c82333;
             }
 
             .login-button {
                 width: 100%;
                 padding: 16px;
-                background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+                background: linear-gradient(135deg, #dc3545 0%, #e3342f 100%);
                 color: white;
                 border: none;
                 border-radius: 8px;
@@ -271,7 +271,7 @@
 
             .login-button:hover {
                 transform: translateY(-2px);
-                box-shadow: 0 10px 25px rgba(40, 167, 69, 0.2);
+                box-shadow: 0 10px 25px rgba(220, 53, 69, 0.2);
             }
 
             .login-button:active {
@@ -326,7 +326,7 @@
             .google-icon {
                 width: 20px;
                 height: 20px;
-                background: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTIyLjU2IDEyLjI1QzIyLjU2IDExLjQ3IDIyLjQ5IDEwLjcyIDIyLjM2IDEwSDE3VjE0LjI2SDIwLjE5QzE5LjkzIDE1LjYgMTkuMTQgMTYuNzQgMTcuOTYgMTcuNVYyMC4wNkgyMC40MkMyMS43MiAxOC44NyAyMi41NiAxNS43OSAyMi41NiAxMi4yNVoiIGZpbGw9IiM0Mjg1RjQiLz4KPHBhdGggZD0iTTEyIDIyQzE1LjI0IDIyIDE3LjkyIDIwLjk1IDE5LjQyIDIwLjA2TDE2Lj96IDE3LjVDMTYuMTMgMTguMDIgMTQuMjMgMTguNTMgMTIgMTguNTNDOC45IDE4LjUzIDYuMjYgMTYuNzYgNS40IDE0LjI4SDMuNzlWMTUuOTdDNS4zOCAxOS4wOSA4LjM5IDIyIDEyIDIyWiIgZmlsbD0iIzM0QTg1MyIvPgo8cGF0aCBkPSJNNS40IDE0LjI4QzUuMTYgMTMuNzYgNSAxMy4xNCA1IDEyQzUgMTAuODYgNS4xNiAxMC4yNCA1LjQgOS43MlY4LjAzSDMuNzlDMy4xOSA5LjIyIDIuODcgMTAuNTcgMi44NyAxMkMyLjg3IDEzLjQzIDMuMTkgMTQuNzggMy43OSAxNS45N0w1LjQgMTQuMjhaIiBmaWxsPSIjRkJCQzA1Ii8+CjxwYXRoIGQ9Ik0xMiA1LjQ3QzE0LjMgNS40NyAxNi4yMyA2LjMzIDE3Ljc0IDcuNzlMMjAuMDEgNS41MkMxNy45MiAzLjU5IDE1LjI0IDIuNTQgMTIgMi41NEM4LjM5IDIuNTQgNS4zOCA1LjQ1IDMuNzkgOC41M0w1LjQgMTAuMjJDNi4yNiA3Ljc0IDguOSA1Ljk3IDEyIDUuOTdaIiBmaWxsPSIjRUE0MzM1Ii8+Cjwvc3ZnPgo=') no-repeat center;
+                background: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTIyLjU2IDEyLjI1QzIyLjU2IDExLjQ3IDIyLjQ5IDEwLjcyIDIyLjM2IDEwSDE3VjE0LjI2SDIwLjE5QzE5LjkzIDE1LjYgMTkuMTQgMTYuNzQgMTcuOTYgMTcuNVYyMC4wNkgyMC40MkMyMS43MiAxOC44NyAyMi41NiAxNS43OSAyMi41NiAxMi4yNVoiIGZpbGw9IiM0Mjg1RjQiLz4KPHBhdGggZD0iTTEyIDIyQzE1LjI0IDIyIDE3LjkyIDIwLjk1IDE5LjQyIDIwLjA2TDE2Lj96IDE3LjVDMTYuMTMgMTguMDIgMTQuMjMgMTguNTMgMTIgMTguNTNDOC45IDE4LjUzIDYuMjYgMTYuNzYgNS40IDE0LjI4SDMuNzlWMTUuOTdDNS4zOCAxOS4wOSA4LjM5IDIyIDEyIDIyWiIgZmlsbD0iIzM0QTg1MyIvPgo8cGF0aCBkPSJNNS40IDE0LjI4QzUuMTYgMTMuNzYgNSAxMy4xNCA1IDEyQzUgMTAuODYgNS4xNiAxMC4yNCA1LjQgOS43MlY4LjAzSDMuNzlDMy4xOSA5LjIyIDIuODcgMTAuNTcgMi44NyAxMkMyLjg3IDEzLjQzIDMuMTkgMTQuNzggMy43OSAxNS45N0w1LjQgMTQuMjhaIiBmaWxsPSIjRkJCQzAiLz4KPHBhdGggZD0iTTEyIDUuNDA3QzE0LjMgNS40NyAxNi4yMyA2LjMzIDE3Ljc0IDcuNzlMMjAuMDEgNS41MkMxNy45MiAzLjU5IDE1LjI0IDIuNTQgMTIgMi41NEM4LjM5IDIuNTQgNS4zOCA1LjQ1IDMuNzkgOC41M0w1LjQgMTAuMjJDNi4yNiA3Ljc0IDguOSA1Ljk3IDEyIDUuOTdaIiBmaWxsPSIjRUE0MzM1Ii8+Cjwvc3ZnPgo=') no-repeat center;
                 background-size: contain;
             }
 
@@ -337,14 +337,14 @@
             }
 
             .register-link {
-                color: #28a745;
+                color: #dc3545;
                 text-decoration: none;
                 font-weight: 600;
                 transition: color 0.3s ease;
             }
 
             .register-link:hover {
-                color: #1e7e34;
+                color: #c82333;
             }
 
             .notification-wrapper {
@@ -425,27 +425,27 @@
         <div class="left-panel">
             <div class="brand-content">
                 <div class="brand-logo">
-                    <svg viewBox="0 0 100 100" style="width: 80px; height: 80px; fill: #28a745;">
+                    <svg viewBox="0 0 100 100" style="width: 80px; height: 80px; fill: #dc3545;">
                         <!-- Cầu lông (shuttlecock) -->
-                        <circle cx="50" cy="75" r="8" fill="#28a745"/>
-                        <path d="M50 67 L42 20 L45 18 L50 25 L55 18 L58 20 Z" fill="#28a745"/>
-                        <path d="M42 20 L35 15 L40 12 L45 18" fill="#28a745" opacity="0.8"/>
-                        <path d="M58 20 L65 15 L60 12 L55 18" fill="#28a745" opacity="0.8"/>
-                        <path d="M45 18 L38 10 L42 8 L47 15" fill="#28a745" opacity="0.6"/>
-                        <path d="M55 18 L62 10 L58 8 L53 15" fill="#28a745" opacity="0.6"/>
+                        <circle cx="50" cy="75" r="8" fill="#dc3545"/>
+                        <path d="M50 67 L42 20 L45 18 L50 25 L55 18 L58 20 Z" fill="#dc3545"/>
+                        <path d="M42 20 L35 15 L40 12 L45 18" fill="#dc3545" opacity="0.8"/>
+                        <path d="M58 20 L65 15 L60 12 L55 18" fill="#dc3545" opacity="0.8"/>
+                        <path d="M45 18 L38 10 L42 8 L47 15" fill="#dc3545" opacity="0.6"/>
+                        <path d="M55 18 L62 10 L58 8 L53 15" fill="#dc3545" opacity="0.6"/>
                         <!-- Vợt cầu lông -->
-                        <ellipse cx="20" cy="35" rx="12" ry="18" fill="none" stroke="#28a745" stroke-width="3"/>
-                        <line x1="20" y1="53" x2="20" y2="80" stroke="#28a745" stroke-width="4"/>
-                        <rect x="18" y="78" width="4" height="8" fill="#28a745"/>
+                        <ellipse cx="20" cy="35" rx="12" ry="18" fill="none" stroke="#dc3545" stroke-width="3"/>
+                        <line x1="20" y1="53" x2="20" y2="80" stroke="#dc3545" stroke-width="4"/>
+                        <rect x="18" y="78" width="4" height="8" fill="#dc3545"/>
                         <!-- Lưới vợt -->
-                        <line x1="12" y1="25" x2="28" y2="25" stroke="#28a745" stroke-width="1" opacity="0.6"/>
-                        <line x1="12" y1="30" x2="28" y2="30" stroke="#28a745" stroke-width="1" opacity="0.6"/>
-                        <line x1="12" y1="35" x2="28" y2="35" stroke="#28a745" stroke-width="1" opacity="0.6"/>
-                        <line x1="12" y1="40" x2="28" y2="40" stroke="#28a745" stroke-width="1" opacity="0.6"/>
-                        <line x1="12" y1="45" x2="28" y2="45" stroke="#28a745" stroke-width="1" opacity="0.6"/>
-                        <line x1="15" y1="20" x2="15" y2="50" stroke="#28a745" stroke-width="1" opacity="0.6"/>
-                        <line x1="20" y1="17" x2="20" y2="53" stroke="#28a745" stroke-width="1" opacity="0.6"/>
-                        <line x1="25" y1="20" x2="25" y2="50" stroke="#28a745" stroke-width="1" opacity="0.6"/>
+                        <line x1="12" y1="25" x2="28" y2="25" stroke="#dc3545" stroke-width="1" opacity="0.6"/>
+                        <line x1="12" y1="30" x2="28" y2="30" stroke="#dc3545" stroke-width="1" opacity="0.6"/>
+                        <line x1="12" y1="35" x2="28" y2="35" stroke="#dc3545" stroke-width="1" opacity="0.6"/>
+                        <line x1="12" y1="40" x2="28" y2="40" stroke="#dc3545" stroke-width="1" opacity="0.6"/>
+                        <line x1="12" y1="45" x2="28" y2="45" stroke="#dc3545" stroke-width="1" opacity="0.6"/>
+                        <line x1="15" y1="20" x2="15" y2="50" stroke="#dc3545" stroke-width="1" opacity="0.6"/>
+                        <line x1="20" y1="17" x2="20" y2="53" stroke="#dc3545" stroke-width="1" opacity="0.6"/>
+                        <line x1="25" y1="20" x2="25" y2="50" stroke="#dc3545" stroke-width="1" opacity="0.6"/>
                     </svg>
                 </div>
                 <h1 class="brand-title">CourtBooking</h1>
@@ -563,7 +563,7 @@
             // Enhanced input interactions
             document.querySelectorAll('.form-input').forEach(input => {
                 input.addEventListener('focus', function() {
-                    this.parentElement.parentElement.querySelector('.form-label').style.color = '#28a745';
+                    this.parentElement.parentElement.querySelector('.form-label').style.color = '#dc3545';
                 });
                 
                 input.addEventListener('blur', function() {

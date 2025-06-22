@@ -15,7 +15,7 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
+          
             min-height: 100vh;
             display: flex;
             justify-content: center;
@@ -32,9 +32,9 @@
             width: 200%;
             height: 200%;
             background: 
-                radial-gradient(circle at 20% 80%, rgba(76, 175, 80, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 20% 80%, rgba(220, 53, 69, 0.3) 0%, transparent 50%),
                 radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 40% 40%, rgba(76, 175, 80, 0.2) 0%, transparent 50%);
+                radial-gradient(circle at 40% 40%, rgba(220, 53, 69, 0.2) 0%, transparent 50%);
             animation: float 6s ease-in-out infinite;
         }
 
@@ -85,7 +85,7 @@
         .reset-icon {
             width: 60px;
             height: 60px;
-            background: linear-gradient(135deg, #4CAF50, #2E7D32);
+            background: linear-gradient(135deg, #dc3545, #e3342f);
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -93,7 +93,7 @@
             margin: 0 auto 20px;
             font-size: 24px;
             color: white;
-            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
+            box-shadow: 0 4px 15px rgba(220, 53, 69, 0.4);
         }
 
         h2 {
@@ -130,8 +130,8 @@
         }
 
         .input-field:focus {
-            border-color: #4CAF50;
-            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+            border-color: #dc3545;
+            box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
             background: white;
         }
 
@@ -146,7 +146,7 @@
             top: 50%;
             transform: translateY(-50%);
             font-size: 18px;
-            color: #4CAF50;
+            color: #dc3545;
             z-index: 2;
         }
 
@@ -163,13 +163,13 @@
         }
 
         .password-toggle:hover {
-            color: #4CAF50;
+            color: #dc3545;
         }
 
         .btn {
             width: 100%;
             padding: 16px;
-            background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
+            background: linear-gradient(135deg, #dc3545 0%, #e3342f 100%);
             color: white;
             border: none;
             border-radius: 12px;
@@ -178,7 +178,7 @@
             font-weight: 600;
             letter-spacing: 0.5px;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
+            box-shadow: 0 4px 15px rgba(220, 53, 69, 0.4);
             position: relative;
             overflow: hidden;
         }
@@ -200,7 +200,7 @@
 
         .btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.6);
+            box-shadow: 0 6px 20px rgba(220, 53, 69, 0.6);
         }
 
         .btn:active {
@@ -225,7 +225,7 @@
         .login-link {
             display: inline-flex;
             align-items: center;
-            color: #4CAF50;
+            color: #dc3545;
             text-decoration: none;
             font-size: 14px;
             font-weight: 500;
@@ -235,7 +235,7 @@
         }
 
         .login-link:hover {
-            background: rgba(76, 175, 80, 0.1);
+            background: rgba(220, 53, 69, 0.1);
             transform: translateX(-3px);
         }
 
