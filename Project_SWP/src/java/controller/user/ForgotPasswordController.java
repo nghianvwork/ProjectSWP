@@ -5,6 +5,8 @@
 package controller.user;
 
 import DAO.UserDAO;
+import Model.User;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -13,7 +15,6 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.UUID;
-import Model.User;
 import utils.EmailUtils;
 
 @WebServlet(name = "ForgotPasswordController", urlPatterns = {"/forgotPassword"})
@@ -57,7 +58,7 @@ public class ForgotPasswordController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.getRequestDispatcher("forgotPassword.jsp").forward(request, response);
+        request.getRequestDispatcher("views/common/user/forgotPassword.jsp").forward(request, response);
     }
 
     /**
@@ -76,15 +77,9 @@ public class ForgotPasswordController extends HttpServlet {
         String email = request.getParameter("email");
 
         UserDAO userDAO = new UserDAO();
+        User user = userDAO.getUserByUsernameOrEmail(username, email);
 
-        // Sử dụng hàm mới: checkUserByUsernameOrEmail
-        Object[] result = userDAO.checkUserByUsernameOrEmail(username, email);
-        int code = (int) result[0];
-        User user = (User) result[1];
-
-        if (code == 4) {
-            // ĐÚNG user → Gửi email reset password
-
+        if (user != null) {
             // Tạo token ngẫu nhiên và lưu vào DB
             String token = UUID.randomUUID().toString();
             UserDAO tokenDAO = new UserDAO();
@@ -106,25 +101,11 @@ public class ForgotPasswordController extends HttpServlet {
             } else {
                 request.setAttribute("error", "Gửi email thất bại. Vui lòng thử lại sau.");
             }
-
-        } else if (code == 1) {
-            // Chỉ trùng username
-            request.setAttribute("error", "Username đã tồn tại, nhưng email không đúng.");
-
-        } else if (code == 2) {
-            // Chỉ trùng email
-            request.setAttribute("error", "Email đã tồn tại, nhưng username không đúng.");
-
-        } else if (code == 3) {
-            // Không trùng gì
-            request.setAttribute("error", "Không tìm thấy tài khoản với tên đăng nhập hoặc email đã cung cấp.");
-
         } else {
-            // Lỗi DB
-            request.setAttribute("error", "Đã xảy ra lỗi trong quá trình xử lý. Vui lòng thử lại sau.");
+            request.setAttribute("error", "Không tìm thấy tài khoản với tên đăng nhập hoặc email đã cung cấp.");
         }
 
-        request.getRequestDispatcher("forgotPassword.jsp").forward(request, response);
+        request.getRequestDispatcher("views/common/user/forgotPassword.jsp").forward(request, response);
     }
 
     /**

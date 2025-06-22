@@ -120,15 +120,24 @@ public void insertUser(User u) {
         return null;
     }
 
-    // Tìm user theo username hoặc email
-    public User getUserByUsernameOrEmail(String username, String email) {
+     public User getUserByUsernameOrEmail(String username, String email) {
         String sql = "SELECT * FROM Users WHERE username = ? OR email = ?";
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, username);
             ps.setString(2, email);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                return extractUserFromResultSet(rs);
+                User user = new User(
+                      rs.getInt("user_id"),
+                        rs.getString("username"),
+                        rs.getString("password"),
+                        rs.getString("email"),
+                        rs.getString("phone_number"),
+                        rs.getString("role")
+                );
+                user.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
+                return user;
             }
         } catch (SQLException e) {
             System.err.println("Lỗi tìm user theo username hoặc email: " + e);
