@@ -6,7 +6,9 @@
 package controller.user;
 
 import DAO.AreaDAO;
+import DAO.Branch_ImageDAO;
 import Model.Branch;
+import Model.Branch_pictures;
 import Model.User;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -16,7 +18,9 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -62,8 +66,17 @@ public class HomePage extends HttpServlet {
             throws ServletException, IOException {
         
         AreaDAO areaDAO = new AreaDAO();
+        Branch_ImageDAO imageDAO = new Branch_ImageDAO();
+        
         List<Branch> listTop3 = areaDAO.getTop3();
+        Map<Integer, List<Branch_pictures>> areaImagesMap = new HashMap<>();
+        
+        for (Branch area : listTop3) {
+            List<Branch_pictures> images = imageDAO.getRoomImagesByDormID(area.getArea_id());
+            areaImagesMap.put(area.getArea_id(), images);
+        }
         request.setAttribute("listTop3", listTop3);
+        request.setAttribute("areaImagesMap", areaImagesMap);
         request.getRequestDispatcher("homepage.jsp").forward(request, response);
     }
 

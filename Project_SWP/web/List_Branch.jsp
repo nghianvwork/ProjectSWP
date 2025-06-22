@@ -367,19 +367,23 @@
             <div class="courts-grid">
                 <c:forEach var="area" items="${areaList}">
                     <div class="court-card">
-                        <div class="logo-san">
-                            <img src="          " alt="${area.name}" />
+                        <div class="court-images">
+                            <c:forEach var="img" items="${areaImagesMap[area.area_id]}">
+                                <div class="logo-san">
+                                    <img src="${pageContext.request.contextPath}/${img.imageURL}" alt="Image ${img.image_id}" />
+                                </div>
+                            </c:forEach>
                         </div>
                         <div class="court-info">
                             <div class="court-name">${area.name}</div>
                             <div class="court-location">${area.location}</div>
                             <p>Giờ mở cửa: ${area.openTime} - ${area.closeTime}</p>
                             <p>Mô tả: ${area.description}</p>
-                            <a href="AreaDetail?area_id=${area.area_id}" class="book-btn btn" >Xem chi tiết</a>
-                        </div>
+                            <a href="AreaDetail?area_id=${area.area_id}" class="book-btn btn">Xem chi tiết</a>
+                        </div>            
                     </div>
                 </c:forEach>
-            </div>
+            </div>    
         </main>
 
         <jsp:include page="homefooter.jsp" />

@@ -391,8 +391,12 @@
             <div class="courts-grid">
                 <c:forEach var="top" items="${listTop3}">
                     <div class="court-card">
-                        <div class="logo-san">
-                            <img src="images/san/san.jpg" alt="${top.name}" />
+                        <div class="court-images">
+                            <c:forEach var="img" items="${areaImagesMap[top.area_id]}">
+                                <div class="logo-san">
+                                    <img src="${pageContext.request.contextPath}/${img.imageURL}" alt="Image ${img.image_id}" />
+                                </div>
+                            </c:forEach>
                         </div>
                         <div class="court-info">
                             <div class="court-name">${top.name}</div>
