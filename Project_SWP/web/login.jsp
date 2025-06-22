@@ -527,10 +527,26 @@
                      data-auto_prompt="false">
                 </div>
 
-                <button class="google-button" onclick="document.querySelector('.g_id_signin').click()">
-                    <div class="google-icon"></div>
-                    Đăng nhập với Google
-                </button>
+              <!-- Google Sign-In script -->
+            <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+            <!-- Google Sign-In Button -->
+            <div id="g_id_onload"
+                 data-client_id="857502113791-0i40c794o3g4h9hped4lhjb77t7h7mn3.apps.googleusercontent.com"
+                 data-context="signin"
+                 data-ux_mode="redirect"
+                 data-login_uri="http://localhost:8080/Project_SWP_2/oauth2handler"
+                 data-auto_prompt="false">
+            </div>
+
+            <div class="g_id_signin"
+                 data-type="standard"
+                 data-size="large"
+                 data-theme="outline"
+                 data-text="sign_in_with"
+                 data-shape="rectangular"
+                 data-logo_alignment="left">
+            </div>
 
                 <div class="g_id_signin" style="display: none;"
                      data-type="standard"
@@ -572,12 +588,7 @@
             });
 
             // Google button interaction
-            document.querySelector('.google-button').addEventListener('click', function() {
-                this.style.transform = 'scale(0.98)';
-                setTimeout(() => {
-                    this.style.transform = 'scale(1)';
-                }, 150);
-            });
+           
         </script>
     </body>
 </html>
