@@ -230,13 +230,13 @@
                 border: none;
                 padding: 0.75rem;
                 border-radius: 8px;
-                cursor: pointer;
                 font-weight: 500;
-                transition: all 0.3s;
+                text-align: center;
             }
 
-            .book-btn:hover {
-                background: #ff3838;
+            .book-btn a {
+                text-decoration: none;
+                color: white;
             }
 
             /* Footer */
@@ -403,10 +403,7 @@
                             <div class="court-location">${top.location}</div>
                             <p>Giờ mở cửa: ${top.openTime} - ${top.closeTime}</p>
                             <p>Mô tả: ${top.description}</p>
-                            <form action="areaDetail" method="get">
-                                <input type="hidden" name="area_id" value="${top.area_id}" />
-                                <button type="submit" class="book-btn">Xem chi tiết</button>
-                            </form>
+                            <div class="book-btn"><a href="login.jsp">Xem chi tiết</a></div>
                         </div>
                     </div>
                 </c:forEach>
