@@ -464,3 +464,11 @@ ALTER TABLE [dbo].[Posts]  WITH CHECK ADD CHECK  (([type]='common' OR [type]='pa
 GO
 ALTER TABLE [dbo].[Reviews]  WITH CHECK ADD CHECK  (([rating]>=(1) AND [rating]<=(5)))
 GO
+CREATE TABLE Shift (
+    shift_id INT IDENTITY(1,1) PRIMARY KEY,
+    area_id INT NOT NULL,
+    shift_name VARCHAR(255) NOT NULL,
+    start_time TIME NOT NULL,
+    end_time TIME NOT NULL
+     FOREIGN KEY (area_id) REFERENCES Areas(area_id)  
+);

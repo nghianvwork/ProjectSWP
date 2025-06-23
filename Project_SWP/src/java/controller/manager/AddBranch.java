@@ -84,7 +84,7 @@ public class AddBranch extends HttpServlet {
         }
 
         User user = (User) session.getAttribute("user");
-        if (user == null || !user.getRole().equals("staff")) {
+        if (user == null || !user.getRole().equals("admin")) {
             response.sendRedirect("login");
             return;
         }

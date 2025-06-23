@@ -24,6 +24,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.math.BigDecimal;
 import java.sql.Time;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -158,11 +159,13 @@ public class BookFieldServlet extends HttpServlet {
                 request.getRequestDispatcher("book_field.jsp").forward(request, response);
                 return;
             }
-
+            Shift shift = new Shift();
             Time startTime, endTime;
             try {
                 startTime = Time.valueOf(request.getParameter("startTime") + ":00");
                 endTime = Time.valueOf(request.getParameter("endTime") + ":00");
+                System.out.println("Start Time: " + shift.getStartTime());
+                System.out.println("End Time: " + shift.getEndTime());
             } catch (Exception e) {
                 request.setAttribute("message", "Lỗi định dạng giờ.");
                 request.setAttribute("court", court);
@@ -181,7 +184,10 @@ public class BookFieldServlet extends HttpServlet {
                 request.getRequestDispatcher("book_field.jsp").forward(request, response);
                 return;
             }
-
+                   CourtDAO cDao = new CourtDAO();
+ BigDecimal pricePerHour = cDao.getCourtPrice(courtId);
+ BigDecimal totalPrice = cDao.calculateSlotPrice(startTime, endTime, pricePerHour);
+        System.out.println("Toltol>>>>" + totalPrice);
             Service_BranchDAO sDao = new Service_BranchDAO();
             List<Branch_Service> services = sDao.getAllAreaServices(court.getArea_id());
 
@@ -189,6 +195,7 @@ public class BookFieldServlet extends HttpServlet {
             request.setAttribute("date", date);
             request.setAttribute("startTime", startTime);
             request.setAttribute("endTime", endTime);
+            request.setAttribute("totalPrice", totalPrice);
             request.setAttribute("availableServices", services);
             request.getRequestDispatcher("confirm_booking.jsp").forward(request, response);
 

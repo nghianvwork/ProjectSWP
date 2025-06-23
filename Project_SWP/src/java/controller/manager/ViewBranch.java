@@ -78,14 +78,14 @@ public class ViewBranch extends HttpServlet {
             UserDAO dao = new UserDAO();
             User u = dao.getUserByUsername(username);
             HttpSession session = request.getSession();
-            if (u.getRole().equals("staff")) {
+            if (u.getRole().equals("admin")) {
                 session.setAttribute("user", u);
             }
         }
         HttpSession session = request.getSession(false);
         if (session != null) {
             User user = (User) session.getAttribute("user");
-            if (user.getRole().equals("staff")) {
+            if (user.getRole().equals("admin")) {
                 int page = 1;
                 int recordsPerpage = 5;
                 if (request.getParameter("page") != null) {
