@@ -22,6 +22,7 @@
                 display: flex;
                 position: relative;
                 overflow: hidden;
+                 overflow-y: auto;
             }
 
             /* Animated court background */
@@ -221,6 +222,81 @@
                 transition: color 0.3s ease;
             }
 
+            /* CAPTCHA Styles */
+            .captcha-container {
+                margin-bottom: 25px;
+            }
+
+            .captcha-display {
+                display: flex;
+                align-items: center;
+                gap: 15px;
+                margin-bottom: 15px;
+            }
+
+            .captcha-box {
+                background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+                border: 2px solid #dee2e6;
+                border-radius: 8px;
+                padding: 15px 20px;
+                font-family: 'Courier New', monospace;
+                font-size: 20px;
+                font-weight: bold;
+                color: #495057;
+                letter-spacing: 3px;
+                user-select: none;
+                position: relative;
+                overflow: hidden;
+                min-width: 120px;
+                text-align: center;
+                background-image: 
+                    repeating-linear-gradient(45deg, transparent, transparent 2px, rgba(220, 53, 69, 0.1) 2px, rgba(220, 53, 69, 0.1) 4px),
+                    repeating-linear-gradient(-45deg, transparent, transparent 2px, rgba(220, 53, 69, 0.05) 2px, rgba(220, 53, 69, 0.05) 4px);
+            }
+
+            .captcha-refresh {
+                background: #dc3545;
+                color: white;
+                border: none;
+                border-radius: 6px;
+                padding: 12px;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                font-size: 16px;
+            }
+
+            .captcha-refresh:hover {
+                background: #c82333;
+                transform: rotate(180deg);
+            }
+
+            .captcha-input {
+                width: 100%;
+                padding: 16px 20px 16px 50px;
+                border: 2px solid #dee2e6;
+                border-radius: 8px;
+                font-size: 16px;
+                font-weight: 400;
+                background: #ffffff;
+                color: #212529;
+                transition: all 0.3s ease;
+                outline: none;
+                text-transform: uppercase;
+                letter-spacing: 2px;
+            }
+
+            .captcha-input:focus {
+                border-color: #dc3545;
+                box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
+            }
+
+            .captcha-error {
+                color: #dc3545;
+                font-size: 12px;
+                margin-top: 5px;
+                display: none;
+            }
+
             .form-options {
                 display: flex;
                 justify-content: space-between;
@@ -278,10 +354,17 @@
                 transform: translateY(0);
             }
 
+            .login-button:disabled {
+                background: #6c757d;
+                cursor: not-allowed;
+                transform: none;
+                box-shadow: none;
+            }
+
             .divider {
                 display: flex;
                 align-items: center;
-                margin: 30px 0;
+                margin: 10px 0;
                 color: #6c757d;
                 font-size: 14px;
             }
@@ -385,6 +468,16 @@
                 
                 .login-title {
                     font-size: 24px;
+                }
+
+                .captcha-display {
+                    flex-direction: column;
+                    align-items: stretch;
+                }
+
+                .captcha-box {
+                    min-width: auto;
+                    margin-bottom: 10px;
                 }
             }
 
@@ -499,6 +592,22 @@
                         </div>
                     </div>
 
+                    <!-- CAPTCHA Section -->
+                    <div class="form-group captcha-container">
+                        <label class="form-label">Xác nhận bảo mật</label>
+                        <div class="captcha-display">
+                            <div class="captcha-box" id="captchaCode">ABC123</div>
+                            <button type="button" class="captcha-refresh" id="refreshCaptcha" title="Làm mới mã xác nhận">
+                                <i class="fas fa-sync-alt"></i>
+                            </button>
+                        </div>
+                        <div class="input-container">
+                            <input type="text" class="captcha-input" id="captchaInput" name="captcha" placeholder="Nhập mã xác nhận" required maxlength="6">
+                            <i class="fas fa-shield-alt input-icon"></i>
+                        </div>
+                        <div class="captcha-error" id="captchaError">Mã xác nhận không đúng!</div>
+                    </div>
+
                     <div class="form-options">
                         <label class="remember-wrapper">
                             <input type="checkbox" class="checkbox" name="rememberMe" id="remember">
@@ -527,28 +636,7 @@
                      data-auto_prompt="false">
                 </div>
 
-              <!-- Google Sign-In script -->
-            <script src="https://accounts.google.com/gsi/client" async defer></script>
-
-            <!-- Google Sign-In Button -->
-            <div id="g_id_onload"
-                 data-client_id="857502113791-0i40c794o3g4h9hped4lhjb77t7h7mn3.apps.googleusercontent.com"
-                 data-context="signin"
-                 data-ux_mode="redirect"
-                 data-login_uri="http://localhost:8080/Project_SWP_2/oauth2handler"
-                 data-auto_prompt="false">
-            </div>
-
-            <div class="g_id_signin"
-                 data-type="standard"
-                 data-size="large"
-                 data-theme="outline"
-                 data-text="sign_in_with"
-                 data-shape="rectangular"
-                 data-logo_alignment="left">
-            </div>
-
-                <div class="g_id_signin" style="display: none;"
+                <div class="g_id_signin"
                      data-type="standard"
                      data-size="large"
                      data-theme="outline"
@@ -556,6 +644,7 @@
                      data-shape="rectangular"
                      data-logo_alignment="left">
                 </div>
+                <br>
 
                 <p class="register-text">
                     Chưa có tài khoản? <a href="${pageContext.request.contextPath}/register" class="register-link">Đăng ký ngay</a>
@@ -564,11 +653,80 @@
         </div>
 
         <script>
-            // Form submission with loading state
+            // CAPTCHA functionality
+            let currentCaptcha = '';
+            
+            function generateCaptcha() {
+                const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+                let result = '';
+                for (let i = 0; i < 6; i++) {
+                    result += chars.charAt(Math.floor(Math.random() * chars.length));
+                }
+                return result;
+            }
+            
+            function updateCaptcha() {
+                currentCaptcha = generateCaptcha();
+                document.getElementById('captchaCode').textContent = currentCaptcha;
+                document.getElementById('captchaInput').value = '';
+                document.getElementById('captchaError').style.display = 'none';
+                document.getElementById('captchaInput').style.borderColor = '#dee2e6';
+            }
+            
+            function validateCaptcha() {
+                const userInput = document.getElementById('captchaInput').value.toUpperCase();
+                return userInput === currentCaptcha;
+            }
+            
+            // Initialize CAPTCHA
+            updateCaptcha();
+            
+            // Refresh CAPTCHA button
+            document.getElementById('refreshCaptcha').addEventListener('click', function() {
+                updateCaptcha();
+                this.style.transform = 'rotate(360deg)';
+                setTimeout(() => {
+                    this.style.transform = 'rotate(0deg)';
+                }, 300);
+            });
+            
+            // CAPTCHA input validation
+            document.getElementById('captchaInput').addEventListener('input', function() {
+                this.value = this.value.toUpperCase();
+                if (this.value.length === 6) {
+                    if (validateCaptcha()) {
+                        this.style.borderColor = '#28a745';
+                        document.getElementById('captchaError').style.display = 'none';
+                    } else {
+                        this.style.borderColor = '#dc3545';
+                        document.getElementById('captchaError').style.display = 'block';
+                    }
+                } else {
+                    this.style.borderColor = '#dee2e6';
+                    document.getElementById('captchaError').style.display = 'none';
+                }
+            });
+            
+            // Form submission with CAPTCHA validation
             document.getElementById('loginForm').addEventListener('submit', function(e) {
+                if (!validateCaptcha()) {
+                    e.preventDefault();
+                    document.getElementById('captchaError').style.display = 'block';
+                    document.getElementById('captchaInput').style.borderColor = '#dc3545';
+                    document.getElementById('captchaInput').focus();
+                    return false;
+                }
+                
                 const btn = document.getElementById('loginBtn');
                 btn.classList.add('loading');
                 btn.disabled = true;
+                
+                // Add captcha value to form data
+                const hiddenInput = document.createElement('input');
+                hiddenInput.type = 'hidden';
+                hiddenInput.name = 'captchaCode';
+                hiddenInput.value = currentCaptcha;
+                this.appendChild(hiddenInput);
                 
                 setTimeout(() => {
                     btn.classList.remove('loading');
@@ -577,18 +735,34 @@
             });
 
             // Enhanced input interactions
-            document.querySelectorAll('.form-input').forEach(input => {
+            document.querySelectorAll('.form-input, .captcha-input').forEach(input => {
                 input.addEventListener('focus', function() {
-                    this.parentElement.parentElement.querySelector('.form-label').style.color = '#dc3545';
+                    const label = this.closest('.form-group').querySelector('.form-label');
+                    if (label) {
+                        label.style.color = '#dc3545';
+                    }
                 });
                 
                 input.addEventListener('blur', function() {
-                    this.parentElement.parentElement.querySelector('.form-label').style.color = '#495057';
+                    const label = this.closest('.form-group').querySelector('.form-label');
+                    if (label) {
+                        label.style.color = '#495057';
+                    }
                 });
             });
 
-            // Google button interaction
-           
+            // Auto-refresh CAPTCHA every 5 minutes for security
+            setInterval(updateCaptcha, 300000);
+            
+            // Prevent right-click on CAPTCHA
+            document.getElementById('captchaCode').addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+            });
+            
+            // Prevent text selection on CAPTCHA
+            document.getElementById('captchaCode').addEventListener('selectstart', function(e) {
+                e.preventDefault();
+            });
         </script>
     </body>
 </html>
