@@ -815,7 +815,7 @@
                         <div class="form-group">
                             <label class="form-label" for="firstName">Họ</label>
                             <div class="input-container">
-                                <input type="text" class="form-input" id="firstName" name="firstName" placeholder="Nhập họ của bạn" required>
+                                <input type="text" class="form-input" id="firstName" name="firstname" placeholder="Nhập họ của bạn" required>
                                 <i class="fas fa-user input-icon"></i>
                             </div>
                             <div class="error-message" id="firstNameError">Vui lòng nhập họ</div>
@@ -824,7 +824,7 @@
                         <div class="form-group">
                             <label class="form-label" for="lastName">Tên</label>
                             <div class="input-container">
-                                <input type="text" class="form-input" id="lastName" name="lastName" placeholder="Nhập tên của bạn" required>
+                                <input type="text" class="form-input" id="lastName" name="lastname" placeholder="Nhập tên của bạn" required>
                                 <i class="fas fa-user input-icon"></i>
                             </div>
                             <div class="error-message" id="lastNameError">Vui lòng nhập tên</div>

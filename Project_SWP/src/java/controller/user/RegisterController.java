@@ -61,7 +61,7 @@ public class RegisterController extends HttpServlet {
             return;
         }
 
-        if (!phoneNumber.matches("^(0)\\d{8}$")) {
+        if (!phoneNumber.matches("^(0)\\d{9}$")) {
             request.setAttribute("error", "Số điện thoại không hợp lệ! Phải bắt đầu bằng 0và có chính xác 10 chữ số.");
             request.getRequestDispatcher("register.jsp").forward(request, response);
             return;

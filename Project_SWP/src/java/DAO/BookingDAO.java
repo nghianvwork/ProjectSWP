@@ -515,22 +515,40 @@ public class BookingDAO extends DBContext {
         return false;
     }
 
-
-   // Lấy danh sách booking theo filter: từ ngày, đến ngày, courtId (nếu null thì tất cả)
 public List<Bookings> getBookingHistoryByFilter(LocalDate from, LocalDate to, Integer courtId) {
     List<Bookings> list = new ArrayList<>();
-    StringBuilder sql = new StringBuilder("SELECT * FROM Bookings WHERE date >= ? AND date <= ? AND status != 'cancelled'");
+    StringBuilder sql = new StringBuilder("SELECT * FROM Bookings WHERE status != 'cancelled'");
+    
+    // Kiểm tra và thêm điều kiện lọc ngày
+    if (from != null) {
+        sql.append(" AND date >= ?");
+    }
+    if (to != null) {
+        sql.append(" AND date <= ?");
+    }
+    
+    // Kiểm tra và thêm điều kiện lọc theo court_id
     if (courtId != null) {
         sql.append(" AND court_id = ?");
     }
+    
     sql.append(" ORDER BY date DESC, start_time");
 
     try (PreparedStatement ps = conn.prepareStatement(sql.toString())) {
-        ps.setDate(1, java.sql.Date.valueOf(from));
-        ps.setDate(2, java.sql.Date.valueOf(to));
-        if (courtId != null) {
-            ps.setInt(3, courtId);
+        int parameterIndex = 1;
+        
+        // Gán giá trị cho các tham số PreparedStatement
+        if (from != null) {
+            ps.setDate(parameterIndex++, java.sql.Date.valueOf(from));
         }
+        if (to != null) {
+            ps.setDate(parameterIndex++, java.sql.Date.valueOf(to));
+        }
+        if (courtId != null) {
+            ps.setInt(parameterIndex++, courtId);
+        }
+        
+        // Thực thi truy vấn
         ResultSet rs = ps.executeQuery();
         while (rs.next()) {
             Bookings b = new Bookings();
@@ -550,6 +568,7 @@ public List<Bookings> getBookingHistoryByFilter(LocalDate from, LocalDate to, In
     }
     return list;
 }
+
 
 // Tính tổng doanh thu theo filter: từ ngày, đến ngày, courtId (nếu null thì tất cả)
 public BigDecimal getTotalRevenue(LocalDate from, LocalDate to, Integer courtId) {
