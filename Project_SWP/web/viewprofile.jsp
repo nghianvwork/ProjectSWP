@@ -119,8 +119,8 @@
         <div class="container">
             <div class="sidebar">
                 <div class="user-info">
-                    <img src="./uploads/avt.jpg" alt="avt" />
-<!--                    <p class="userName">Sáng Nguyễn</p>-->
+                    <img src="./images/avt/avt.jpg" alt="avt" />
+                    <!--                    <p class="userName">Sáng Nguyễn</p>-->
                     <span><b><%=user.getUsername()%></b></span>
                 </div>
                 <ul class="menu">
@@ -129,6 +129,7 @@
                     <li><a href="change-pass">Đổi mật khẩu</a></li>
                     <li><strong>Danh sách lịch của tôi</strong></li>
                     <li><a href="#">Lịch đã đặt</a></li>
+                    <li><a href="setting-notification">Gửi thông báo về mail</a></li>
                 </ul>
             </div>
             <div class="main-content">
@@ -150,16 +151,16 @@
                             </div>
                             <div >
                                 <button type="submit" class="edit-btn">Update</button>
-<!--                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>-->
+                                <!--                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>-->
                             </div>
                         </form>
                     </div>
                     <div class="avt-view-profile">
-                        <img src="./uploads/avt.jpg" alt="avt" />
+                        <img src="./images/avt/avt.jpg" alt="avt" />
                     </div>
                 </div>
             </div>
         </div>
-                               <jsp:include page="homefooter.jsp" />
+        <jsp:include page="homefooter.jsp" />
     </body>
 </html>

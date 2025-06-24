@@ -349,6 +349,7 @@ CREATE TABLE [dbo].[Users](
 	[lastname] [nvarchar](100) NULL,
 	[fullname]  AS (concat([lastname],' ',[firstname])) PERSISTED NOT NULL,
 	[date_of_birth] [date] NULL,
+	[send_mail] [bit] NOT NULL,
 PRIMARY KEY CLUSTERED 
 (
 	[user_id] ASC

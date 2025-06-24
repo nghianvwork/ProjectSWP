@@ -849,7 +849,7 @@
                         <div class="form-group">
                             <label class="form-label" for="birthDate">Ngày sinh</label>
                             <div class="input-container">
-                                <input type="date" class="form-input" id="birthDate" name="birthDate" required>
+                                <input type="date" class="form-input" id="birthDate" name="date_of_birth" required>
                                 <i class="fas fa-calendar input-icon"></i>
                             </div>
                             <div class="error-message" id="birthDateError">Vui lòng chọn ngày sinh</div>

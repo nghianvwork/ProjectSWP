@@ -92,18 +92,31 @@ public class UserDAO extends DBContext {
     }
 
     // Cập nhật user
-    public void updateUser(User u) {
-        String sql = "UPDATE Users SET username = ?, password = ?, email = ?, phone_number = ?, role = ? WHERE user_id = ?";
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, u.getUsername());
-            ps.setString(2, u.getPassword());
-            ps.setString(3, u.getEmail());
-            ps.setString(4, u.getPhone_number());
-            ps.setString(5, u.getRole());
-            ps.setInt(6, u.getUser_Id());
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            System.err.println("Lỗi cập nhật user: " + e);
+    public boolean updateUser(User user) throws Exception {
+        PreparedStatement ps = null;
+        String query = "UPDATE Users SET username=?, fullname=?, email=?, phone_number=?, gender=?, role=?, status=?, note=?, date_of_birth=? WHERE user_id=?";
+
+        try {
+            conn = new DBContext().getConnection();
+            ps = conn.prepareStatement(query);
+
+            ps.setString(1, user.getUsername());
+            ps.setString(2, user.getFullname());
+            ps.setString(3, user.getEmail());
+            ps.setString(4, user.getPhone_number());
+            ps.setString(5, user.getGender());
+            ps.setString(6, user.getRole());
+            ps.setString(7, user.getStatus());
+            ps.setString(8, user.getNote());
+            ps.setDate(9, user.getDateOfBirth());
+            ps.setInt(10, user.getUser_Id());
+
+            int rowsAffected = ps.executeUpdate();
+            return rowsAffected > 0;
+
+        } finally {
+            if (ps != null) ps.close();
+            if (conn != null) conn.close();
         }
     }
 
@@ -580,6 +593,7 @@ public class UserDAO extends DBContext {
 
         return false;
     }
+
   public List<User> getAllStaff() {
     List<User> staffList = new ArrayList<>();
     String sql = "SELECT * FROM Users WHERE role = 'staff'";
@@ -599,5 +613,30 @@ public class UserDAO extends DBContext {
     }
     return staffList;
 }
+
+       public boolean getSendMail(int user_Id) {
+        String sql = "SELECT send_mail FROM Users WHERE user_id = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, user_Id);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getBoolean("send_mail");
+            }
+        } catch (SQLException e) {
+            System.err.println("Lỗi getSendMail: " + e.getMessage());
+        }
+        return false;
+    }
+           public void updateSendMail(int user_Id, boolean sendMail) {
+        String sql = "UPDATE Users SET send_mail = ? WHERE user_id = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setBoolean(1, sendMail);
+            ps.setInt(2, user_Id);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("Lỗi updateSendMail: " + e.getMessage());
+        }
+    }
+
 
 }

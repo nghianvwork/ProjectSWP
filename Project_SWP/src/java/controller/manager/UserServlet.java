@@ -12,6 +12,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.sql.Date;
 import java.time.LocalDateTime;
 import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import utils.EmailUtils;
 import utils.PasswordUtil;
 
@@ -109,7 +111,11 @@ if (userByUsername != null) {
     request.setAttribute("error", "Email đã tồn tại.");
 } else if (phoneExists) {
     request.setAttribute("error", "Số điện thoại đã tồn tại.");
+}// Validate username chỉ tối đa 10 ký tự, chỉ nhận chữ cái và số
+if (username == null || !username.matches("^[a-zA-Z0-9]{1,10}$")) {
+    request.setAttribute("error", "Tên đăng nhập chỉ tối đa 10 ký tự và chỉ gồm chữ cái, số.");
 }
+
 
 if (request.getAttribute("error") != null) {
     List<User> users = userDAO.getUsersByPage(1, 5);
@@ -230,7 +236,11 @@ if (request.getAttribute("error") != null) {
                 oldUser.setEmail(email);
                 oldUser.setPhone_number(phone);
                 oldUser.setRole(role);
-                userDAO.updateUser(oldUser);
+                try {
+                    userDAO.updateUser(oldUser);
+                } catch (Exception ex) {
+                    Logger.getLogger(UserServlet.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
 
         } else if ("delete".equals(action)) {

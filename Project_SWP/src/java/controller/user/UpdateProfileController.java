@@ -14,6 +14,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.sql.Date;
 
 /**
  *
@@ -48,7 +49,17 @@ public class UpdateProfileController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        
+        int userId = Integer.parseInt(request.getParameter("id"));
+        UserDAO dao = new UserDAO();
+        try {
+            User user = dao.getUserById(userId);
+            request.setAttribute("user", user);
+            request.getRequestDispatcher("UpdateProfile.jsp").forward(request, response);
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.sendRedirect("error.jsp");
+        }
     }
 
     /**
@@ -62,16 +73,52 @@ public class UpdateProfileController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        UserDAO userDao = new UserDAO();
-        HttpSession session = request.getSession();
-        String username = request.getParameter("username");
-        String email = request.getParameter("email");
-        String phoneNumber = request.getParameter("phoneNumber");
-        User user = (User) session.getAttribute("user");
-        User newUser = new User(user.getUser_Id(), username, user.getPassword(), email, phoneNumber, user.getRole());
-        userDao.updateUser(newUser);
-        session.setAttribute("user", newUser);
-        request.getRequestDispatcher("viewprofile.jsp").forward(request, response);
+        request.setCharacterEncoding("UTF-8");
+
+        try {
+            int userId = Integer.parseInt(request.getParameter("userId"));
+            String username = request.getParameter("username");
+            String fullname = request.getParameter("fullname");
+            String email = request.getParameter("email");
+            String phoneNumber = request.getParameter("phoneNumber");
+            String gender = request.getParameter("gender");
+            String role = request.getParameter("role");
+            String status = request.getParameter("status");
+            String note = request.getParameter("note");
+            String dobStr = request.getParameter("dateOfBirth");
+
+            Date dateOfBirth = null;
+            if (dobStr != null && !dobStr.isEmpty()) {
+                dateOfBirth = Date.valueOf(dobStr);
+            }
+
+            User user = new User();
+            user.setUser_Id(userId);
+            user.setUsername(username);
+            user.setFullname(fullname);
+            user.setEmail(email);
+            user.setPhone_number(phoneNumber);
+            user.setGender(gender);
+            user.setRole(role);
+            user.setStatus(status);
+            user.setNote(note);
+            user.setDateOfBirth(dateOfBirth);
+
+            UserDAO dao = new UserDAO();
+            boolean success = dao.updateUser(user);
+
+            if (success) {
+                response.sendRedirect("viewprofile?id=" + userId);
+            } else {
+                request.setAttribute("error", "Update failed!");
+                request.setAttribute("user", user);
+                request.getRequestDispatcher("UpdateProfile.jsp").forward(request, response);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.sendRedirect("error.jsp");
+        }
     }
 
     /**

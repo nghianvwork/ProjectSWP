@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 
 /**
  *
- * @author admin
+ * @author Hoang Tan Bao
  */
 public class User {
 
@@ -28,6 +28,7 @@ public class User {
     private String fullname;
     private Date dateOfBirth;
     private String fullName = firstname + lastname;
+    private boolean sendMail;
 
     public User() {
     }
@@ -76,6 +77,39 @@ public class User {
         this.lastname = lastname;
         this.fullname = fullname;
         this.dateOfBirth = dateOfBirth;
+    }
+
+    public User(int user_Id, String username, String password, String email, String phone_number, String role, String status, String note, String gender, String firstname, String lastname, String fullname, Date dateOfBirth, boolean sendMail) {
+        this.user_Id = user_Id;
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.phone_number = phone_number;
+        this.role = role;
+        this.status = status;
+        this.note = note;
+        this.gender = gender;
+        this.firstname = firstname;
+        this.lastname = lastname;
+        this.fullname = fullname;
+        this.dateOfBirth = dateOfBirth;
+        this.sendMail = sendMail;
+    }
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+
+    public boolean isSendMail() {
+        return sendMail;
+    }
+
+    public void setSendMail(boolean sendMail) {
+        this.sendMail = sendMail;
     }
 
     public String getGender() {
