@@ -189,8 +189,17 @@
                                                                         <input type="text" name="description" class="form-control" value="${a.description}">
                                                                     </div>
                                                                     <div class="form-group">
-                                                                        <label>Tên quản lí </label>
-                                                                        <input type="text" name="nameStaff" class="form-control" value="${a.nameStaff}">
+                                                                        <label>Chọn nhân viên quản lí</label>
+                                                                        <select name="manager_id" class="form-control" required>
+                                                                            <option value="">-- Chọn nhân viên --</option>
+                                                                            <c:forEach var="staff" items="${staffList}">
+                                                                                <option value="${staff.user_Id}"
+                                                                                        <c:if test="${a.manager_id == staff.user_Id}">selected</c:if>
+                                                                                            >
+                                                                                        ${staff.lastname} ${staff.firstname}
+                                                                                </option>
+                                                                            </c:forEach>
+                                                                        </select>
                                                                     </div>
                                                                     <div class="form-group">
                                                                         <label>Số điện thoại quản lí </label>
@@ -264,8 +273,15 @@
                                                 <input type="text" name="description" class="form-control" required>
                                             </div>
                                             <div class="form-group">
-                                                <label>Tên quản lí </label>
-                                                <input type="text" name="nameStaff" class="form-control" required="">
+                                                <label>Chọn nhân viên quản lí</label>
+                                                <select name="manager_id" class="form-control" required>
+                                                    <option value="">-- Chọn nhân viên --</option>
+                                                    <c:forEach var="staff" items="${staffList}">
+                                                        <option value="${staff.user_Id}">
+                                                            ${staff.lastname} ${staff.firstname}
+                                                        </option>
+                                                    </c:forEach>
+                                                </select>
                                             </div>
                                             <div class="form-group">
                                                 <label>Số điện thoại quản lí </label>

@@ -11,35 +11,35 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
         <style>
             :root {
-    --primary-color: #ff2d2d;           /* đỏ tươi */
-    --secondary-color: #b22222;         /* đỏ đậm/firebrick */
-    --success-color: #ff7675;           /* đỏ nhạt */
-    --danger-color: #e74c3c;            /* đỏ cam */
-    --warning-color: #ffbe76;           /* cam nhạt */
-    --info-color: #e17055;              /* cam đất */
-    --light-color: #fff1f1;             /* đỏ nhạt */
-    --dark-color: #c0392b;              /* đỏ đậm */
-    --gradient-bg: linear-gradient(135deg, #ff2d2d 0%, #b22222 100%);
-    --card-shadow: 0 4px 20px rgba(255,45,45,0.08);
-    --hover-shadow: 0 8px 30px rgba(255,45,45,0.15);
+                --primary-color: #377dff;           /* Xanh biển đậm */
+                --secondary-color: #2b4c7e;         /* Xanh navy */
+                --success-color: #48e6a0;           /* Xanh lá nhạt */
+                --danger-color: #ff6b6b;            /* Đỏ dùng cho xóa/cảnh báo */
+                --warning-color: #ffbe76;           /* Cam nhạt */
+                --info-color: #3ec6e0;              /* Xanh cyan */
+                --light-color: #f5faff;             /* Nền xanh nhạt */
+                --dark-color: #23304d;              /* Xanh navy đậm */
+                --gradient-bg: linear-gradient(135deg, #377dff 0%, #3ec6e0 100%);
+                --card-shadow: 0 4px 20px rgba(55,125,255,0.08);
+                --hover-shadow: 0 8px 30px rgba(55,125,255,0.18);
+            }
+           body {
+    background-color: #f4f6f9;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    min-height: 100vh;
 }
-            body {
-                background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                min-height: 100vh;
-            }
+          .navbar {
+    background-color: #ffffff !important;
+    padding: 10px 20px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    border: none;
+}
+.navbar-brand {
+    color: #007bff !important;
+    font-weight: 700;
+    font-size: 1.5rem;
+}
 
-            .navbar {
-                background: var(--gradient-bg) !important;
-                box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-                border: none;
-            }
-
-            .navbar-brand {
-                color: white !important;
-                font-weight: 700;
-                font-size: 1.5rem;
-            }
 
             .navbar-toggler {
                 border-color: rgba(255,255,255,0.3);
@@ -63,14 +63,12 @@
                 padding: 0;
             }
 
-            .main-content {
-                background: white;
-                border-radius: 20px;
-                margin: 20px;
-                padding: 30px;
-                box-shadow: var(--card-shadow);
-                animation: fadeInUp 0.6s ease;
-            }
+           .main-content {
+    padding: 30px;
+    background-color: #ffffff;
+    border-radius: 15px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.05);
+}
 
             @keyframes fadeInUp {
                 from {
@@ -115,6 +113,7 @@
                 border-radius: 20px 20px 0 0 !important;
                 border: none;
             }
+
 
             .card-title {
                 font-weight: 600;
@@ -168,14 +167,14 @@
                 border-radius: 25px;
                 font-weight: 500;
                 transition: all 0.3s ease;
-                box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+                box-shadow: 0 4px 15px rgba(55,125,255,0.18);
             }
-
             .btn-custom:hover {
                 color: white;
                 transform: translateY(-3px);
-                box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+                box-shadow: 0 6px 20px rgba(55,125,255,0.30);
             }
+
 
             .btn-custom i {
                 margin-right: 8px;
@@ -205,6 +204,7 @@
                 font-size: 0.95rem;
             }
 
+
             .table tbody tr {
                 transition: all 0.3s ease;
             }
@@ -214,19 +214,18 @@
                 transform: scale(1.01);
             }
 
-            .table tbody td {
-                padding: 15px;
-                border-top: 1px solid #e9ecef;
-                vertical-align: middle;
-                text-align: center;
-            }
+           .table thead th {
+    background-color: #007bff !important;
+    color: #fff;
+    border: none;
+}
 
             .table tbody tr:first-child td {
                 border-top: none;
             }
 
             .btn-danger-custom {
-                background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+                background: linear-gradient(135deg, #ff6b6b, #fd5e53);
                 border: none;
                 color: white;
                 padding: 8px 15px;
@@ -234,26 +233,21 @@
                 font-size: 0.85rem;
                 transition: all 0.3s ease;
             }
-
             .btn-danger-custom:hover {
                 color: white;
                 transform: translateY(-2px);
-                box-shadow: 0 4px 15px rgba(238, 90, 82, 0.4);
+                box-shadow: 0 4px 15px rgba(238, 90, 82, 0.30);
             }
 
-            .modal-content {
-                border: none;
-                border-radius: 20px;
-                overflow: hidden;
-                box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-            }
-
-            .modal-header {
-                background: var(--gradient-bg);
-                color: white;
-                border: none;
-                padding: 25px;
-            }
+           .modal-content {
+    border-radius: 12px;
+}
+.modal-header {
+    background-color: #007bff;
+    color: #fff;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+}
 
             .modal-title {
                 font-weight: 600;
@@ -325,8 +319,12 @@
             }
 
             @keyframes spin {
-                0% { transform: translate(-50%, -50%) rotate(0deg); }
-                100% { transform: translate(-50%, -50%) rotate(360deg); }
+                0% {
+                    transform: translate(-50%, -50%) rotate(0deg);
+                }
+                100% {
+                    transform: translate(-50%, -50%) rotate(360deg);
+                }
             }
 
             .court-image {
@@ -398,16 +396,16 @@
             }
 
             .notification.success {
-                background: linear-gradient(135deg, #28a745, #20c997);
+                background: linear-gradient(135deg, #48e6a0, #22b8cf);
             }
-
             .notification.error {
-                background: linear-gradient(135deg, #dc3545, #fd7e14);
+                background: linear-gradient(135deg, #ff6b6b, #fd7e14);
+            }
+            .notification.warning {
+                background: linear-gradient(135deg, #ffe066, #ffd166);
+                color: #8d6708;
             }
 
-            .notification.warning {
-                background: linear-gradient(135deg, #ffc107, #fd7e14);
-            }
 
             .close-btn {
                 margin-left: 15px;
@@ -447,21 +445,21 @@
                     margin: 10px;
                     padding: 20px;
                 }
-                
+
                 .page-title {
                     font-size: 2rem;
                 }
-                
+
                 .section-header {
                     flex-direction: column;
                     align-items: flex-start;
                     gap: 15px;
                 }
-                
+
                 .table-responsive {
                     font-size: 0.8rem;
                 }
- 
+
             }
         </style>
     </head>
@@ -469,7 +467,7 @@
         <nav class="navbar navbar-expand-lg">
             <a class="navbar-brand" href="#">
                 <i class="fas fa-shuttlecock-cock"></i>
-                
+
             </a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -489,8 +487,8 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-2">
-                    <div class="slidebar">
-                    <jsp:include page="Sidebar.jsp" />
+                    <div >
+                        <jsp:include page="Sidebar.jsp" />
                     </div>
                 </div>
                 <div class="col-md-10">
@@ -648,7 +646,7 @@
                                 <table id="imageTable" class="table">
                                     <thead>
                                         <tr>
-                                            <th>STT</th>
+
                                             <th>Ảnh</th>
                                             <th>Hành động</th>
                                         </tr>
@@ -656,7 +654,7 @@
                                     <tbody>
                                         <c:forEach var="image" items="${areaImages}" varStatus="loop">
                                             <tr>
-                                                <td>${loop.count}</td>
+
                                                 <td>
                                                     <img src="${image.imageURL}" 
                                                          alt="Branch Image" 
@@ -696,7 +694,7 @@
                                 <table id="serviceTable" class="table">
                                     <thead>
                                         <tr>
-                                            <th>STT</th>
+
                                             <th>Tên dịch vụ</th>
                                             <th>Giá</th>
                                             <th>Mô tả</th>
@@ -706,7 +704,7 @@
                                     <tbody>
                                         <c:forEach var="s" items="${areaAllServices}" varStatus="loop">
                                             <tr>
-                                                <td>${loop.count}</td>
+
                                                 <td><strong>${s.service.name}</strong></td>
                                                 <td><span class="badge badge-success">${s.service.price} VNĐ</span></td>
                                                 <td>${s.service.description}</td>
@@ -738,7 +736,7 @@
                                 <table class="table" id="courtsTable">
                                     <thead>
                                         <tr>
-                                            <th>STT</th>
+
                                             <th>Số sân</th>
                                             <th>Thể loại</th>
                                             <th>Sàn sân</th>
@@ -751,7 +749,7 @@
                                     <tbody>
                                         <c:forEach var="court" items="${areaCourts}" varStatus="loop">
                                             <tr>
-                                                <td>${loop.count}</td>
+
                                                 <td><strong>Sân ${court.court_number}</strong></td>
                                                 <td><span class="badge badge-info">${court.type}</span></td>
                                                 <td>${court.floor_material}</td>
@@ -971,139 +969,139 @@
         <script src="https://cdn.datatables.net/1.10.24/js/dataTables.bootstrap4.min.js"></script>
 
         <script>
-            $(document).ready(function () {
-                // Initialize DataTables
-                $('#shiftTable, #imageTable, #serviceTable, #courtsTable').DataTable({
-                    pageLength: 5,
-                    lengthChange: false,
-                    language: {
-                        "sProcessing": "Đang xử lý...",
-                        "sLengthMenu": "Xem _MENU_ mục",
-                        "sZeroRecords": "Không tìm thấy dòng nào phù hợp",
-                        "sInfo": "Đang xem _START_ đến _END_ trong tổng số _TOTAL_ mục",
-                        "sInfoEmpty": "Đang xem 0 đến 0 trong tổng số 0 mục",
-                        "sInfoFiltered": "(được lọc từ _MAX_ mục)",
-                        "sInfoPostFix": "",
-                        "sSearch": "Tìm kiếm:",
-                        "sUrl": "",
-                        "oPaginate": {
-                            "sFirst": "Đầu",
-                            "sPrevious": "Trước",
-                            "sNext": "Tiếp",
-                            "sLast": "Cuối"
-                        }
-                    }
-                });
+                    $(document).ready(function () {
+                        // Initialize DataTables
+                        $('#shiftTable, #imageTable, #serviceTable, #courtsTable').DataTable({
+                            pageLength: 5,
+                            lengthChange: false,
+                            language: {
+                                "sProcessing": "Đang xử lý...",
+                                "sLengthMenu": "Xem _MENU_ mục",
+                                "sZeroRecords": "Không tìm thấy dòng nào phù hợp",
+                                "sInfo": "Đang xem _START_ đến _END_ trong tổng số _TOTAL_ mục",
+                                "sInfoEmpty": "Đang xem 0 đến 0 trong tổng số 0 mục",
+                                "sInfoFiltered": "(được lọc từ _MAX_ mục)",
+                                "sInfoPostFix": "",
+                                "sSearch": "Tìm kiếm:",
+                                "sUrl": "",
+                                "oPaginate": {
+                                    "sFirst": "Đầu",
+                                    "sPrevious": "Trước",
+                                    "sNext": "Tiếp",
+                                    "sLast": "Cuối"
+                                }
+                            }
+                        });
 
-                // Auto hide notifications after 5 seconds
-                setTimeout(function() {
-                    $('.notification.show').removeClass('show');
-                }, 5000);
+                        // Auto hide notifications after 5 seconds
+                        setTimeout(function () {
+                            $('.notification.show').removeClass('show');
+                        }, 5000);
 
-                // Image preview functionality
-                $('#image').change(function() {
-                    const file = this.files[0];
-                    if (file) {
-                        const reader = new FileReader();
-                        reader.onload = function(e) {
-                            $('#previewImg').attr('src', e.target.result);
-                            $('#imagePreview').show();
-                        }
-                        reader.readAsDataURL(file);
-                    }
-                });
+                        // Image preview functionality
+                        $('#image').change(function () {
+                            const file = this.files[0];
+                            if (file) {
+                                const reader = new FileReader();
+                                reader.onload = function (e) {
+                                    $('#previewImg').attr('src', e.target.result);
+                                    $('#imagePreview').show();
+                                }
+                                reader.readAsDataURL(file);
+                            }
+                        });
 
-                // Form validation
-                $('form').submit(function() {
-                    let isValid = true;
-                    $(this).find('input[required], select[required]').each(function() {
-                        if (!$(this).val()) {
-                            isValid = false;
-                            $(this).addClass('is-invalid');
-                        } else {
-                            $(this).removeClass('is-invalid');
-                        }
+                        // Form validation
+                        $('form').submit(function () {
+                            let isValid = true;
+                            $(this).find('input[required], select[required]').each(function () {
+                                if (!$(this).val()) {
+                                    isValid = false;
+                                    $(this).addClass('is-invalid');
+                                } else {
+                                    $(this).removeClass('is-invalid');
+                                }
+                            });
+                            return isValid;
+                        });
                     });
-                    return isValid;
-                });
-            });
 
-            function confirmDelete(itemName) {
-                return confirm(`Bạn có chắc chắn muốn xóa ${itemName} không?\nHành động này không thể hoàn tác!`);
-            }
+                    function confirmDelete(itemName) {
+                        return confirm(`Bạn có chắc chắn muốn xóa ${itemName} không?\nHành động này không thể hoàn tác!`);
+                    }
 
-            function showLoading() {
-                $('#loadingOverlay').fadeIn();
-            }
+                    function showLoading() {
+                        $('#loadingOverlay').fadeIn();
+                    }
 
-            function hideLoading() {
-                $('#loadingOverlay').fadeOut();
-            }
+                    function hideLoading() {
+                        $('#loadingOverlay').fadeOut();
+                    }
 
-            function hideNotification(id) {
-                $('#' + id).removeClass('show');
-            }
+                    function hideNotification(id) {
+                        $('#' + id).removeClass('show');
+                    }
 
-            function openImageModal(imageUrl) {
-                $('#modalImage').attr('src', imageUrl);
-                $('#imageViewModal').modal('show');
-            }
+                    function openImageModal(imageUrl) {
+                        $('#modalImage').attr('src', imageUrl);
+                        $('#imageViewModal').modal('show');
+                    }
 
-            // Show success notification for successful operations
-            function showSuccessNotification(message) {
-                const notification = $(`
+                    // Show success notification for successful operations
+                    function showSuccessNotification(message) {
+                        const notification = $(`
                     <div class="notification success" id="dynamicNotification">
                         <i class="fas fa-check-circle"></i>
-                        ${message}
+            ${message}
                         <span class="close-btn" onclick="hideNotification('dynamicNotification')">&times;</span>
                     </div>
                 `);
-                
-                $('body').append(notification);
-                setTimeout(() => notification.addClass('show'), 100);
-                setTimeout(() => notification.removeClass('show'), 5000);
-            }
 
-            // Check URL parameters for success messages
-            $(document).ready(function() {
-                const urlParams = new URLSearchParams(window.location.search);
-                
-                if (urlParams.get('shift_added') === 'true') {
-                    showSuccessNotification('Thêm ca làm việc thành công!');
-                }
-                
-                if (urlParams.get('image_added') === 'true') {
-                    showSuccessNotification('Thêm ảnh thành công!');
-                }
-                
-                if (urlParams.get('service_added') === 'true') {
-                    showSuccessNotification('Thêm dịch vụ thành công!');
-                }
+                        $('body').append(notification);
+                        setTimeout(() => notification.addClass('show'), 100);
+                        setTimeout(() => notification.removeClass('show'), 5000);
+                    }
 
-                if (urlParams.get('deleted') === 'true') {
-                    showSuccessNotification('Xóa thành công!');
-                }
-            });
+                    // Check URL parameters for success messages
+                    $(document).ready(function () {
+                        const urlParams = new URLSearchParams(window.location.search);
 
-            // Add loading animation for delete operations
-            $('a[href*="delete"]').click(function(e) {
-                if (confirm($(this).data('confirm') || 'Bạn có chắc chắn muốn xóa không?')) {
-                    showLoading();
-                } else {
-                    e.preventDefault();
-                }
-            });
+                        if (urlParams.get('shift_added') === 'true') {
+                            showSuccessNotification('Thêm ca làm việc thành công!');
+                        }
 
-            // Smooth scrolling for anchor links
-            $('a[href^="#"]').on('click', function(event) {
-                var target = $(this.getAttribute('href'));
-                if( target.length ) {
-                    event.preventDefault();
-                    $('html, body').stop().animate({
-                        scrollTop: target.offset().top - 100
-                    }, 1000);
-                }
-            });
+                        if (urlParams.get('image_added') === 'true') {
+                            showSuccessNotification('Thêm ảnh thành công!');
+                        }
+
+                        if (urlParams.get('service_added') === 'true') {
+                            showSuccessNotification('Thêm dịch vụ thành công!');
+                        }
+
+                        if (urlParams.get('deleted') === 'true') {
+                            showSuccessNotification('Xóa thành công!');
+                        }
+                    });
+
+                    // Add loading animation for delete operations
+                    $('a[href*="delete"]').click(function (e) {
+                        if (confirm($(this).data('confirm') || 'Bạn có chắc chắn muốn xóa không?')) {
+                            showLoading();
+                        } else {
+                            e.preventDefault();
+                        }
+                    });
+
+                    // Smooth scrolling for anchor links
+                    $('a[href^="#"]').on('click', function (event) {
+                        var target = $(this.getAttribute('href'));
+                        if (target.length) {
+                            event.preventDefault();
+                            $('html, body').stop().animate({
+                                scrollTop: target.offset().top - 100
+                            }, 1000);
+                        }
+                    });
         </script>
     </body>
 </html>

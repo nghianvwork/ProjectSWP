@@ -176,26 +176,25 @@ public class AreaDAO extends DBContext {
         return null;
     }
 
-    public void UpdateArea(int id, String name, String location, Time openTime, Time closeTime, String descriptions, String phone_branch, String nameStaff) {
-        String sql = "UPDATE Areas SET name = ?, location = ?,  open_time = ?, close_time = ?, descriptions = ?,phone_area = ?, nameStaff =? WHERE area_id = ?";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, name);
-            stmt.setString(2, location);
-
-            stmt.setTime(3, openTime);
-            stmt.setTime(4, closeTime);
-            stmt.setString(5, descriptions);
-            stmt.setString(6, phone_branch);
-            stmt.setString(7, nameStaff);
-
-            stmt.setInt(8, id);
-
-            stmt.executeUpdate();
-        } catch (SQLException e) {
-            System.out.println("UpdateArea: " + e.getMessage());
-        }
-
+    public void UpdateArea(int id, String name, String address, Time openTime, Time closeTime, String description, String phone_branch, int manager_id, String nameStaff) {
+    String sql = "UPDATE Areas SET name = ?, location = ?, open_time = ?, close_time = ?, descriptions = ?, phone_area = ?, manager_id = ?, nameStaff = ? WHERE area_id = ?";
+    try (
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+        ps.setString(1, name);
+        ps.setString(2, address);
+        ps.setTime(3, openTime);
+        ps.setTime(4, closeTime);
+        ps.setString(5, description);
+        ps.setString(6, phone_branch);
+        ps.setInt(7, manager_id);
+        ps.setString(8, nameStaff);
+        ps.setInt(9, id);
+        ps.executeUpdate();
+    } catch (SQLException e) {
+        e.printStackTrace();
     }
+}
+
 
     public void deleteById(int areaId) {
         String sql = "delete from Areas where area_id = ?";
@@ -370,36 +369,5 @@ public class AreaDAO extends DBContext {
         return false;
     }
 
-    public static void main(String[] args) {
-
-        AreaDAO areaDAO = new AreaDAO();
-
-        int areaIdToUpdate = 5;
-        String updatedName = "Sân Thể Thao XYZ";
-        String updatedLocation = "456 Đường DEF, TP.HCM";
-        Time updatedOpenTime = Time.valueOf("06:00:00");
-        Time updatedCloseTime = Time.valueOf("21:00:00");
-        String updatedDescription = "Khu vực được cải tạo mới nhất";
-        String updatedPhoneBranch = "0909123456";
-        String updatedNameStaff = "Lê Văn B";
-
-        areaDAO.UpdateArea(
-                areaIdToUpdate,
-                updatedName,
-                updatedLocation,
-                updatedOpenTime,
-                updatedCloseTime,
-                updatedDescription,
-                updatedPhoneBranch,
-                updatedNameStaff
-        );
-
-        System.out.println("Cập nhật thông tin khu vực thành công!");
-
-        List<Branch> aa = areaDAO.getAreasByManager(2);
-        for (Branch list : aa) {
-            System.out.println(list);
-        }
-
-    }
+    
 }

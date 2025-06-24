@@ -580,5 +580,24 @@ public class UserDAO extends DBContext {
 
         return false;
     }
+  public List<User> getAllStaff() {
+    List<User> staffList = new ArrayList<>();
+    String sql = "SELECT * FROM Users WHERE role = 'staff'";
+    try (
+         PreparedStatement ps = conn.prepareStatement(sql);
+         ResultSet rs = ps.executeQuery()) {
+        while (rs.next()) {
+            User user = new User();
+            user.setUser_Id(rs.getInt("user_id"));
+            user.setFirstname(rs.getString("firstname"));
+            user.setLastname(rs.getString("lastname"));
+            // Thêm các trường cần thiết khác nếu cần
+            staffList.add(user);
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return staffList;
+}
 
 }
