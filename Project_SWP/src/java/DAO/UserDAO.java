@@ -593,5 +593,28 @@ public class UserDAO extends DBContext {
 
         return false;
     }
+       public boolean getSendMail(int user_Id) {
+        String sql = "SELECT send_mail FROM Users WHERE user_id = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, user_Id);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getBoolean("send_mail");
+            }
+        } catch (SQLException e) {
+            System.err.println("Lỗi getSendMail: " + e.getMessage());
+        }
+        return false;
+    }
+           public void updateSendMail(int user_Id, boolean sendMail) {
+        String sql = "UPDATE Users SET send_mail = ? WHERE user_id = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setBoolean(1, sendMail);
+            ps.setInt(2, user_Id);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("Lỗi updateSendMail: " + e.getMessage());
+        }
+    }
 
 }
