@@ -11,6 +11,8 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>JSP Page</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+
         <style>
             * {
                 margin: 0;
@@ -69,7 +71,7 @@
                 outline: none;
             }
 
-            .search-header {
+            .search-btn {
                 position: absolute;
                 right: 5px;
                 top: 50%;
@@ -87,8 +89,8 @@
                 gap: 1rem;
                 align-items: center;
             }
-            
-            
+
+
             .header-btn {
                 background: rgba(255,255,255,0.2);
                 border: 1px solid rgba(255,255,255,0.3);
@@ -161,14 +163,14 @@
                 <div class="logo">BadmintonCourt</div>
                 <div class="search-bar">
 
-                    <form action="SearchUser" method="GET" class="form-inline mb-4">
-                        <input type="text" name="areaName" value="${areaName != null ? areaName : ''}" placeholder="Tên khu vực">
-                        <button class="search-header" type="submit" >Tìm</button>
+                    <form action="SearchUser" method="POST" class="form-inline mb-4">
+                        <input type="text" name="searchInput" value="${searchKeyword}" placeholder="Tìm khu vực sân cầu lông...">
+                        <button class="search-btn" type="submit" >Tìm</button>
                     </form>
 
                 </div>
                 <div class="header-actions">
-                    
+
                     <span>
                         <a href="viewprofile.jsp" class="header-btn"><%=user.getUsername()%></a>
                     </span>
@@ -187,6 +189,15 @@
                 <div class="nav-item"><a href="PostView.jsp">Bài Viết</a></div>
                 <div class="nav-item"><a href="AboutUs.jsp">Giới Thiệu</a></div>
                 <div class="nav-item">Liên Hệ</div>
+                <div class="nav-item"> <a href="faq-list?for=user">FAQ</a></div>
+
+
+                <div class="nav-item"> 
+                    <a href="notifications?for=user">
+                        <i class="fas fa-bell notification-icon"></i>
+                    </a>
+                </div>
+
             </div>
         </nav>
     </body>
