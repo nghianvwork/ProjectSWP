@@ -172,7 +172,7 @@
                 <div class="header-actions">
 
                     <span>
-                        <a href="viewprofile.jsp" class="header-btn"><%=user.getUsername()%></a>
+                        <a href="viewprofile.jsp" class="header-btn"><%=user.getFirstname()%> <%=user.getLastname()%></a>
                     </span>
                     <a href="HomePage" class="header-btn">Thoát</a>
                 </div>

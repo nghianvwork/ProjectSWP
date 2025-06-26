@@ -6,15 +6,23 @@ package controller.user;
 
 import DAO.UserDAO;
 import Model.User;
+import utils.PasswordUtil;
+
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.sql.Date;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import java.sql.Date;
+import java.text.SimpleDateFormat;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.mail.internet.ParseException;
 
 /**
  *
@@ -49,17 +57,6 @@ public class UpdateProfileController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
-        int userId = Integer.parseInt(request.getParameter("id"));
-        UserDAO dao = new UserDAO();
-        try {
-            User user = dao.getUserById(userId);
-            request.setAttribute("user", user);
-            request.getRequestDispatcher("UpdateProfile.jsp").forward(request, response);
-        } catch (Exception e) {
-            e.printStackTrace();
-            response.sendRedirect("error.jsp");
-        }
     }
 
     /**
@@ -74,60 +71,90 @@ public class UpdateProfileController extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding("UTF-8");
 
-        try {
-            int userId = Integer.parseInt(request.getParameter("userId"));
-            String username = request.getParameter("username");
-            String fullname = request.getParameter("fullname");
-            String email = request.getParameter("email");
-            String phoneNumber = request.getParameter("phoneNumber");
-            String gender = request.getParameter("gender");
-            String role = request.getParameter("role");
-            String status = request.getParameter("status");
-            String note = request.getParameter("note");
-            String dobStr = request.getParameter("dateOfBirth");
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("user");
 
-            Date dateOfBirth = null;
-            if (dobStr != null && !dobStr.isEmpty()) {
-                dateOfBirth = Date.valueOf(dobStr);
-            }
-
-            User user = new User();
-            user.setUser_Id(userId);
-            user.setUsername(username);
-            user.setFullname(fullname);
-            user.setEmail(email);
-            user.setPhone_number(phoneNumber);
-            user.setGender(gender);
-            user.setRole(role);
-            user.setStatus(status);
-            user.setNote(note);
-            user.setDateOfBirth(dateOfBirth);
-
-            UserDAO dao = new UserDAO();
-            boolean success = dao.updateUser(user);
-
-            if (success) {
-                response.sendRedirect("viewprofile?id=" + userId);
-            } else {
-                request.setAttribute("error", "Update failed!");
-                request.setAttribute("user", user);
-                request.getRequestDispatcher("UpdateProfile.jsp").forward(request, response);
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            response.sendRedirect("error.jsp");
+        if (user == null) {
+            response.sendRedirect("login.jsp");
+            return;
         }
+
+        UserDAO userDao = new UserDAO();
+        String username = request.getParameter("username");
+        String email = request.getParameter("email");
+        String phoneNumber = request.getParameter("phoneNumber");
+        String gender = request.getParameter("gender");
+        String firstname = request.getParameter("firstname");
+        String lastname = request.getParameter("lastname");
+        String dobStr = request.getParameter("dateOfBirth");
+
+        // Validation
+        if (firstname == null || lastname == null || firstname.trim().isEmpty() || lastname.trim().isEmpty()) {
+            request.setAttribute("error", "Họ và tên không được để trống");
+            request.getRequestDispatcher("UpdateProfile.jsp").forward(request, response);
+            return;
+        }
+        
+        if (username == null || username.trim().isEmpty() || !username.matches("^[a-zA-Z0-9_\\.]{3,20}$")) {
+            request.setAttribute("error", "Tên đăng nhập không hợp lệ! Chỉ cho phép chữ cái, số, dấu gạch dưới (_) và dấu chấm (.). Độ dài từ 3-20 ký tự.");
+            request.getRequestDispatcher("UpdateProfile.jsp").forward(request, response);
+            return;
+        }
+
+        if (!phoneNumber.matches("^(0)\\d{9}$")) {
+            request.setAttribute("error", "Số điện thoại không hợp lệ! Phải bắt đầu bằng 0và có chính xác 10 chữ số.");
+            request.getRequestDispatcher("UpdateProfile.jsp").forward(request, response);
+            return;
+        }
+
+        // Kiểm tra số điện thoại đã tồn tại
+        UserDAO userDAO = new UserDAO();
+        if (userDAO.isPhoneExists(phoneNumber)) {
+            request.setAttribute("error", "Số điện thoại đã tồn tại");
+            request.getRequestDispatcher("UpdateProfile.jsp").forward(request, response);
+            return;
+        }
+
+
+        User newUser = new User();
+        newUser.setUser_Id(user.getUser_Id()); // Lấy user_id từ user trong session
+        newUser.setUsername(username);
+        newUser.setEmail(email);
+        newUser.setPhone_number(phoneNumber);
+        newUser.setGender(gender);
+        newUser.setFirstname(firstname);
+        newUser.setLastname(lastname);
+        newUser.setFullname(lastname + " " + firstname);
+        newUser.setRole(user.getRole()); // Giữ nguyên role từ user cũ
+
+        // Xử lý dateOfBirth
+        try {
+            if (dobStr != null && !dobStr.isEmpty()) {
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                java.util.Date utilDate = sdf.parse(dobStr);
+                newUser.setDateOfBirth(new java.sql.Date(utilDate.getTime()));
+            } else {
+                newUser.setDateOfBirth(null);
+            }
+        } catch (java.text.ParseException ex) {
+            Logger.getLogger(UpdateProfileController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        userDao.updateUser(newUser);
+        session.setAttribute("user", newUser);
+        response.sendRedirect("viewprofile.jsp");
     }
 
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
+
+/**
+ * Returns a short description of the servlet.
+ *
+ * @return a String containing servlet description
+ */
+@Override
+public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
 
