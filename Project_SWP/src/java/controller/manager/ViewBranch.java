@@ -19,73 +19,72 @@ import java.util.List;
 public class ViewBranch extends HttpServlet {
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        // --- Xác thực token, thiết lập user vào session nếu hợp lệ ---
-        Cookie cookies[] = request.getCookies();
-        String authToken = null;
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if ("auth_token".equals(cookie.getName())) {
-                    authToken = cookie.getValue();
-                }
+protected void doGet(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException {
+    // --- Xác thực token, thiết lập user vào session nếu hợp lệ ---
+    Cookie cookies[] = request.getCookies();
+    String authToken = null;
+    if (cookies != null) {
+        for (Cookie cookie : cookies) {
+            if ("auth_token".equals(cookie.getName())) {
+                authToken = cookie.getValue();
             }
-        }
-        if (authToken != null && validateToken(authToken)) {
-            String username = getUsernameFromToken(authToken);
-            UserDAO userDAO = new UserDAO();
-            User u = userDAO.getUserByUsername(username);
-            HttpSession session = request.getSession();
-            if (u != null && "admin".equals(u.getRole())) {
-                session.setAttribute("user", u);
-            }
-        }
-
-        HttpSession session = request.getSession(false);
-        if (session != null) {
-            User user = (User) session.getAttribute("user");
-            if (user != null && "admin".equals(user.getRole())) {
-
-               
-                int page = 1;
-                int recordsPerpage = 5;
-                if (request.getParameter("page") != null) {
-                    try {
-                        page = Integer.parseInt(request.getParameter("page"));
-                    } catch (NumberFormatException ignored) {}
-                }
-                String regionName = request.getParameter("regionName");
-                if (regionName == null) regionName = "";
-
-                AreaDAO areaDAO = new AreaDAO();
-                int numberofRegion = areaDAO.countAreasByManagerId(user.getUser_Id());
-                int numberofPage = (int) Math.ceil((double) numberofRegion / recordsPerpage);
-
-                List<Branch> area = areaDAO.getAllByManagerID(user.getUser_Id(), (page - 1) * recordsPerpage, recordsPerpage);
-                request.setAttribute("area", area);
-                request.setAttribute("numberOfPages", numberofPage);
-                request.setAttribute("currentPage", page);
-
-              
-                UserDAO userDAO = new UserDAO();
-                List<User> staffList = userDAO.getAllStaff();
-                request.setAttribute("staffList", staffList);
-
-             
-                String error = (String) session.getAttribute("error");
-                if (error != null) {
-                    request.setAttribute("error", error);
-                    session.removeAttribute("error");
-                }
-
-                request.getRequestDispatcher("manager-region.jsp").forward(request, response);
-            } else {
-                response.sendError(403);
-            }
-        } else {
-            response.sendRedirect("login");
         }
     }
+    if (authToken != null && validateToken(authToken)) {
+        String username = getUsernameFromToken(authToken);
+        UserDAO userDAO = new UserDAO();
+        User u = userDAO.getUserByUsername(username);
+        HttpSession session = request.getSession();
+        if (u != null && "admin".equals(u.getRole())) {
+            session.setAttribute("user", u);
+        }
+    }
+
+    HttpSession session = request.getSession(false);
+    if (session != null) {
+        User user = (User) session.getAttribute("user");
+        if (user != null && "admin".equals(user.getRole())) {
+
+            int page = 1;
+            int recordsPerpage = 5;
+            if (request.getParameter("page") != null) {
+                try {
+                    page = Integer.parseInt(request.getParameter("page"));
+                } catch (NumberFormatException ignored) {}
+            }
+
+            AreaDAO areaDAO = new AreaDAO();
+            // Đếm tổng số khu vực
+            int numberofRegion = areaDAO.countAllAreas(); // HÀM NÀY PHẢI THÊM TRONG AreaDAO
+            int numberofPage = (int) Math.ceil((double) numberofRegion / recordsPerpage);
+
+            // Lấy danh sách tất cả khu vực có phân trang
+            List<Branch> area = areaDAO.getAllAreas((page - 1) * recordsPerpage, recordsPerpage); // HÀM NÀY PHẢI THÊM TRONG AreaDAO
+
+            request.setAttribute("area", area);
+            request.setAttribute("numberOfPages", numberofPage);
+            request.setAttribute("currentPage", page);
+
+            UserDAO userDAO = new UserDAO();
+            List<User> staffList = userDAO.getAllStaff();
+            request.setAttribute("staffList", staffList);
+
+            String error = (String) session.getAttribute("error");
+            if (error != null) {
+                request.setAttribute("error", error);
+                session.removeAttribute("error");
+            }
+
+            request.getRequestDispatcher("manager-region.jsp").forward(request, response);
+        } else {
+            response.sendError(403);
+        }
+    } else {
+        response.sendRedirect("login");
+    }
+}
+
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)

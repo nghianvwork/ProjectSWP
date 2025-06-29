@@ -566,7 +566,7 @@ public List<Bookings> getBookingHistoryByFilter(LocalDate from, LocalDate to, In
 }
 
 
-// Tính tổng doanh thu theo filter: từ ngày, đến ngày, courtId (nếu null thì tất cả)
+
 public BigDecimal getTotalRevenue(LocalDate from, LocalDate to, Integer courtId) {
     StringBuilder sql = new StringBuilder("SELECT SUM(total_price) FROM Bookings WHERE date >= ? AND date <= ? AND status != 'cancelled'");
     if (courtId != null) {
