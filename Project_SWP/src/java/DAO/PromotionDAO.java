@@ -12,6 +12,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -32,6 +33,53 @@ public class PromotionDAO extends DBContext{
             System.out.println("Connect failed");
         }
     }
+    public void updateExpiredPromotions() {
+   String sql = "UPDATE Promotions SET status = 'inactive' WHERE status = 'active' AND end_date < GETDATE()";
+
+    try (
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+        ps.executeUpdate();
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+}
+    public Promotion getCurrentPromotionForArea(int areaId, LocalDate bookingDate) {
+    Promotion promotion = null;
+    try {
+        String sql = "SELECT TOP 1 p.*\n"
+                + "FROM Promotions p\n"
+                + "JOIN Promotion_Area pa ON p.promotion_id = pa.promotion_id\n"
+                + "WHERE pa.area_id = ?\n"
+                + "  AND p.status = 'active'\n"
+                + "  AND p.start_date <= ?\n"
+                + "  AND p.end_date >= ?\n"
+                + "ORDER BY p.discount_percent DESC, p.discount_amount DESC";
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setInt(1, areaId);
+        ps.setDate(2, java.sql.Date.valueOf(bookingDate));
+        ps.setDate(3, java.sql.Date.valueOf(bookingDate));
+        ResultSet rs = ps.executeQuery();
+
+        if (rs.next()) {
+            promotion = new Promotion();
+            promotion.setPromotionId(rs.getInt("promotion_id"));
+            promotion.setTitle(rs.getString("title"));
+            promotion.setDescription(rs.getString("description"));
+            promotion.setDiscountPercent(rs.getDouble("discount_percent"));
+            promotion.setDiscountAmount(rs.getDouble("discount_amount"));
+            promotion.setStartDate(rs.getTimestamp("start_date").toLocalDateTime());
+            promotion.setEndDate(rs.getTimestamp("end_date").toLocalDateTime());
+            promotion.setStatus(rs.getString("status"));
+        }
+        rs.close();
+        ps.close();
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return promotion;
+}
+
+
     public List<Promotion> getValidPromotionsForArea(int areaId, LocalDateTime bookingTime) throws SQLException {
         List<Promotion> result = new ArrayList<>();
         String sql = "SELECT p.* FROM Promotions p "
@@ -109,8 +157,35 @@ public int insertPromotion(Promotion p) throws SQLException {
         }
         return 0;
     }
+ public void deleteAllPromotionAreas(int promotionId)  {
+    String sql = "DELETE FROM Promotion_Area WHERE promotion_id = ?";
+    try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        ps.setInt(1, promotionId);
+        ps.executeUpdate();
+    }catch(SQLException e){
+        System.out.println(e.getMessage());
+    }
+}
+public void deletePromotion(int promotionId)  {
+    String sql2 = "DELETE FROM Promotions WHERE promotion_id = ?";
+    String sql1 = "DELETE FROM Promotion_Area WHERE promotion_id = ?";
+    
+    try (PreparedStatement ps1 = conn.prepareStatement(sql1);
+             PreparedStatement ps2 = conn.prepareStatement(sql2);) {
+        ps1.setInt(1, promotionId);
+        ps1.executeUpdate();
+          ps2.setInt(1, promotionId);
+          ps2.executeUpdate(); 
 
-   
+       
+        
+    }catch(SQLException e){
+        System.out.println(e.getMessage());
+    }
+    
+}
+ 
+  
     public boolean updatePromotion(Promotion p) throws SQLException {
         String sql = "UPDATE Promotions SET title=?, description=?, discount_percent=?, discount_amount=?, start_date=?, end_date=?, status=?, updated_at=? WHERE promotion_id=?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -128,13 +203,7 @@ public int insertPromotion(Promotion p) throws SQLException {
     }
 
     
-    public boolean deletePromotion(int id) throws SQLException {
-        String sql = "DELETE FROM Promotions WHERE promotion_id=?";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, id);
-            return stmt.executeUpdate() > 0;
-        }
-    }
+  
 
   
     public void insertPromotionArea(int promotionId, int areaId) throws SQLException {
@@ -200,7 +269,31 @@ public int getTotalPromotionCount() {
     }
     return 0;
 }
-// Thêm vào PromotionDAO
+ public List<Promotion> searchPromotionByTitle(String keyword) {
+        List<Promotion> promotions = new ArrayList<>();
+        String sql = "SELECT * FROM Promotions WHERE title LIKE ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, "%" + keyword + "%");
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Promotion promotion = new Promotion();
+                promotion.setPromotionId(rs.getInt("promotion_id"));
+                promotion.setTitle(rs.getString("title"));
+                promotion.setDescription(rs.getString("description"));
+                promotion.setDiscountPercent(rs.getDouble("discount_percent"));
+                promotion.setDiscountAmount(rs.getDouble("discount_amount"));
+                  promotion.setStartDate(rs.getTimestamp("start_date").toLocalDateTime());
+        promotion.setEndDate(rs.getTimestamp("end_date").toLocalDateTime());
+        promotion.setStatus(rs.getString("status"));
+        promotion.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
+        Timestamp updated = rs.getTimestamp("updated_at");
+                promotions.add(promotion);
+            }
+        } catch (Exception e) {
+            System.out.println("search error: " + e.getMessage());
+        }
+        return promotions;
+    }
 public List<String> getAreaNamesByPromotionId(int promotionId) {
     List<String> areaNames = new ArrayList<>();
     String sql = "SELECT a.name FROM Promotion_Area pa JOIN Areas a ON pa.area_id = a.area_id WHERE pa.promotion_id = ?";
@@ -215,5 +308,9 @@ public List<String> getAreaNamesByPromotionId(int promotionId) {
     }
     return areaNames;
 }
-
+    public static void main(String[] args) {
+        PromotionDAO dao = new PromotionDAO();
+        dao.deletePromotion(1);
+        System.out.println("Xoa thanh cong");
+    }
 }

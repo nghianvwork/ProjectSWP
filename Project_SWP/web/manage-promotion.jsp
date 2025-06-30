@@ -56,6 +56,9 @@
                 font-size: 18px;
                 cursor: pointer;
             }
+            .pagination {
+    display: flex !important;
+}
         </style>
     </head>
     <body>
@@ -118,14 +121,16 @@
                                                 </span>
                                             </td>
                                             <td>
+                                                <c:if test="${empty promo.areaNames}">EMPTY</c:if>
                                                 <c:forEach var="areaName" items="${promo.areaNames}">
-                                                    <span class="badge badge-info">${areaNames}</span>
+                                                    <span class="badge badge-info">${areaName}</span>
                                                 </c:forEach>
                                             </td>
+                                            
                                             <td>
-                                                <button class="btn btn-warning btn-sm" data-toggle="modal" data-target="#updateModal${loop.index}">Sửa</button>
-                                                <button class="btn btn-danger btn-sm" onclick="confirmDelete(${promo.promotionId})">Xóa</button>
-                                                <!-- Sửa khuyến mãi (Modal) -->
+                                                <button  class="btn btn-warning btn-sm" data-toggle="modal" data-target="#updateModal${loop.index}">Sửa</button>
+                                            <a href="delele-promotion?promotionId=${promo.promotionId}" class="btn btn-danger btn-sm" onclick="confirmDelete()">Xóa</a>
+                                                
                                                 <div class="modal fade" id="updateModal${loop.index}" tabindex="-1" role="dialog">
                                                     <div class="modal-dialog">
                                                         <div class="modal-content">
@@ -170,7 +175,7 @@
                                                                     <div class="form-group">
                                                                         <label>Khu vực áp dụng:</label><br/>
                                                                         <c:forEach var="area" items="${areaList}">
-                                                                            <input type="checkbox" name="areaIds" value="${area.areaId}" 
+                                                                            <input type="checkbox" name="area_id" value="${area.area_id}" 
                                                                                    <c:if test="">checked</c:if>
                                                                                    > ${area.name}<br/>
                                                                         </c:forEach>
@@ -273,21 +278,8 @@
         </div>
 
         <script>
-            function confirmDelete(id) {
-                Swal.fire({
-                    title: 'Bạn chắc chắn muốn xóa?',
-                    text: "Hành động này sẽ không thể hoàn tác!",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Xóa',
-                    cancelButtonText: 'Hủy'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        window.location = 'delete-promotion?id=' + id;
-                    }
-                })
+             function confirmDelete() {
+                return confirm("Do you want to delete this?");
             }
             function closeNotification() {
                 const notification = document.getElementById('notification');
@@ -299,7 +291,9 @@
                 }
             }
         </script>
-        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+       <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     </body>
 </html>

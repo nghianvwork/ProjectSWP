@@ -83,7 +83,7 @@ public class UpdatePromotion extends HttpServlet {
             LocalDateTime endDate = LocalDateTime.parse(req.getParameter("endDate"));
             String status = req.getParameter("status");
 
-            String[] areaIdArr = req.getParameterValues("areaIds");
+            String[] areaIdArr = req.getParameterValues("area_id");
             List<Integer> areaIds = new ArrayList<>();
             if(areaIdArr != null){
                 for(String s : areaIdArr) areaIds.add(Integer.parseInt(s));
@@ -96,11 +96,11 @@ public class UpdatePromotion extends HttpServlet {
             boolean updated = dao.updatePromotion(promotion);
 
             
-        
+            dao.deleteAllPromotionAreas(promotionId);
             for(Integer areaId : areaIds){
                 dao.insertPromotionArea(promotionId, areaId);
             }
-
+          System.out.println("Cập nhật khu vực cho promotion " + promotionId + ": " + areaIds);
             if (updated) {
                 req.getSession().setAttribute("success", "Cập nhật khuyến mãi thành công!");
             } else {

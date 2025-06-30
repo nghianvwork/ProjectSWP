@@ -24,7 +24,9 @@ import Model.Courts;
 import Model.Service;
 import DAO.ServiceDAO;
 import DAO.BookingServiceDAO;
+import Model.Promotion;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -629,6 +631,44 @@ public Map<String, BigDecimal> getRevenueByWeek(int year) {
         e.printStackTrace();
     }
     return result;
+}
+public BigDecimal calculateSlotPriceWithPromotion(
+    Time startTime, 
+    Time endTime, 
+    BigDecimal pricePerHour,
+    Promotion promotion 
+) {
+   
+    long millisStart = startTime.getTime();
+    long millisEnd = endTime.getTime();
+    long durationMillis = millisEnd - millisStart;
+    long minutes = durationMillis / (1000 * 60); 
+    BigDecimal slotPrice;
+    if (minutes == 60) {
+        slotPrice = pricePerHour;
+    } else {
+        BigDecimal hours = new BigDecimal(minutes).divide(new BigDecimal(60), 2, RoundingMode.HALF_UP);
+        slotPrice = hours.multiply(pricePerHour);
+    }
+
+    if (promotion != null) {
+        
+        if (promotion.getDiscountPercent() > 0) {
+            BigDecimal percent = BigDecimal.valueOf(promotion.getDiscountPercent()).divide(BigDecimal.valueOf(100));
+            BigDecimal discount = slotPrice.multiply(percent);
+            slotPrice = slotPrice.subtract(discount);
+        }
+       
+        if (promotion.getDiscountAmount() > 0) {
+            slotPrice = slotPrice.subtract(BigDecimal.valueOf(promotion.getDiscountAmount()));
+        }
+    }
+
+    
+    if (slotPrice.compareTo(BigDecimal.ZERO) < 0) {
+        slotPrice = BigDecimal.ZERO;
+    }
+    return slotPrice.setScale(0, RoundingMode.HALF_UP); 
 }
 
 

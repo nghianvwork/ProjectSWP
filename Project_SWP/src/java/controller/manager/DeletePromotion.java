@@ -5,7 +5,9 @@
 
 package controller.manager;
 
+import DAO.AreaDAO;
 import DAO.PromotionDAO;
+import Model.User;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -13,6 +15,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 /**
  *
@@ -56,7 +59,21 @@ public class DeletePromotion extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-        processRequest(request, response);
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            User user = (User) session.getAttribute("user");
+            if (user.getRole().equals("admin")) {
+              String idRaw = request.getParameter("promotionId");
+                int id = Integer.parseInt(idRaw);
+                PromotionDAO dao = new PromotionDAO();
+                dao.deletePromotion(id);
+                session.setAttribute("success", "Xóa khuyến mại thành công!");
+                response.sendRedirect("promotion-admin");
+        } else {
+            response.sendRedirect("login");
+        }
+       
+    }
     } 
 
     /** 
@@ -69,28 +86,7 @@ public class DeletePromotion extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
     throws ServletException, IOException {
-        
-    String idRaw = req.getParameter("id");
-        try {
-            int id = Integer.parseInt(idRaw);
-            PromotionDAO dao = new PromotionDAO();
-
-          
-
-            
-            boolean deleted = dao.deletePromotion(id);
-
-            if (deleted) {
-                req.getSession().setAttribute("success", "Xóa khuyến mãi thành công!");
-            } else {
-                req.getSession().setAttribute("error", "Không tìm thấy khuyến mãi để xóa!");
-            }
-            resp.sendRedirect("promotion-admin");
-        } catch (Exception e) {
-            e.printStackTrace();
-            req.getSession().setAttribute("error", "Đã có lỗi khi xóa khuyến mãi!");
-            resp.sendRedirect("promotion-admin");
-        }
+       
     }
 
     /** 

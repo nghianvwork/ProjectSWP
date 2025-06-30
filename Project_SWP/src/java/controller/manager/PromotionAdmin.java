@@ -61,52 +61,55 @@ public class PromotionAdmin extends HttpServlet {
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
-    HttpSession session = request.getSession(false);
-    if (session != null) {
-        User user = (User) session.getAttribute("user");
-        if (user != null && "admin".equals(user.getRole())) {
-            // Phân trang
-            int page = 1;
-            int pageSize = 6;
-            String pageParam = request.getParameter("page");
-            if (pageParam != null) {
-                try {
-                    page = Integer.parseInt(pageParam);
-                    if(page < 1) page = 1;
-                } catch(NumberFormatException e) {
-                    page = 1;
+            throws ServletException, IOException {
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            User user = (User) session.getAttribute("user");
+            if (user != null && "admin".equals(user.getRole())) {
+                // Phân trang
+                int page = 1;
+                int pageSize = 6;
+                String pageParam = request.getParameter("page");
+                if (pageParam != null) {
+                    try {
+                        page = Integer.parseInt(pageParam);
+                        if (page < 1) {
+                            page = 1;
+                        }
+                    } catch (NumberFormatException e) {
+                        page = 1;
+                    }
                 }
+                PromotionDAO dao = new PromotionDAO();
+                dao.updateExpiredPromotions();
+                int totalPromotions = dao.getTotalPromotionCount();
+                int numberOfPages = (int) Math.ceil((double) totalPromotions / pageSize);
+
+                if (page > numberOfPages) {
+                    page = numberOfPages;
+                }
+
+                int offset = (page - 1) * pageSize;
+                List<Promotion> list = dao.getPromotionsByPage(offset, pageSize);
+                for (Promotion p : list) {
+                    List<String> areaNames = dao.getAreaNamesByPromotionId(p.getPromotionId());
+                    p.setAreaNames(areaNames);
+                    System.out.println("Promotion ID: " + p.getPromotionId() + " - areaNames: " + p.getAreaNames());
+                }
+
+                AreaDAO areaDAO = new AreaDAO();
+                List<Branch> areaList = areaDAO.getAllAreas();
+                request.setAttribute("areaList", areaList);
+                request.setAttribute("promotionList", list);
+                request.setAttribute("currentPage", page);
+                request.setAttribute("numberOfPages", numberOfPages);
+                request.getRequestDispatcher("manage-promotion.jsp").forward(request, response);
+                return;
             }
-            PromotionDAO dao = new PromotionDAO();
-            int totalPromotions = dao.getTotalPromotionCount();
-            int numberOfPages = (int) Math.ceil((double) totalPromotions / pageSize);
-
-          
-            if (page > numberOfPages) page = numberOfPages;
-
-            int offset = (page - 1) * pageSize;
-            List<Promotion> list = dao.getPromotionsByPage(offset, pageSize);
-            for (Promotion p : list) {
-    List<String> areaNames = dao.getAreaNamesByPromotionId(p.getPromotionId());
-    p.setAreaNames(areaNames);
-    System.out.println("Promotion ID: " + p.getPromotionId() + " - areaNames: " + p.getAreaNames());
-}
-            
-
-            AreaDAO areaDAO = new AreaDAO();
-            List<Branch> areaList = areaDAO.getAllAreas(); 
-            request.setAttribute("areaList", areaList);
-            request.setAttribute("promotionList", list);
-            request.setAttribute("currentPage", page);
-            request.setAttribute("numberOfPages", numberOfPages);
-            request.getRequestDispatcher("manage-promotion.jsp").forward(request, response);
-            return;
         }
+
+        response.sendRedirect("login");
     }
-    // Nếu không phải admin hoặc chưa đăng nhập, chuyển về trang login hoặc báo lỗi
-    response.sendRedirect("login");
-}
 
     /** 
      * Handles the HTTP <code>POST</code> method.

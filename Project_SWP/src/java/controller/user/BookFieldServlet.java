@@ -6,12 +6,14 @@ package controller.user;
 
 import DAO.BookingDAO;
 import DAO.CourtDAO;
+import DAO.PromotionDAO;
 
 import DAO.Service_BranchDAO;
 import DAO.ShiftDAO;
 import Model.Bookings;
 import Model.Branch_Service;
 import Model.Courts;
+import Model.Promotion;
 import Model.Shift;
 import Model.Slot;
 import Model.SlotTime;
@@ -184,13 +186,21 @@ public class BookFieldServlet extends HttpServlet {
                 request.getRequestDispatcher("book_field.jsp").forward(request, response);
                 return;
             }
-                   CourtDAO cDao = new CourtDAO();
- BigDecimal pricePerHour = cDao.getCourtPrice(courtId);
- BigDecimal totalPrice = cDao.calculateSlotPrice(startTime, endTime, pricePerHour);
-        System.out.println("Toltol>>>>" + totalPrice);
+            CourtDAO cDao = new CourtDAO();
+            BigDecimal pricePerHour = cDao.getCourtPrice(courtId);
+            PromotionDAO proDAO = new PromotionDAO();
+            Promotion promotion = proDAO.getCurrentPromotionForArea(court.getArea_id(), date);
+
+            System.out.println("Promotion for areaId " + court.getArea_id() + ": " + promotion);
+            if (promotion != null) {
+                System.out.println("Title: " + promotion.getTitle());
+            }
+
+            BigDecimal totalPrice = bookingDAO.calculateSlotPriceWithPromotion(startTime, endTime, pricePerHour, promotion);
+            System.out.println("Toltol>>>>" + totalPrice);
             Service_BranchDAO sDao = new Service_BranchDAO();
             List<Branch_Service> services = sDao.getAllAreaServices(court.getArea_id());
-
+            request.setAttribute("promotion", promotion);
             request.setAttribute("court", court);
             request.setAttribute("date", date);
             request.setAttribute("startTime", startTime);

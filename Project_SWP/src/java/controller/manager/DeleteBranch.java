@@ -74,6 +74,7 @@ public class DeleteBranch extends HttpServlet {
             response.sendRedirect("login");
         }
     }
+    
 
     /**
      * Handles the HTTP <code>POST</code> method.
