@@ -5,6 +5,7 @@
 package Model;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.logging.Logger;
@@ -20,8 +21,8 @@ public class Promotion {
     private String description;
     private double discountPercent;
     private double discountAmount;
-    private LocalDateTime startDate;
-    private LocalDateTime endDate;
+    private LocalDate startDate;
+    private LocalDate endDate;
     private String status;
      private LocalDateTime createdAt;
     private List<String> areaNames;
@@ -34,7 +35,7 @@ public class Promotion {
         this.areaNames = areaNames;
     }
 
-    public Promotion(int promotionId, String title, String description, double discountPercent, double discountAmount, LocalDateTime startDate, LocalDateTime endDate, String status, LocalDateTime createdAt, List<String> areaNames, LocalDateTime updatedAt) {
+    public Promotion(int promotionId, String title, String description, double discountPercent, double discountAmount, LocalDate startDate, LocalDate endDate, String status, LocalDateTime createdAt, List<String> areaNames, LocalDateTime updatedAt) {
         this.promotionId = promotionId;
         this.title = title;
         this.description = description;
@@ -53,7 +54,7 @@ public class Promotion {
     public Promotion() {
     }
 
-    public Promotion(int promotionId, String title, String description, double discountPercent, double discountAmount, LocalDateTime startDate, LocalDateTime endDate, String status, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public Promotion(int promotionId, String title, String description, double discountPercent, double discountAmount, LocalDate startDate, LocalDate endDate, String status, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.promotionId = promotionId;
         this.title = title;
         this.description = description;
@@ -106,19 +107,19 @@ public class Promotion {
         this.discountAmount = discountAmount;
     }
 
-    public LocalDateTime getStartDate() {
+    public LocalDate getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(LocalDateTime startDate) {
+    public void setStartDate(LocalDate startDate) {
         this.startDate = startDate;
     }
 
-    public LocalDateTime getEndDate() {
+    public LocalDate getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(LocalDateTime endDate) {
+    public void setEndDate(LocalDate endDate) {
         this.endDate = endDate;
     }
 

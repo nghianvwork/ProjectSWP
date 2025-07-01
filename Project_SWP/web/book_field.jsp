@@ -49,7 +49,7 @@
         </style>
     </head>
     <body>
-        <jsp:include page="homehead.jsp" />
+          <jsp:include page="homehead.jsp" />
         <div class="container booking-container">
             <h2 class="booking-title">Đặt sân: ${court.court_number}</h2>
 

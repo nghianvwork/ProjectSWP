@@ -14,6 +14,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -79,8 +80,8 @@ public class UpdatePromotion extends HttpServlet {
             String description = req.getParameter("description");
             double discountPercent = Double.parseDouble(req.getParameter("discountPercent"));
             double discountAmount = Double.parseDouble(req.getParameter("discountAmount"));
-            LocalDateTime startDate = LocalDateTime.parse(req.getParameter("startDate"));
-            LocalDateTime endDate = LocalDateTime.parse(req.getParameter("endDate"));
+           LocalDate startDate = LocalDate.parse(req.getParameter("startDate"));
+LocalDate endDate = LocalDate.parse(req.getParameter("endDate"));
             String status = req.getParameter("status");
 
             String[] areaIdArr = req.getParameterValues("area_id");

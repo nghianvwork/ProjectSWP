@@ -97,7 +97,7 @@
         </style>
     </head>
     <body>
-        <jsp:include page="homehead.jsp" />
+         <jsp:include page="homehead.jsp" />
 
         <!-- Main -->
         <main class="main">

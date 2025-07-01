@@ -159,11 +159,11 @@
                                                                     </div>
                                                                     <div class="form-group">
                                                                         <label>Bắt đầu</label>
-                                                                        <input type="datetime-local" name="startDate" class="form-control" value="${promo.startDate}">
+                                                                        <input type="date" name="startDate" class="form-control" value="${promo.startDate}">
                                                                     </div>
                                                                     <div class="form-group">
                                                                         <label>Kết thúc</label>
-                                                                        <input type="datetime-local" name="endDate" class="form-control" value="${promo.endDate}">
+                                                                        <input type="date" name="endDate" class="form-control" value="${promo.endDate}">
                                                                     </div>
                                                                     <div class="form-group">
                                                                         <label>Trạng thái</label>
@@ -242,11 +242,11 @@
                                             </div>
                                             <div class="form-group">
                                                 <label>Bắt đầu</label>
-                                                <input type="datetime-local" name="startDate" class="form-control" required>
+                                                <input type="date" name="startDate" class="form-control" required>
                                             </div>
                                             <div class="form-group">
                                                 <label>Kết thúc</label>
-                                                <input type="datetime-local" name="endDate" class="form-control" required>
+                                                <input type="date" name="endDate" class="form-control" required>
                                             </div>
                                             <div class="form-group">
                                                 <label>Trạng thái</label>

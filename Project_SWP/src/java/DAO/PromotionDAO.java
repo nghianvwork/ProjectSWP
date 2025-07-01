@@ -67,8 +67,8 @@ public class PromotionDAO extends DBContext{
             promotion.setDescription(rs.getString("description"));
             promotion.setDiscountPercent(rs.getDouble("discount_percent"));
             promotion.setDiscountAmount(rs.getDouble("discount_amount"));
-            promotion.setStartDate(rs.getTimestamp("start_date").toLocalDateTime());
-            promotion.setEndDate(rs.getTimestamp("end_date").toLocalDateTime());
+            promotion.setStartDate(rs.getDate("start_date").toLocalDate());
+            promotion.setEndDate(rs.getDate("end_date").toLocalDate());
             promotion.setStatus(rs.getString("status"));
         }
         rs.close();
@@ -97,8 +97,8 @@ public class PromotionDAO extends DBContext{
                 promo.setDescription(rs.getString("description"));
                 promo.setDiscountPercent(rs.getDouble("discount_percent"));
                 promo.setDiscountAmount(rs.getDouble("discount_amount"));
-                promo.setStartDate(rs.getTimestamp("start_date").toLocalDateTime());
-                promo.setEndDate(rs.getTimestamp("end_date").toLocalDateTime());
+                promo.setStartDate(rs.getDate("start_date").toLocalDate());
+                promo.setEndDate(rs.getDate("end_date").toLocalDate());
                 promo.setStatus(rs.getString("status"));
                 promo.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
                 Timestamp updated = rs.getTimestamp("updated_at");
@@ -147,8 +147,8 @@ public int insertPromotion(Promotion p) throws SQLException {
             stmt.setString(2, p.getDescription());
             stmt.setDouble(3, p.getDiscountPercent());
             stmt.setDouble(4, p.getDiscountAmount());
-            stmt.setTimestamp(5, Timestamp.valueOf(p.getStartDate()));
-            stmt.setTimestamp(6, Timestamp.valueOf(p.getEndDate()));
+           stmt.setDate(5, java.sql.Date.valueOf(p.getStartDate())); 
+stmt.setDate(6, java.sql.Date.valueOf(p.getEndDate()));
             stmt.setString(7, p.getStatus());
             stmt.setTimestamp(8, Timestamp.valueOf(LocalDateTime.now()));
             stmt.executeUpdate();
@@ -193,8 +193,8 @@ public void deletePromotion(int promotionId)  {
             stmt.setString(2, p.getDescription());
             stmt.setDouble(3, p.getDiscountPercent());
             stmt.setDouble(4, p.getDiscountAmount());
-            stmt.setTimestamp(5, Timestamp.valueOf(p.getStartDate()));
-            stmt.setTimestamp(6, Timestamp.valueOf(p.getEndDate()));
+           stmt.setDate(5, java.sql.Date.valueOf(p.getStartDate())); // startDate là LocalDate
+stmt.setDate(6, java.sql.Date.valueOf(p.getEndDate()));
             stmt.setString(7, p.getStatus());
             stmt.setTimestamp(8, Timestamp.valueOf(LocalDateTime.now()));
             stmt.setInt(9, p.getPromotionId());
@@ -233,8 +233,8 @@ public void deletePromotion(int promotionId)  {
         p.setDescription(rs.getString("description"));
         p.setDiscountPercent(rs.getDouble("discount_percent"));
         p.setDiscountAmount(rs.getDouble("discount_amount"));
-        p.setStartDate(rs.getTimestamp("start_date").toLocalDateTime());
-        p.setEndDate(rs.getTimestamp("end_date").toLocalDateTime());
+        p.setStartDate(rs.getDate("start_date").toLocalDate());
+        p.setEndDate(rs.getDate("end_date").toLocalDate());
         p.setStatus(rs.getString("status"));
         p.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
         Timestamp updated = rs.getTimestamp("updated_at");
@@ -258,7 +258,7 @@ public void deletePromotion(int promotionId)  {
     return list;
 }
 
-// Đếm tổng số Promotion để tính số trang
+
 public int getTotalPromotionCount() {
     String sql = "SELECT COUNT(*) FROM Promotions";
     try (Statement stmt = conn.createStatement()) {
@@ -282,8 +282,8 @@ public int getTotalPromotionCount() {
                 promotion.setDescription(rs.getString("description"));
                 promotion.setDiscountPercent(rs.getDouble("discount_percent"));
                 promotion.setDiscountAmount(rs.getDouble("discount_amount"));
-                  promotion.setStartDate(rs.getTimestamp("start_date").toLocalDateTime());
-        promotion.setEndDate(rs.getTimestamp("end_date").toLocalDateTime());
+                  promotion.setStartDate(rs.getDate("start_date").toLocalDate());
+        promotion.setEndDate(rs.getDate("end_date").toLocalDate());
         promotion.setStatus(rs.getString("status"));
         promotion.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
         Timestamp updated = rs.getTimestamp("updated_at");
