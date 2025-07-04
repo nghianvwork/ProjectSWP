@@ -17,18 +17,28 @@
                 padding: 0 2rem;
             }
 
-            .hero-banner {
-                border-radius: 20px;
-                overflow: hidden;
-                margin-bottom: 3rem;
-                box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            }
-
-            .hero-banner img {
+            .banner-slider {
+                position: relative;
                 width: 100%;
-                height: 400px;
-                object-fit: cover;
+                max-width: 900px;
+                margin: 0 auto;
+            }
+            .banner-slide {
+                display: none;
+                position: absolute;
+                width: 100%;
+            }
+            .banner-slide.active {
                 display: block;
+            }
+            .banner-caption {
+                position: absolute;
+                bottom: 20px;
+                left: 30px;
+                background: rgba(0,0,0,0.4);
+                color: #fff;
+                padding: 10px 20px;
+                border-radius: 5px;
             }
             
             .title {
@@ -111,8 +121,16 @@
 
         <main class="main">
 
-            <div class="hero-banner">
-                <img src="./uploads/hinh_nen.jpg" alt="Badminton Court Banner" />
+            <div class="banner-slider" style="height: 350px;">
+                <c:forEach var="banner" items="${bannerList}">
+                    <div class="banner-slide">
+                        <img src="${pageContext.request.contextPath}/${banner.imageUrl}" alt="${banner.title}" style="width:100%;height:350px;object-fit:cover;">
+                        <div class="banner-caption">
+                            <h2>${banner.title}</h2>
+                            <p>${banner.caption}</p>
+                        </div>
+                    </div>
+                </c:forEach>
             </div>
 
             <div class="title">

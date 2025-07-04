@@ -6,7 +6,9 @@
 package controller.user;
 
 import DAO.AreaDAO;
+import DAO.BannerDAO;
 import DAO.Branch_ImageDAO;
+import Model.Banner;
 import Model.Branch;
 import Model.Branch_pictures;
 import Model.User;
@@ -21,6 +23,8 @@ import jakarta.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -65,27 +69,34 @@ public class HomePageUser extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
         
-        HttpSession session = request.getSession();
-        User user = (User) session.getAttribute("user");
-        if (user == null) {
-            response.sendRedirect("login");
-            return;
+        try {
+            HttpSession session = request.getSession();
+            User user = (User) session.getAttribute("user");
+            if (user == null) {
+                response.sendRedirect("login");
+                return;
+            }
+            
+            AreaDAO areaDAO = new AreaDAO();
+            Branch_ImageDAO imageDAO = new Branch_ImageDAO();
+            BannerDAO bannerDAO = new BannerDAO();
+            
+            List<Branch> listTop3 = areaDAO.getTop3();
+            Map<Integer, List<Branch_pictures>> areaImagesMap = new HashMap<>();
+            List<Banner> bannerList = bannerDAO.getActiveBanners();
+            
+            for (Branch area : listTop3) {
+                List<Branch_pictures> images = imageDAO.getRoomImagesByDormID(area.getArea_id());
+                areaImagesMap.put(area.getArea_id(), images);
+            }
+            request.setAttribute("listTop3", listTop3);
+            request.setAttribute("areaImagesMap", areaImagesMap);
+            request.setAttribute("bannerList", bannerList);
+            
+            request.getRequestDispatcher("homepageUser.jsp").forward(request, response);
+        } catch (Exception ex) {
+            Logger.getLogger(HomePageUser.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
-        AreaDAO areaDAO = new AreaDAO();
-        Branch_ImageDAO imageDAO = new Branch_ImageDAO();
-        
-        List<Branch> listTop3 = areaDAO.getTop3();
-        Map<Integer, List<Branch_pictures>> areaImagesMap = new HashMap<>();
-        
-        for (Branch area : listTop3) {
-            List<Branch_pictures> images = imageDAO.getRoomImagesByDormID(area.getArea_id());
-            areaImagesMap.put(area.getArea_id(), images);
-        }
-        request.setAttribute("listTop3", listTop3);
-        request.setAttribute("areaImagesMap", areaImagesMap);
-        
-        request.getRequestDispatcher("homepageUser.jsp").forward(request, response);
     } 
 
     /** 
