@@ -1,4 +1,4 @@
-
+﻿
 GO
 /****** Object:  Table [dbo].[Area_Image]    Script Date: 6/22/2025 7:25:22 PM ******/
 SET ANSI_NULLS ON
@@ -473,3 +473,29 @@ CREATE TABLE Shift (
     end_time TIME NOT NULL
      FOREIGN KEY (area_id) REFERENCES Areas(area_id)  
 );
+CREATE TABLE [dbo].[ChatbotMessages] (
+    [message_id] INT IDENTITY(1,1) PRIMARY KEY,
+    [user_id] INT NULL, -- Nếu null là tin nhắn từ chatbot, ngược lại từ người dùng
+    [message_content] NVARCHAR(MAX) NOT NULL,
+    [created_at] DATETIME DEFAULT GETDATE(),
+    [sender_type] VARCHAR(10) CHECK(sender_type IN ('user', 'bot')) NOT NULL
+);
+
+ALTER TABLE [dbo].[ChatbotMessages] WITH CHECK ADD FOREIGN KEY([user_id])
+REFERENCES [dbo].[Users] ([user_id]);
+CREATE TABLE [dbo].[ChatbotResponses] (
+    [response_id] INT IDENTITY(1,1) PRIMARY KEY,
+    [intent] NVARCHAR(255) NOT NULL,
+    [response_text] NVARCHAR(MAX) NOT NULL,
+    [created_at] DATETIME DEFAULT GETDATE()
+);
+CREATE TABLE [dbo].[ChatbotSessions] (
+    [session_id] INT IDENTITY(1,1) PRIMARY KEY,
+    [user_id] INT NULL,
+    [started_at] DATETIME DEFAULT GETDATE(),
+    [ended_at] DATETIME NULL,
+    [session_status] VARCHAR(20) DEFAULT 'active'
+);
+
+ALTER TABLE [dbo].[ChatbotSessions] WITH CHECK ADD FOREIGN KEY([user_id])
+REFERENCES [dbo].[Users] ([user_id]);
