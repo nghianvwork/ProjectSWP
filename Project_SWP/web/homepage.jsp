@@ -151,18 +151,42 @@
             }
 
             /* Hero Banner */
-            .hero-banner {
-                border-radius: 20px;
-                overflow: hidden;
-                margin-bottom: 3rem;
-                box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            }
+            /*            .hero-banner {
+                            border-radius: 20px;
+                            overflow: hidden;
+                            margin-bottom: 3rem;
+                            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+                        }
+            
+                        .hero-banner img {
+                            width: 100%;
+                            height: 400px;
+                            object-fit: cover;
+                            display: block;
+                        }*/
 
-            .hero-banner img {
+            .banner-slider {
+                position: relative;
                 width: 100%;
-                height: 400px;
-                object-fit: cover;
+                max-width: 900px;
+                margin: 0 auto;
+            }
+            .banner-slide {
+                display: none;
+                position: absolute;
+                width: 100%;
+            }
+            .banner-slide.active {
                 display: block;
+            }
+            .banner-caption {
+                position: absolute;
+                bottom: 20px;
+                left: 30px;
+                background: rgba(0,0,0,0.4);
+                color: #fff;
+                padding: 10px 20px;
+                border-radius: 5px;
             }
 
             .title {
@@ -199,7 +223,7 @@
             .court-info {
                 padding: 1.5rem;
             }
-            
+
             .court-info p{
                 margin-bottom: 0.5rem;
             }
@@ -376,17 +400,24 @@
         <!-- Main Content -->
         <main class="main">
 
-            <!-- Hero Banner -->
-            <div class="hero-banner">
-                <img src="./uploads/hinh_nen.jpg" alt="Badminton Court Banner" />
+            <div class="banner-slider" style="height: 350px;">
+                <c:forEach var="banner" items="${bannerList}">
+                    <div class="banner-slide">
+                        <img src="${pageContext.request.contextPath}/${banner.imageUrl}" alt="${banner.title}" style="width:100%;height:350px;object-fit:cover;">
+                        <div class="banner-caption">
+                            <h2>${banner.title}</h2>
+                            <p>${banner.caption}</p>
+                        </div>
+                    </div>
+                </c:forEach>
             </div>
 
             <div class="title">
                 <h1>Danh sách khu vực nổi bật</h1>
             </div>
-            
 
-            
+
+
             <!-- Courts Grid -->
             <div class="courts-grid">
                 <c:forEach var="top" items="${listTop3}">
@@ -453,6 +484,19 @@
                 <p>&copy; 2025 BadmintonCourt. Thế giới cầu lông.</p>
             </div>
         </footer>
-
+        
     </body>
+    <script>
+        // JS chuyển slide đơn giản
+        window.onload = function() {
+            let slides = document.querySelectorAll('.banner-slide');
+            let idx = 0;
+            if(slides.length > 0) slides[0].classList.add('active');
+            setInterval(function() {
+                slides[idx].classList.remove('active');
+                idx = (idx+1)%slides.length;
+                slides[idx].classList.add('active');
+            }, 4000);
+        }
+    </script>
 </html>

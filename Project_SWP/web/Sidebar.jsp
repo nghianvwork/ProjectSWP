@@ -102,6 +102,9 @@
                 <li class="nav-item">
                     <a class="nav-link" href="revenue-report">BÁO CÁO</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="banner-list">BANNER</a>
+                </li>
             </ul>
         </div>
     </body>
