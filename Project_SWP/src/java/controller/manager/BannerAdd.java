@@ -79,10 +79,10 @@ public class BannerAdd extends HttpServlet {
             request.setCharacterEncoding("UTF-8");
             Part filePart = request.getPart("image");
             String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
-            String uploadDir = getServletContext().getRealPath("/uploads");
+            String uploadDir = getServletContext().getRealPath("/uploads");         
             File dir = new File(uploadDir);
             if (!dir.exists()) dir.mkdir();
-            String filePath = uploadDir + File.separator + fileName;
+            String filePath = uploadDir + File.separator + fileName;           
             filePart.write(filePath);
             String imageUrl = "uploads/" + fileName;
 
