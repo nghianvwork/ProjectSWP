@@ -68,7 +68,7 @@ public class BannerEdit extends HttpServlet {
             int id = Integer.parseInt(request.getParameter("id"));
             Banner banner = new BannerDAO().getBannerById(id);
             request.setAttribute("banner", banner);
-            request.getRequestDispatcher("banner_edit.jsp").forward(request, response);
+            request.getRequestDispatcher("banner_list.jsp").forward(request, response);
         } catch (Exception e) {
             e.printStackTrace();
             response.sendRedirect("banner-list?msg=notfound");
