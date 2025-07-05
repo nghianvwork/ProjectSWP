@@ -20,7 +20,7 @@
             .banner-slider {
                 position: relative;
                 width: 100%;
-                max-width: 900px;
+                max-width: 1200px;
                 margin: 0 auto;
             }
             .banner-slide {
@@ -121,10 +121,10 @@
 
         <main class="main">
 
-            <div class="banner-slider" style="height: 350px;">
+            <div class="banner-slider" style="height: 400px;">
                 <c:forEach var="banner" items="${bannerList}">
                     <div class="banner-slide">
-                        <img src="${pageContext.request.contextPath}/${banner.imageUrl}" alt="${banner.title}" style="width:100%;height:350px;object-fit:cover;">
+                        <img src="${pageContext.request.contextPath}/${banner.imageUrl}" alt="${banner.title}" style="width:100%;height:400px;object-fit:cover;">
                         <div class="banner-caption">
                             <h2>${banner.title}</h2>
                             <p>${banner.caption}</p>
@@ -165,4 +165,17 @@
 
         <jsp:include page="homefooter.jsp" />
     </body>
+    <script>
+        // JS chuyển slide đơn giản
+        window.onload = function() {
+            let slides = document.querySelectorAll('.banner-slide');
+            let idx = 0;
+            if(slides.length > 0) slides[0].classList.add('active');
+            setInterval(function() {
+                slides[idx].classList.remove('active');
+                idx = (idx+1)%slides.length;
+                slides[idx].classList.add('active');
+            }, 4000);
+        }
+    </script>
 </html>

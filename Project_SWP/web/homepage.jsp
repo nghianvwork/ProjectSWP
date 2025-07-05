@@ -150,21 +150,6 @@
                 padding: 0 2rem;
             }
 
-            /* Hero Banner */
-            /*            .hero-banner {
-                            border-radius: 20px;
-                            overflow: hidden;
-                            margin-bottom: 3rem;
-                            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-                        }
-            
-                        .hero-banner img {
-                            width: 100%;
-                            height: 400px;
-                            object-fit: cover;
-                            display: block;
-                        }*/
-
             .banner-slider {
                 position: relative;
                 width: 100%;
