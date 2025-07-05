@@ -427,7 +427,7 @@
                 <div class="user-info">
                     <img src="./uploads/avt.jpg" alt="avt" />
                     <!--                    <p class="userName">Sáng Nguyễn</p>-->
-                    <span><b><%=user.getUsername()%></b></span>
+                    <span><b><%=user.getFirstname()%> <%=user.getLastname()%></b></span>
                 </div>
                 <ul class="menu">
                     <li><strong>Tài khoản của tôi</strong></li>
@@ -442,6 +442,7 @@
                 <div class="info-box">
                     <div>
                         <form id="form-1" action="updateprofile" method="post">
+                            <input type="hidden" name="user_id" value="<%=user.getUser_Id()%>">
                             <div class="info-row">
                                 <label>Username</label>
                                 <input type="text" name="username" value="<%=user.getUsername()%>" readonly>
@@ -472,7 +473,7 @@
                             </div>
                             <div class="info-row">
                                 <label>Ngày sinh</label>
-                                <input type="date" name="dateOfBirth" value="<%=user.getDateOfBirth() != null ? user.getDateOfBirth().toString() : ""%>">
+                                <input type="date" name="date_of_birth" value="<%=user.getDateOfBirth() != null ? user.getDateOfBirth().toString() : ""%>">
                             </div>
                             <div>
                                 <button type="submit" class="edit-btn">Cập Nhật</button>
