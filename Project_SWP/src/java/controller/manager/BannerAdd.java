@@ -3,35 +3,29 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
 
-package controller.user;
+package controller.manager;
 
-import DAO.AreaDAO;
 import DAO.BannerDAO;
-import DAO.Branch_ImageDAO;
 import Model.Banner;
-import Model.Branch;
-import Model.Branch_pictures;
-import Model.User;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import jakarta.servlet.http.Part;
+import java.io.File;
+import java.nio.file.Paths;
 
 /**
  *
- * @author sangn
+ * @author sang
  */
-@WebServlet(name="HomePageUser", urlPatterns={"/HomePageUser"})
-public class HomePageUser extends HttpServlet {
+@WebServlet(name="BannerAdd", urlPatterns={"/banner-add"})
+@MultipartConfig
+public class BannerAdd extends HttpServlet {
    
     /** 
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -48,10 +42,10 @@ public class HomePageUser extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet HomePageUser</title>");  
+            out.println("<title>Servlet BannerAdd</title>");  
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet HomePageUser at " + request.getContextPath () + "</h1>");
+            out.println("<h1>Servlet BannerAdd at " + request.getContextPath () + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -68,35 +62,7 @@ public class HomePageUser extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-        
-        try {
-            HttpSession session = request.getSession();
-            User user = (User) session.getAttribute("user");
-            if (user == null) {
-                response.sendRedirect("login");
-                return;
-            }
-            
-            AreaDAO areaDAO = new AreaDAO();
-            Branch_ImageDAO imageDAO = new Branch_ImageDAO();
-            BannerDAO bannerDAO = new BannerDAO();
-            
-            List<Branch> listTop3 = areaDAO.getTop3();
-            Map<Integer, List<Branch_pictures>> areaImagesMap = new HashMap<>();
-            List<Banner> bannerList = bannerDAO.getActiveBanners();
-            
-            for (Branch area : listTop3) {
-                List<Branch_pictures> images = imageDAO.getRoomImagesByDormID(area.getArea_id());
-                areaImagesMap.put(area.getArea_id(), images);
-            }
-            request.setAttribute("listTop3", listTop3);
-            request.setAttribute("areaImagesMap", areaImagesMap);
-            request.setAttribute("bannerList", bannerList);
-            
-            request.getRequestDispatcher("homepageUser.jsp").forward(request, response);
-        } catch (Exception ex) {
-            Logger.getLogger(HomePageUser.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        request.getRequestDispatcher("banner_add.jsp").forward(request, response);
     } 
 
     /** 
@@ -109,7 +75,31 @@ public class HomePageUser extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-        processRequest(request, response);
+        try {
+            request.setCharacterEncoding("UTF-8");
+            Part filePart = request.getPart("image");
+            String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
+            String uploadDir = getServletContext().getRealPath("/uploads");         
+            File dir = new File(uploadDir);
+            if (!dir.exists()) dir.mkdir();
+            String filePath = uploadDir + File.separator + fileName;           
+            filePart.write(filePath);
+            String imageUrl = "uploads/" + fileName;
+
+            Banner banner = new Banner();
+            banner.setImageUrl(imageUrl);
+            banner.setTitle(request.getParameter("title"));
+            banner.setCaption(request.getParameter("caption"));
+            banner.setStatus(request.getParameter("status") != null);
+
+            BannerDAO dao = new BannerDAO();
+            dao.addBanner(banner);
+
+            response.sendRedirect("banner-list");
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.sendRedirect("banner-add?msg=error");
+        }
     }
 
     /** 

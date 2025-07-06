@@ -285,7 +285,7 @@
                 <div class="user-info">
                     <img src="./uploads/avt.jpg" alt="avt" />
                     <!--                    <p class="userName">Sáng Nguyễn</p>-->
-                    <span><b><%=user.getUsername()%></b></span>
+                    <span><b><%=user.getFirstname()%> <%=user.getLastname()%></b></span>
                 </div>
                 <ul class="menu">
                     <li><strong>Tài khoản của tôi</strong></li>

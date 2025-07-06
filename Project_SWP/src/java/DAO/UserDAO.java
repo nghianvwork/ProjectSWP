@@ -92,24 +92,31 @@ public class UserDAO extends DBContext {
     }
 
     // Cập nhật user
-    public void updateUser(User u) {
-    String sql = "UPDATE Users SET username = ?, email = ?, phone_number = ?, gender = ?, firstname = ?, lastname = ?, fullname = ?, date_of_birth = ? WHERE user_id = ?";
+    public boolean updateUser(User u) {
+    String sql = "UPDATE Users SET username = ?, email = ?, phone_number = ?, gender = ?, firstname = ?, lastname = ?, date_of_birth = ? WHERE user_id = ?";
     try (PreparedStatement ps = conn.prepareStatement(sql)) {
         ps.setString(1, u.getUsername());
         ps.setString(2, u.getEmail());
-        ps.setString(3, u.getPhone_number());
+        ps.setString(3, u.getPhone_number()); // hoặc getPhoneNumber()
         ps.setString(4, u.getGender());
         ps.setString(5, u.getFirstname());
         ps.setString(6, u.getLastname());
-        ps.setString(7, u.getFullname());
-        ps.setDate(8, u.getDateOfBirth() != null ? u.getDateOfBirth() : null);
-        ps.setInt(9, u.getUser_Id());
-        ps.executeUpdate();
+        if (u.getDateOfBirth() != null) {
+            ps.setDate(7, u.getDateOfBirth());
+        } else {
+            ps.setNull(7, java.sql.Types.DATE);
+        }
+        ps.setInt(8, u.getUser_Id()); // hoặc getUserId()
+        int row = ps.executeUpdate();
+        System.out.println("Update user, rows affected: " + row);
+        return row > 0;
     } catch (SQLException e) {
         System.err.println("Lỗi cập nhật user: " + e.getMessage());
         e.printStackTrace();
     }
+    return false;
 }
+
 
     // Xóa user
     public void deleteUser(int userId) {

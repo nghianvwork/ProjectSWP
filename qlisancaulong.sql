@@ -481,6 +481,15 @@ CREATE TABLE [dbo].[ChatbotMessages] (
     [sender_type] VARCHAR(10) CHECK(sender_type IN ('user', 'bot')) NOT NULL
 );
 
+CREATE TABLE [dbo].[Banners](
+    [banner_id] INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
+    [image_url] NVARCHAR(255) NOT NULL,
+    [title] NVARCHAR(255) NOT NULL,
+    [caption] NVARCHAR(500) NULL,
+    [status] BIT DEFAULT 1,
+    [created_at] DATETIME DEFAULT GETDATE()
+);
+
 ALTER TABLE [dbo].[ChatbotMessages] WITH CHECK ADD FOREIGN KEY([user_id])
 REFERENCES [dbo].[Users] ([user_id]);
 CREATE TABLE [dbo].[ChatbotResponses] (

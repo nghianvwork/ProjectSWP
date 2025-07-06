@@ -3,35 +3,27 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
 
-package controller.user;
+package controller.manager;
 
-import DAO.AreaDAO;
 import DAO.BannerDAO;
-import DAO.Branch_ImageDAO;
 import Model.Banner;
-import Model.Branch;
-import Model.Branch_pictures;
-import Model.User;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
- * @author sangn
+ * @author sang
  */
-@WebServlet(name="HomePageUser", urlPatterns={"/HomePageUser"})
-public class HomePageUser extends HttpServlet {
+@WebServlet(name="BannerList", urlPatterns={"/banner-list"})
+@MultipartConfig
+public class BannerList extends HttpServlet {
    
     /** 
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -48,10 +40,10 @@ public class HomePageUser extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet HomePageUser</title>");  
+            out.println("<title>Servlet BannerList</title>");  
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet HomePageUser at " + request.getContextPath () + "</h1>");
+            out.println("<h1>Servlet BannerList at " + request.getContextPath () + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -68,35 +60,18 @@ public class HomePageUser extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-        
         try {
-            HttpSession session = request.getSession();
-            User user = (User) session.getAttribute("user");
-            if (user == null) {
-                response.sendRedirect("login");
-                return;
-            }
-            
-            AreaDAO areaDAO = new AreaDAO();
-            Branch_ImageDAO imageDAO = new Branch_ImageDAO();
-            BannerDAO bannerDAO = new BannerDAO();
-            
-            List<Branch> listTop3 = areaDAO.getTop3();
-            Map<Integer, List<Branch_pictures>> areaImagesMap = new HashMap<>();
-            List<Banner> bannerList = bannerDAO.getActiveBanners();
-            
-            for (Branch area : listTop3) {
-                List<Branch_pictures> images = imageDAO.getRoomImagesByDormID(area.getArea_id());
-                areaImagesMap.put(area.getArea_id(), images);
-            }
-            request.setAttribute("listTop3", listTop3);
-            request.setAttribute("areaImagesMap", areaImagesMap);
-            request.setAttribute("bannerList", bannerList);
-            
-            request.getRequestDispatcher("homepageUser.jsp").forward(request, response);
-        } catch (Exception ex) {
-            Logger.getLogger(HomePageUser.class.getName()).log(Level.SEVERE, null, ex);
+            BannerDAO dao = new BannerDAO();
+            List<Banner> banners = dao.getAllBanners();
+            request.setAttribute("bannerList", banners);
+
+            String msg = request.getParameter("msg");
+            if (msg != null) request.setAttribute("msg", msg);
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+        request.getRequestDispatcher("banner_list.jsp").forward(request, response);
     } 
 
     /** 

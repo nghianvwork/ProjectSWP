@@ -88,7 +88,7 @@ public class UpdateProfileController extends HttpServlet {
         String gender = request.getParameter("gender");
         String firstname = request.getParameter("firstname");
         String lastname = request.getParameter("lastname");
-        String dobStr = request.getParameter("dateOfBirth");
+        String dobStr = request.getParameter("date_of_birth");
 
         // Validation
         if (firstname == null || lastname == null || firstname.trim().isEmpty() || lastname.trim().isEmpty()) {
@@ -110,12 +110,12 @@ public class UpdateProfileController extends HttpServlet {
         }
 
         // Kiểm tra số điện thoại đã tồn tại
-        UserDAO userDAO = new UserDAO();
-        if (userDAO.isPhoneExists(phoneNumber)) {
-            request.setAttribute("error", "Số điện thoại đã tồn tại");
-            request.getRequestDispatcher("UpdateProfile.jsp").forward(request, response);
-            return;
-        }
+//        UserDAO userDAO = new UserDAO();
+//        if (userDAO.isPhoneExists(phoneNumber)) {
+//            request.setAttribute("error", "Số điện thoại đã tồn tại");
+//            request.getRequestDispatcher("UpdateProfile.jsp").forward(request, response);
+//            return;
+//        }
 
 
         User newUser = new User();
@@ -126,7 +126,7 @@ public class UpdateProfileController extends HttpServlet {
         newUser.setGender(gender);
         newUser.setFirstname(firstname);
         newUser.setLastname(lastname);
-        newUser.setFullname(lastname + " " + firstname);
+//        newUser.setFullname(lastname + " " + firstname);
         newUser.setRole(user.getRole()); // Giữ nguyên role từ user cũ
 
         // Xử lý dateOfBirth
