@@ -12,7 +12,7 @@
                 padding: 0;
                 box-sizing: border-box;
             }
-           
+
             body {
                 font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
                 background-color: #f5f5f5;
@@ -374,8 +374,19 @@
         <nav class="nav">
             <div class="nav-container">
                 <div class="nav-item active"><a href="HomePage">Trang Chủ</a></div>
-                <div class="nav-item"><a href="login.jsp">Danh Sách Sân Bãi</a></div>
-                <div class="nav-item"><a href="login.jsp">Danh sách đặt sân</a></div>
+                <div class="nav-dropdown" style="position: relative; display: inline-block;">
+                    <a class="nav-item" style="padding:10px 18px; cursor:pointer; display:inline-block;">
+                        Danh sách <span style="font-size:13px;">▼</span>
+                    </a>
+                    <div class="dropdown-content" style="
+                         display: none; position: absolute; left: 0; background: #fff; min-width: 210px;
+                         box-shadow: 0 2px 8px rgba(0,0,0,0.16); border-radius: 10px; z-index: 10;
+                         ">
+                        <a class="nav-item" href="login.jsp" style="padding: 12px; display: block; text-decoration: none; color: #222;">Danh Sách Sân Bãi</a>
+                        <a class="nav-item" href="login.jsp" style="padding: 12px; display: block; text-decoration: none; color: #222;">Danh sách đặt sân</a>
+                        <a class="nav-item" href="login.jsp" style="padding: 12px; display: block; text-decoration: none; color: #222;">Danh sách huấn luyện viên</a>
+                    </div>
+                </div>
                 <div class="nav-item"><a href="login.jsp">Bài Viết</a></div>
                 <div class="nav-item"><a href="login.jsp">Giới Thiệu</a></div>
                 <div class="nav-item">Liên Hệ</div>
@@ -469,19 +480,32 @@
                 <p>&copy; 2025 BadmintonCourt. Thế giới cầu lông.</p>
             </div>
         </footer>
-        
+
     </body>
     <script>
         // JS chuyển slide đơn giản
-        window.onload = function() {
+        window.onload = function () {
             let slides = document.querySelectorAll('.banner-slide');
             let idx = 0;
-            if(slides.length > 0) slides[0].classList.add('active');
-            setInterval(function() {
+            if (slides.length > 0)
+                slides[0].classList.add('active');
+            setInterval(function () {
                 slides[idx].classList.remove('active');
-                idx = (idx+1)%slides.length;
+                idx = (idx + 1) % slides.length;
                 slides[idx].classList.add('active');
             }, 4000);
         }
+
+// Hiện dropdown khi hover vào nav-btn hoặc menu
+        const navDropdown = document.querySelector('.nav-dropdown');
+        const navDropdownContent = navDropdown.querySelector('.dropdown-content');
+
+        navDropdown.addEventListener('mouseenter', function () {
+            navDropdownContent.style.display = 'block';
+        });
+        navDropdown.addEventListener('mouseleave', function () {
+            navDropdownContent.style.display = 'none';
+        });
+
     </script>
 </html>

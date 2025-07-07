@@ -241,6 +241,9 @@
                         <a class="nav-link" href="users">QUẢN LÝ NGƯỜI DÙNG</a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" href="CoachList">QUẢN LÝ HUẤN LUYỆN VIÊN</a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" href="notification_list">QUẢN LÝ THÔNG BÁO</a>
                     </li>
                     <li class="nav-item">
