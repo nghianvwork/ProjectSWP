@@ -490,6 +490,19 @@ CREATE TABLE [dbo].[Banners](
     [created_at] DATETIME DEFAULT GETDATE()
 );
 
+CREATE TABLE [dbo].[Coaches](
+    [coach_id] INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
+    [area_id] INT NOT NULL,
+    [fullname] NVARCHAR(100) NOT NULL,
+    [email] NVARCHAR(100) NOT NULL,
+    [phone] NVARCHAR(20) NOT NULL,
+    [specialty] NVARCHAR(255) NULL,
+    [description] NVARCHAR(MAX) NULL,
+    [image_url] NVARCHAR(255) NULL,
+    [status] NVARCHAR(50) DEFAULT 'active',
+    CONSTRAINT FK_Coaches_Area FOREIGN KEY (area_id) REFERENCES [dbo].[Areas](area_id)
+) ON [PRIMARY]
+
 ALTER TABLE [dbo].[ChatbotMessages] WITH CHECK ADD FOREIGN KEY([user_id])
 REFERENCES [dbo].[Users] ([user_id]);
 CREATE TABLE [dbo].[ChatbotResponses] (
