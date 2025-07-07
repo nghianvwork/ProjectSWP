@@ -31,12 +31,7 @@
             .banner-slide.active {
                 display: block;
             }
-<<<<<<< HEAD
 
-
-
-=======
->>>>>>> 1240f3b0bbdb11a9ad2210559827140f555e4d91
             .banner-caption {
                 position: absolute;
                 bottom: 20px;
@@ -47,10 +42,7 @@
                 border-radius: 5px;
             }
             
-<<<<<<< HEAD
 
-=======
->>>>>>> 1240f3b0bbdb11a9ad2210559827140f555e4d91
             .title {
                 text-align: center;
             }
