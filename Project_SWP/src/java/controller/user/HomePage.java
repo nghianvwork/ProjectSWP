@@ -81,7 +81,7 @@ public class HomePage extends HttpServlet {
                 areaImagesMap.put(area.getArea_id(), images);
             }
 
-            // Lấy danh sách banner (debug)
+          
             List<Banner> bannerList = bannerDAO.getActiveBanners(); // hoặc getAllBanners() để test
 
             // === DEBUG BANNER ===
