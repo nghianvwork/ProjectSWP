@@ -52,24 +52,50 @@
             }
 
             .page-header {
-                background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-                color: white;
-                padding: 20px;
-                border-radius: 15px;
-                margin-bottom: 20px;
-                box-shadow: var(--shadow);
+                background: #fff;
+                padding: 20px 30px;
+                border-radius: 10px;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+                margin-bottom: 30px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                flex-wrap: wrap;
             }
 
             .page-header h2 {
-                margin: 0;
-                font-weight: 700;
-                font-size: 1.8rem;
+                color: #333;
+                font-size: 24px;
+                font-weight: 600;
+                display: flex;
+                align-items: center;
+                gap: 10px;
             }
 
-            .page-header p {
-                margin: 5px 0 0 0;
-                opacity: 0.9;
-                font-size: 0.9rem;
+            .user-info {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                color: #666;
+            }
+
+            .user-info::before {
+                content: "👤";
+            }
+            
+            .logout-button {
+                background: #dc3545;
+                color: white;
+                padding: 8px 16px;
+                border-radius: 6px;
+                text-decoration: none;
+                font-weight: 600;
+                transition: all 0.3s ease;
+            }
+
+            .logout-button:hover {
+                background: #c82333;
+                transform: translateY(-2px);
             }
 
             .stats-card {
@@ -180,7 +206,7 @@
 
             .table {
                 margin: 0;
-                border-collapse: separate;
+                border-collapse: collapse;
                 border-spacing: 0;
             }
 
@@ -191,8 +217,8 @@
                 text-transform: uppercase;
                 letter-spacing: 0.5px;
                 padding: 20px 15px;
-                border: none;
-                font-size: 0.85rem;
+                border: 1px solid #cbd5e0;
+                font-size: 0.6rem;
             }
 
             .table tbody tr {
@@ -205,9 +231,10 @@
             }
 
             .table tbody td {
-                padding: 20px 15px;
+                padding: 8px 6px;
                 border-bottom: 1px solid var(--border-color);
                 vertical-align: middle;
+                font-size: 13px;
             }
 
             .coach-avatar {
@@ -222,7 +249,7 @@
             .status-badge {
                 padding: 8px 16px;
                 border-radius: 20px;
-                font-size: 0.8rem;
+                font-size: 0.5rem;
                 font-weight: 600;
                 text-transform: uppercase;
                 letter-spacing: 0.5px;
@@ -247,10 +274,10 @@
                 padding: 8px 12px;
                 border-radius: 8px;
                 border: none;
-                font-size: 0.8rem;
+                font-size: 0.6rem;
                 font-weight: 600;
                 transition: all 0.3s ease;
-                min-width: 70px;
+                min-width: 50px;
             }
 
             .btn-edit {
@@ -378,7 +405,9 @@
             <!-- Page Header -->
             <div class="page-header">
                 <h2><i class="fas fa-users-cog me-3"></i>Quản lý Huấn luyện viên</h2>
-                <p>Quản lý thông tin và hoạt động của các huấn luyện viên</p>
+                <div class="user-info">
+                    <a href="login" class="logout-button">Đăng xuất</a>
+                </div>
             </div>
 
             <!-- Stats Cards -->
@@ -413,7 +442,7 @@
                 <table class="table" id="coachTable">
                     <thead>
                         <tr>
-                            <th><i class="fas fa-hashtag me-2"></i>ID</th>
+                            <th><i class="fas fa-hashtag me-2"></i>STT</th>
                             <th><i class="fas fa-map-marker-alt me-2"></i>Khu vực</th>
                             <th><i class="fas fa-user me-2"></i>Họ tên</th>
                             <th><i class="fas fa-image me-2"></i>Ảnh</th>
@@ -426,9 +455,10 @@
                         </tr>
                     </thead>
                     <tbody>
+                        <% int stt = 1; %>
                         <% for (Coach c : coaches) { %>
                         <tr>
-                            <td><strong>#<%=c.getCoachId()%></strong></td>
+                            <td><strong>#<%=stt++%></strong></td>
                             <td>
                                 <% for (AreaCoach a : areas) {
                                     if (a.getAreaId() == c.getAreaId()) { %>
