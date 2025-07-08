@@ -2,11 +2,13 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package controller.user;
+package controller.manager;
 
-import DAO.ReactionDAO;
-import Dal.DBContext;
-import Model.User;
+import DAO.BookingDAO;
+import DAO.CourtDAO;
+import DAO.ReviewDAO;
+import DAO.UserDAO;
+import jakarta.servlet.RequestDispatcher;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -14,15 +16,22 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
-import java.sql.Connection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import Model.AdminDashBoard;
 
 /**
  *
  * @author admin
  */
-@WebServlet(name = "ReactionUser", urlPatterns = {"/ReactionUser"})
-public class ReactionUser extends HttpServlet {
+@WebServlet(name = "AdminDashBoard", urlPatterns = {"/AdminDashBoard"})
+public class AdminDashBoardController extends HttpServlet {
+
+    private BookingDAO bookingDAO = new BookingDAO(); 
+    private UserDAO userDAO = new UserDAO();
+//    private ReviewDAO reviewDAO = new ReviewDAO();
+    private CourtDAO courtDAO = new CourtDAO();
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -41,10 +50,10 @@ public class ReactionUser extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet ReactionUser</title>");
+            out.println("<title>Servlet AdminDashBoard</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet ReactionUser at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet AdminDashBoard at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -62,7 +71,26 @@ public class ReactionUser extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        Map<String, Object> summary = new HashMap<>();
+        summary.put("totalBookings", bookingDAO.getTotalBookings());    
+        summary.put("totalRevenue", bookingDAO.getTotalRevenue());      
+        summary.put("returningUsers", userDAO.getReturningUserCount()); 
+//        summary.put("avgRating", reviewDAO.getAverageRating());         
+
+        request.setAttribute("summary", summary);
+
+        // Lấy danh sách report từng sân
+        List<AdminDashBoard> courts = courtDAO.getAllCourtReports();       
+        request.setAttribute("courtReports", courts);
+
+        // Xếp hạng top 10 sân doanh thu/lượt đặt/đánh giá (ví dụ theo doanh thu)
+        courts.sort((a, b) -> Double.compare(b.getRevenue(), a.getRevenue()));
+        List<AdminDashBoard> topCourts = courts.subList(0, Math.min(10, courts.size()));
+        request.setAttribute("topCourts", topCourts);
+
+        // Sau khi xử lý xong thì forward sang ViewAdminDashboardServlet
+        RequestDispatcher rd = request.getRequestDispatcher("ViewAdminDashboardServlet");
+        rd.forward(request, response);
     }
 
     /**
@@ -76,39 +104,7 @@ public class ReactionUser extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        HttpSession session = request.getSession();
-        User user = (User) session.getAttribute("user");
-
-        int postId = Integer.parseInt(request.getParameter("postId"));
-        String reactionType = request.getParameter("reaction");
-
-        try {
-            DBContext db = new DBContext();
-            Connection conn = db.getConnection();
-            ReactionDAO dao = new ReactionDAO(conn);
-
-            dao.reactToPost(user.getUser_Id(), postId, reactionType);
-
-            // Lấy lại cảm xúc user đã thả cho post này
-            String userReaction = dao.getUserReaction(user.getUser_Id(), postId);
-
-            // Lấy tổng số từng loại reaction cho post này
-            java.util.Map<String, Integer> reactionCounts = dao.countReactionsByType(postId);
-
-            // Lấy lại thông tin bài viết (tuỳ bạn dùng DAO nào để get)
-            Model.Post post = new DAO.PostDAO(conn).getPostById(postId);
-
-            request.setAttribute("post", post);
-            request.setAttribute("userReaction", userReaction);
-            request.setAttribute("reactionCounts", reactionCounts);
-
-            // Forward sang trang chi tiết bài viết
-            request.getRequestDispatcher("PostDetail.jsp").forward(request, response);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            response.sendError(500, "Lỗi xử lý cảm xúc: " + e.getMessage());
-        }
+        processRequest(request, response);
     }
 
     /**
