@@ -25,6 +25,9 @@ import Model.Service;
 import DAO.ServiceDAO;
 import DAO.BookingServiceDAO;
 import Model.Promotion;
+import Model.Shift;
+import Model.Slot;
+import Model.SlotTime;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.LinkedHashMap;
@@ -120,6 +123,35 @@ public class BookingDAO extends DBContext {
 
         return bookings;
     }
+public List<Slot> getAvailableSlots(int courtId, LocalDate date) {
+    List<Slot> availableSlots = new ArrayList<>();
+    try {
+        CourtDAO courtDAO = new CourtDAO();
+        Courts court = courtDAO.getCourtById(courtId);
+        ShiftDAO shiftDAO = new ShiftDAO();
+        List<Shift> shifts = shiftDAO.getShiftsByCourt(courtId);
+        
+        if (shifts.isEmpty()) {
+            return availableSlots;
+        }
+
+        // Lấy toàn bộ booking đã có trong ngày
+        List<Bookings> bookings = getBookingsByCourtAndDate(courtId, date);
+
+        // Duyệt từng ca hoạt động để lấy slot trống
+        for (Shift shift : shifts) {
+            List<Slot> slots = SlotTime.generateSlots(shift, bookings, 60);
+            for (Slot slot : slots) {
+                if (slot.isAvailable()) {
+                    availableSlots.add(slot);
+                }
+            }
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return availableSlots;
+}
 
     public boolean checkSlotAvailable(int courtId, LocalDate date, Time startTime, Time endTime) {
         String sql = "SELECT * FROM Bookings "
@@ -205,7 +237,22 @@ public class BookingDAO extends DBContext {
 
     return bookingId;
 }
+public boolean createBooking(Bookings booking) {
+    String sql = "INSERT INTO Bookings(user_id, court_id, date, start_time, end_time, status, total_price) VALUES (?, ?, ?, ?, ?, 'pending', ?)";
+    try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        ps.setInt(1, booking.getUser_id());
+        ps.setInt(2, booking.getCourt_id());
+        ps.setDate(3, java.sql.Date.valueOf(booking.getDate()));
+        ps.setTime(4, booking.getStart_time());
+        ps.setTime(5, booking.getEnd_time());
+        ps.setDouble(6, booking.getTotal_price());
 
+        return ps.executeUpdate() > 0;
+    } catch (SQLException e) {
+        e.printStackTrace();
+        return false;
+    }
+}
 
     public int insertBooking(int userId, int courtId, LocalDate date, Time startTime, Time endTime, String status) {
         String sql = "INSERT INTO Bookings (user_id, court_id, date, start_time, end_time, status, total_price) VALUES (?, ?, ?, ?, ?, ?, ?)";
