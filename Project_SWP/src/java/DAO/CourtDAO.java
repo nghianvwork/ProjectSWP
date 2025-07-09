@@ -14,6 +14,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import Dal.DBContext;
+import Model.AdminDashBoard;
 import Model.Courts;
 import java.math.BigDecimal;
 import java.sql.Time;
@@ -279,6 +280,45 @@ public BigDecimal calculateSlotPrice(Time startTime, Time endTime, BigDecimal pr
         CourtDAO dao = new CourtDAO();
         int a = dao .countCourtsByArea(5);
         System.out.println(a);
+    }
+    
+    public List<AdminDashBoard> getAllCourtReports() {
+        List<AdminDashBoard> list = new ArrayList<>();
+        String sql
+                = "SELECT c.court_id, c.court_name, u.username AS manager_name, "
+                + "       COUNT(DISTINCT b.booking_id) AS total_bookings, "
+                + "       ISNULL(SUM(b.total_price),0) AS total_revenue, "
+                + "       ISNULL(AVG(CAST(b.rating AS FLOAT)), 0) AS avg_rating, "
+                + "       COUNT(DISTINCT CASE WHEN ucount.booking_count > 1 THEN b.user_id END) AS returning_users "
+                + "FROM Courts c "
+                + "LEFT JOIN Areas a ON c.area_id = a.area_id "
+                + "LEFT JOIN Users u ON a.manager_id = u.user_id "
+                + "LEFT JOIN Bookings b ON c.court_id = b.court_id AND b.status != 'cancelled' "
+                + "LEFT JOIN ( "
+                + "    SELECT user_id, court_id, COUNT(*) AS booking_count "
+                + "    FROM Bookings "
+                + "    WHERE status != 'cancelled' "
+                + "    GROUP BY user_id, court_id "
+                + ") ucount ON ucount.user_id = b.user_id AND ucount.court_id = b.court_id "
+                + "GROUP BY c.court_id, c.court_name, u.username";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                String courtName = rs.getString("court_name");
+                String managerName = rs.getString("manager_name");
+                double revenue = rs.getDouble("total_revenue");
+                int bookings = rs.getInt("total_bookings");
+                int returningUsers = rs.getInt("returning_users");
+                double avgRating = rs.getDouble("avg_rating");
+
+                AdminDashBoard report = new AdminDashBoard(courtName, managerName, revenue, bookings, returningUsers, avgRating);
+                list.add(report);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
     }
     
 }

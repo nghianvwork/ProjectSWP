@@ -4,8 +4,7 @@
  */
 package controller.user;
 
-import DAO.ReactionDAO;
-import Dal.DBContext;
+import DAO.CommentDAO;
 import Model.User;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -15,14 +14,13 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import java.sql.Connection;
 
 /**
  *
  * @author admin
  */
-@WebServlet(name = "ReactionUser", urlPatterns = {"/ReactionUser"})
-public class ReactionUser extends HttpServlet {
+@WebServlet(name = "AddComment", urlPatterns = {"/AddComment"})
+public class AddComment extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -41,10 +39,10 @@ public class ReactionUser extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet ReactionUser</title>");
+            out.println("<title>Servlet AddComment</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet ReactionUser at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet AddComment at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -76,38 +74,33 @@ public class ReactionUser extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        HttpSession session = request.getSession();
-        User user = (User) session.getAttribute("user");
+        request.setCharacterEncoding("UTF-8");
 
-        int postId = Integer.parseInt(request.getParameter("postId"));
-        String reactionType = request.getParameter("reaction");
+        HttpSession session = request.getSession(false);
+        User user = (session != null) ? (User) session.getAttribute("user") : null;
+
+        if (user == null) {
+            response.sendRedirect("login.jsp");
+            return;
+        }
 
         try {
-            DBContext db = new DBContext();
-            Connection conn = db.getConnection();
-            ReactionDAO dao = new ReactionDAO(conn);
+            int postId = Integer.parseInt(request.getParameter("postId"));
+            String content = request.getParameter("content");
+            String parentIdStr = request.getParameter("parentId");
 
-            dao.reactToPost(user.getUser_Id(), postId, reactionType);
+            Integer parentId = (parentIdStr != null && !parentIdStr.isEmpty())
+                    ? Integer.parseInt(parentIdStr)
+                    : null;
 
-            // Lấy lại cảm xúc user đã thả cho post này
-            String userReaction = dao.getUserReaction(user.getUser_Id(), postId);
+            new CommentDAO().addComment(postId, user.getUser_Id(), content, parentId);
 
-            // Lấy tổng số từng loại reaction cho post này
-            java.util.Map<String, Integer> reactionCounts = dao.countReactionsByType(postId);
-
-            // Lấy lại thông tin bài viết (tuỳ bạn dùng DAO nào để get)
-            Model.Post post = new DAO.PostDAO(conn).getPostById(postId);
-
-            request.setAttribute("post", post);
-            request.setAttribute("userReaction", userReaction);
-            request.setAttribute("reactionCounts", reactionCounts);
-
-            // Forward sang trang chi tiết bài viết
-            request.getRequestDispatcher("PostDetail.jsp").forward(request, response);
+            // Quay lại trang chi tiết bài viết
+            response.sendRedirect("PostDetail?id=" + postId);
 
         } catch (Exception e) {
             e.printStackTrace();
-            response.sendError(500, "Lỗi xử lý cảm xúc: " + e.getMessage());
+            response.sendRedirect("error.jsp");
         }
     }
 
