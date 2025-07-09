@@ -4,11 +4,12 @@
  */
 package DAO;
 
-import Dal.DBContext;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+
+import Dal.DBContext;
 
 /**
  *
@@ -25,9 +26,9 @@ public class ReviewDAO  extends DBContext{
         }
     }
 public int countReviewsByManager(int managerId) {
-    String sql = "SELECT COUNT(*) FROM Reviews r " +
-                 "JOIN Areas a ON r.area_id = a.area_id " +
-                 "WHERE a.manager_id = ?";
+        String sql = "SELECT COUNT(*) FROM Reviews r " +
+                     "JOIN Areas a ON r.area_id = a.area_id " +
+                     "WHERE a.manager_id = ?";
     
     try (
          PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -37,7 +38,19 @@ public int countReviewsByManager(int managerId) {
     }catch(SQLException e){
         System.out.println(e.getMessage());
     }
-    return 0;
+        return 0;
+    }
+
+    // Count all reviews in system
+    public int countAllReviews() {
+        String sql = "SELECT COUNT(*) FROM Reviews";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) return rs.getInt(1);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return 0;
     }
 
     public boolean addReview(int userId, int areaId, int rating, String comment) {

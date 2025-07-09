@@ -4,22 +4,22 @@
  */
 package DAO;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Time;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import Dal.DBContext;
 import Model.AdminDashBoard;
 import Model.Courts;
-import java.math.BigDecimal;
-import java.sql.Time;
-import java.time.Duration;
-import java.time.LocalTime;
 
 /**
  *
@@ -246,6 +246,22 @@ public int countCourtsByManager(int managerId) {
         System.out.println(e.getMessage());
     }
     return 0;
+}
+// Get counts of courts by status for a manager
+public Map<String, Integer> getCourtStatusCounts(int managerId) {
+    Map<String, Integer> result = new LinkedHashMap<>();
+    String sql = "SELECT c.status, COUNT(*) AS cnt FROM Courts c JOIN Areas a ON c.area_id = a.area_id "
+            + "WHERE a.manager_id = ? GROUP BY c.status";
+    try (PreparedStatement ps = connection.prepareStatement(sql)) {
+        ps.setInt(1, managerId);
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            result.put(rs.getString("status"), rs.getInt("cnt"));
+        }
+    } catch (SQLException e) {
+        System.out.println(e.getMessage());
+    }
+    return result;
 }
 public BigDecimal getCourtPrice(int courtId) {
     String sql = "SELECT price FROM Courts WHERE court_id = ?";
