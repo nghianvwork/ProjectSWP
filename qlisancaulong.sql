@@ -484,7 +484,7 @@ CREATE TABLE Shift (
 );
 CREATE TABLE [dbo].[ChatbotMessages] (
     [message_id] INT IDENTITY(1,1) PRIMARY KEY,
-    [user_id] INT NULL, -- Nếu null là tin nhắn từ chatbot, ngược lại từ người dùng
+    [user_id] INT NULL,
     [message_content] NVARCHAR(MAX) NOT NULL,
     [created_at] DATETIME DEFAULT GETDATE(),
     [sender_type] VARCHAR(10) CHECK(sender_type IN ('user', 'bot')) NOT NULL
@@ -514,19 +514,5 @@ CREATE TABLE [dbo].[Coaches](
 
 ALTER TABLE [dbo].[ChatbotMessages] WITH CHECK ADD FOREIGN KEY([user_id])
 REFERENCES [dbo].[Users] ([user_id]);
-CREATE TABLE [dbo].[ChatbotResponses] (
-    [response_id] INT IDENTITY(1,1) PRIMARY KEY,
-    [intent] NVARCHAR(255) NOT NULL,
-    [response_text] NVARCHAR(MAX) NOT NULL,
-    [created_at] DATETIME DEFAULT GETDATE()
-);
-CREATE TABLE [dbo].[ChatbotSessions] (
-    [session_id] INT IDENTITY(1,1) PRIMARY KEY,
-    [user_id] INT NULL,
-    [started_at] DATETIME DEFAULT GETDATE(),
-    [ended_at] DATETIME NULL,
-    [session_status] VARCHAR(20) DEFAULT 'active'
-);
 
-ALTER TABLE [dbo].[ChatbotSessions] WITH CHECK ADD FOREIGN KEY([user_id])
-REFERENCES [dbo].[Users] ([user_id]);
+
