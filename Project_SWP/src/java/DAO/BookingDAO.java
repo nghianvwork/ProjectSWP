@@ -817,6 +817,7 @@ public BigDecimal calculateSlotPriceWithPromotion(
     return slotPrice.setScale(0, RoundingMode.HALF_UP); 
 }
 
+
 public int getTotalBookings() {
         String sql = "SELECT COUNT(*) FROM Bookings WHERE status != 'cancelled'";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {

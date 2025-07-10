@@ -31,6 +31,8 @@ public class AreaDAO extends DBContext {
             System.out.println("Connect failed");
         }
     }
+   
+
 public List<Branch> getAllAreas(int offset, int limit) {
     List<Branch> list = new ArrayList<>();
     String sql = "SELECT * FROM Areas ORDER BY area_id OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
