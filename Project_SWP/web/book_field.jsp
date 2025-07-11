@@ -57,7 +57,7 @@
                 <div class="alert alert-danger">${message}</div>
             </c:if>
 
-            <!-- Form GET: chỉ để chọn lại ngày -->
+           
             <form action="book-field" method="get" id="dateForm">
                 <input type="hidden" name="courtId" value="${court.court_id}" />
                 <div class="mb-3">

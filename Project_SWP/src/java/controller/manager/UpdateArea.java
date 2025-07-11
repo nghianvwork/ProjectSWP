@@ -14,6 +14,8 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.sql.Time;
+import java.time.LocalTime;
 
 /**
  *
@@ -87,9 +89,10 @@ protected void doPost(HttpServletRequest request, HttpServletResponse response)
         String closeTimeStr = request.getParameter("closeTime");
         String description = request.getParameter("description");
 
-       
-        java.sql.Time openTime = java.sql.Time.valueOf(openTimeStr);
-        java.sql.Time closeTime = java.sql.Time.valueOf(closeTimeStr);
+        LocalTime openLocalTime = LocalTime.parse(openTimeStr);
+    LocalTime closeLocalTime = LocalTime.parse(closeTimeStr);
+    Time openTime = Time.valueOf(openLocalTime);
+    Time closeTime = Time.valueOf(closeLocalTime);
         String phone_branch = request.getParameter("phone_branch");
 
        

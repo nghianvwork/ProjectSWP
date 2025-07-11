@@ -515,4 +515,29 @@ CREATE TABLE [dbo].[Coaches](
 ALTER TABLE [dbo].[ChatbotMessages] WITH CHECK ADD FOREIGN KEY([user_id])
 REFERENCES [dbo].[Users] ([user_id]);
 
+CREATE TABLE Promotions (
+    promotion_id INT IDENTITY(1,1) PRIMARY KEY,
+    title NVARCHAR(255) NOT NULL,
+    description NVARCHAR(MAX),
+    discount_percent DECIMAL(5, 2),
+    discount_amount DECIMAL(18, 2),
+    start_date DATE NOT NULL,
+    end_date DATE NOT NULL,
+    status NVARCHAR(50) NOT NULL, -- 'active', 'inactive'
+    created_at DATETIME DEFAULT GETDATE(),
+    updated_at DATETIME NULL
+);
+
+-- Ràng buộc giá trị hợp lệ cho status (nếu muốn)
+ALTER TABLE Promotions
+ADD CONSTRAINT CHK_Promotion_Status CHECK (status IN ('active', 'inactive'));
+CREATE TABLE Promotion_Area (
+    id INT IDENTITY(1,1) PRIMARY KEY,
+    promotion_id INT NOT NULL,
+    area_id INT NOT NULL,
+
+    FOREIGN KEY (promotion_id) REFERENCES Promotions(promotion_id) ON DELETE CASCADE,
+    FOREIGN KEY (area_id) REFERENCES Areas(area_id) ON DELETE CASCADE
+);
+
 
