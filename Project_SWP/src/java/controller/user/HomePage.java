@@ -146,7 +146,6 @@ public class HomePage extends HttpServlet {
         request.setAttribute("areaImagesMap", areaImagesMap);
         request.getRequestDispatcher("homepage.jsp").forward(request, response);
     }
-
     /** 
      * Handles the HTTP <code>POST</code> method.
      * @param request servlet request
