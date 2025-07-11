@@ -163,7 +163,33 @@ public class BookingDAO extends DBContext {
         }
         return result;
     }
+    public int insertBooking1(int userId, int courtId, LocalDate date, Time startTime, Time endTime, String status, BigDecimal totalPrice) {
+    String sql = "INSERT INTO Bookings (user_id, court_id, date, start_time, end_time, status, total_price) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    int bookingId = -1;
 
+    try (PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+        ps.setInt(1, userId);
+        ps.setInt(2, courtId);
+        ps.setDate(3, java.sql.Date.valueOf(date));
+        ps.setTime(4, startTime);
+        ps.setTime(5, endTime);
+        ps.setString(6, status); // e.g., "pending"
+        ps.setBigDecimal(7, totalPrice); // truyền giá đã tính toán
+
+        int affectedRows = ps.executeUpdate();
+        if (affectedRows > 0) {
+            try (ResultSet rs = ps.getGeneratedKeys()) {
+                if (rs.next()) {
+                    bookingId = rs.getInt(1); // lấy booking_id vừa tạo
+                }
+            }
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+
+    return bookingId;
+}
     public List<Bookings> getBookingsByCourtAndDate(int courtId, LocalDate date) {
         List<Bookings> bookings = new ArrayList<>();
         String sql = "SELECT * FROM Bookings WHERE court_id = ? AND date = ? AND status NOT IN ('cancelled', 'rejected')";
