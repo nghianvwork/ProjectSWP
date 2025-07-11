@@ -187,6 +187,7 @@ public class BookingDAO extends DBContext {
                 booking.setStatus(rs.getString("status"));
                 booking.setRating(rs.getInt("rating"));
                 booking.setTotal_price(rs.getDouble("total_price"));
+                booking.setReviewComment(rs.getString("review_comment"));
 
                 bookings.add(booking);
             }
@@ -237,8 +238,9 @@ public List<Slot> getAvailableSlots(int courtId, LocalDate date) {
 
             ps.setInt(1, courtId);
             ps.setDate(2, java.sql.Date.valueOf(date));
-            ps.setObject(3, endTime, java.sql.Types.TIME);
-            ps.setObject(4, startTime, java.sql.Types.TIME);
+            // Check overlap using new booking's startTime and endTime
+            ps.setObject(3, startTime, java.sql.Types.TIME);
+            ps.setObject(4, endTime, java.sql.Types.TIME);
 
             ResultSet rs = ps.executeQuery();
             boolean hasConflict = rs.next();
@@ -281,36 +283,51 @@ public List<Slot> getAvailableSlots(int courtId, LocalDate date) {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return true;
+        return false;
     }
 
-   public int insertBooking1(int userId, int courtId, LocalDate date, Time startTime, Time endTime, String status, BigDecimal totalPrice) {
-    String sql = "INSERT INTO Bookings (user_id, court_id, date, start_time, end_time, status, total_price) VALUES (?, ?, ?, ?, ?, ?, ?)";
-    int bookingId = -1;
+    /**
+     * Insert a booking and specify the total price for the reservation.
+     *
+     * @param userId      id of the user making the booking
+     * @param courtId     id of the court
+     * @param date        booking date
+     * @param startTime   shift start time
+     * @param endTime     shift end time
+     * @param status      booking status
+     * @param totalPrice  total price to persist
+     * @return generated booking id or -1 on failure
+     */
+    public int insertBookingWithTotalPrice(int userId, int courtId, LocalDate date,
+                                           Time startTime, Time endTime, String status,
+                                           BigDecimal totalPrice) {
+        String sql = "INSERT INTO Bookings (user_id, court_id, date, start_time, end_time, status, total_price) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?)";
+        int bookingId = -1;
 
-    try (PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-        ps.setInt(1, userId);
-        ps.setInt(2, courtId);
-        ps.setDate(3, java.sql.Date.valueOf(date));
-        ps.setTime(4, startTime);
-        ps.setTime(5, endTime);
-        ps.setString(6, status); // e.g., "pending"
-        ps.setBigDecimal(7, totalPrice); // truyền giá đã tính toán
+        try (PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            ps.setInt(1, userId);
+            ps.setInt(2, courtId);
+            ps.setDate(3, java.sql.Date.valueOf(date));
+            ps.setTime(4, startTime);
+            ps.setTime(5, endTime);
+            ps.setString(6, status);
+            ps.setBigDecimal(7, totalPrice);
 
-        int affectedRows = ps.executeUpdate();
-        if (affectedRows > 0) {
-            try (ResultSet rs = ps.getGeneratedKeys()) {
-                if (rs.next()) {
-                    bookingId = rs.getInt(1); // lấy booking_id vừa tạo
+            int affectedRows = ps.executeUpdate();
+            if (affectedRows > 0) {
+                try (ResultSet rs = ps.getGeneratedKeys()) {
+                    if (rs.next()) {
+                        bookingId = rs.getInt(1);
+                    }
                 }
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-    } catch (SQLException e) {
-        e.printStackTrace();
-    }
 
-    return bookingId;
-}
+        return bookingId;
+    }
 public boolean createBooking(Bookings booking) {
     String sql = "INSERT INTO Bookings(user_id, court_id, date, start_time, end_time, status, total_price) VALUES (?, ?, ?, ?, ?, 'pending', ?)";
     try (PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -414,7 +431,11 @@ public boolean createBooking(Bookings booking) {
     public List<Bookings> getBookingsByUserId(int userId) {
     List<Bookings> bookings = new ArrayList<>();
     
-    String sql = "SELECT b.*, c.court_number, s.name AS service_name " +
+    String sql = "SELECT b.*, c.court_number, c.area_id, " +
+                 "       s.name AS service_name, " +
+                 "       (SELECT TOP 1 comment FROM Reviews r " +
+                 "        WHERE r.user_id = b.user_id AND r.area_id = c.area_id " +
+                 "          AND r.rating = b.rating ORDER BY r.created_at DESC) AS review_comment " +
                  "FROM Bookings b " +
                  "JOIN Courts c ON b.court_id = c.court_id " +
                  "LEFT JOIN Booking_Services bs ON b.booking_id = bs.booking_id " +
@@ -442,8 +463,9 @@ public boolean createBooking(Bookings booking) {
                 booking.setStatus(rs.getString("status"));
                 booking.setRating(rs.getInt("rating"));
                 booking.setTotal_price(rs.getDouble("total_price"));
-                
-                booking.setServices(new ArrayList<>()); 
+                booking.setReviewComment(rs.getString("review_comment"));
+
+                booking.setServices(new ArrayList<>());
                 bookingMap.put(bookingId, booking);
             }
 
@@ -475,14 +497,85 @@ public boolean createBooking(Bookings booking) {
         return false;
     }
 
-    public List<BookingScheduleDTO> getManagerBookings(int managerId, Integer areaId, LocalDate start, LocalDate end, String status) {
+    public List<BookingScheduleDTO> getManagerBookings(int managerId, Integer areaId,
+            LocalDate start, LocalDate end, String status) {
+        List<BookingScheduleDTO> list = new ArrayList<>();
+
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT b.booking_id, b.user_id, b.court_id, b.date, b.start_time, ")
+                .append("b.end_time, b.status, u.username, c.court_number, c.area_id ")
+                .append("FROM Bookings b ")
+                .append("JOIN Courts c ON b.court_id = c.court_id ")
+                .append("JOIN Areas a ON c.area_id = a.area_id ")
+                .append("JOIN Users u ON b.user_id = u.user_id ")
+                .append("WHERE a.manager_id = ?");
+        if (areaId != null) {
+            sql.append(" AND a.area_id = ?");
+        }
+        if (start != null) {
+            sql.append(" AND b.date >= ?");
+        }
+        if (end != null) {
+            sql.append(" AND b.date <= ?");
+        }
+        if (status != null && !status.isEmpty()) {
+            sql.append(" AND b.status = ?");
+        }
+
+        sql.append(" ORDER BY b.date, b.start_time");
+
+        try (PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+            int paramIndex = 1;
+            ps.setInt(paramIndex++, managerId);
+
+            if (areaId != null) {
+                ps.setInt(paramIndex++, areaId);
+            }
+            if (start != null) {
+                ps.setDate(paramIndex++, Date.valueOf(start));
+            }
+            if (end != null) {
+                ps.setDate(paramIndex++, Date.valueOf(end));
+            }
+            if (status != null && !status.isEmpty()) {
+                ps.setString(paramIndex++, status);
+            }
+
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                BookingScheduleDTO dto = new BookingScheduleDTO();
+                dto.setBooking_id(rs.getInt("booking_id"));
+                dto.setUser_id(rs.getInt("user_id"));
+                dto.setCourt_id(rs.getInt("court_id"));
+                dto.setDate(rs.getDate("date").toLocalDate());
+                dto.setStart_time(rs.getTime("start_time"));
+                dto.setEnd_time(rs.getTime("end_time"));
+                dto.setStatus(rs.getString("status"));
+                dto.setTotalPrice(rs.getDouble("total_price"));
+                dto.setCustomerName(rs.getString("username"));
+                dto.setCourtNumber(rs.getString("court_number"));
+                dto.setArea_id(rs.getInt("area_id"));
+                dto.setAreaName(rs.getString("area_name"));
+
+                list.add(dto);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    /**
+     * Retrieve bookings across all areas. This is used by admin accounts to
+     * view every booking in the system without filtering by manager.
+     */
+    public List<BookingScheduleDTO> getAllBookings(Integer areaId, LocalDate start, LocalDate end, String status) {
         List<BookingScheduleDTO> list = new ArrayList<>();
         StringBuilder sql = new StringBuilder();
-        sql.append("SELECT b.booking_id, b.user_id, b.court_id, b.date, b.start_time, b.end_time, b.status, u.username, c.court_number, c.area_id, a.name AS area_name "
+        sql.append("SELECT b.booking_id, b.user_id, b.court_id, b.date, b.start_time, b.end_time, b.status, b.total_price, u.username, c.court_number, c.area_id, a.name AS area_name "
                 + "FROM Bookings b JOIN Courts c ON b.court_id = c.court_id "
                 + "JOIN Areas a ON c.area_id = a.area_id "
-                + "JOIN Users u ON b.user_id = u.user_id "
-                + "WHERE a.manager_id = ?");
+                + "JOIN Users u ON b.user_id = u.user_id WHERE 1=1");
         if (areaId != null) {
             sql.append(" AND a.area_id = ?");
         }
@@ -499,7 +592,6 @@ public boolean createBooking(Bookings booking) {
 
         try (PreparedStatement ps = conn.prepareStatement(sql.toString())) {
             int idx = 1;
-            ps.setInt(idx++, managerId);
             if (areaId != null) {
                 ps.setInt(idx++, areaId);
             }
@@ -522,11 +614,11 @@ public boolean createBooking(Bookings booking) {
                 dto.setStart_time(rs.getTime("start_time"));
                 dto.setEnd_time(rs.getTime("end_time"));
                 dto.setStatus(rs.getString("status"));
+                dto.setTotalPrice(rs.getDouble("total_price"));
                 dto.setCustomerName(rs.getString("username"));
                 dto.setCourtNumber(rs.getString("court_number"));
                 dto.setArea_id(rs.getInt("area_id"));
                 dto.setAreaName(rs.getString("area_name"));
-
                 list.add(dto);
             }
         } catch (SQLException e) {
@@ -610,12 +702,12 @@ public boolean createBooking(Bookings booking) {
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 // Slot is available when there is no overlapping booking
-                return rs.getInt(1) > 0;
+                return rs.getInt(1) == 0;
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return true;
+        return false;
     }
 
     public List<Bookings> getBookingsByCourtId(int courtId) {
