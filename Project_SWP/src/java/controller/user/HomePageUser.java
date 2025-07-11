@@ -6,12 +6,12 @@
 package controller.user;
 
 import DAO.AreaDAO;
-import DAO.BannerDAO;
 import DAO.Branch_ImageDAO;
-import Model.Banner;
+import DAO.EventDAO;
 import Model.Branch;
 import Model.Branch_pictures;
 import Model.User;
+import Model.Event;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -23,8 +23,6 @@ import jakarta.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -69,34 +67,71 @@ public class HomePageUser extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
         
-        try {
-            HttpSession session = request.getSession();
-            User user = (User) session.getAttribute("user");
-            if (user == null) {
-                response.sendRedirect("login");
-                return;
-            }
-            
-            AreaDAO areaDAO = new AreaDAO();
-            Branch_ImageDAO imageDAO = new Branch_ImageDAO();
-            BannerDAO bannerDAO = new BannerDAO();
-            
-            List<Branch> listTop3 = areaDAO.getTop3();
-            Map<Integer, List<Branch_pictures>> areaImagesMap = new HashMap<>();
-            List<Banner> bannerList = bannerDAO.getActiveBanners();
-            
-            for (Branch area : listTop3) {
-                List<Branch_pictures> images = imageDAO.getRoomImagesByDormID(area.getArea_id());
-                areaImagesMap.put(area.getArea_id(), images);
-            }
-            request.setAttribute("listTop3", listTop3);
-            request.setAttribute("areaImagesMap", areaImagesMap);
-            request.setAttribute("bannerList", bannerList);
-            
-            request.getRequestDispatcher("homepageUser.jsp").forward(request, response);
-        } catch (Exception ex) {
-            Logger.getLogger(HomePageUser.class.getName()).log(Level.SEVERE, null, ex);
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            response.sendRedirect("login");
+            return;
         }
+        
+        AreaDAO areaDAO = new AreaDAO();
+        Branch_ImageDAO imageDAO = new Branch_ImageDAO();
+        EventDAO eventDAO = new EventDAO();
+        
+        List<Branch> listTop3 = areaDAO.getTop3();
+        Map<Integer, List<Branch_pictures>> areaImagesMap = new HashMap<>();
+        
+        for (Branch area : listTop3) {
+            List<Branch_pictures> images = imageDAO.getRoomImagesByDormID(area.getArea_id());
+            areaImagesMap.put(area.getArea_id(), images);
+        }
+        
+        // Lấy event mới nhất để hiển thị popup
+        Event latestEvent = eventDAO.getLatestActiveEvent();
+        
+        // Kiểm tra thông báo join event từ session
+        String joinEventSuccess = (String) session.getAttribute("joinEventSuccess");
+        if (joinEventSuccess != null) {
+            request.setAttribute("joinEventSuccess", joinEventSuccess);
+            session.removeAttribute("joinEventSuccess");
+        }
+        
+        String joinEventInfo = (String) session.getAttribute("joinEventInfo");
+        if (joinEventInfo != null) {
+            request.setAttribute("infoMessage", joinEventInfo);
+            session.removeAttribute("joinEventInfo");
+        }
+        
+        // Kiểm tra error messages từ URL parameters
+        String error = request.getParameter("error");
+        if (error != null) {
+            switch (error) {
+                case "invalid_event":
+                    request.setAttribute("errorMessage", "Sự kiện không hợp lệ!");
+                    break;
+                case "invalid_event_id":
+                    request.setAttribute("errorMessage", "ID sự kiện không hợp lệ!");
+                    break;
+                case "event_not_found":
+                    request.setAttribute("errorMessage", "Không tìm thấy sự kiện!");
+                    break;
+                case "login_required":
+                    request.setAttribute("errorMessage", "Vui lòng đăng nhập để tham gia sự kiện!");
+                    break;
+                case "join_failed":
+                    request.setAttribute("errorMessage", "Tham gia sự kiện thất bại!");
+                    break;
+                case "system_error":
+                    request.setAttribute("errorMessage", "Lỗi hệ thống!");
+                    break;
+            }
+        }
+        
+        request.setAttribute("listTop3", listTop3);
+        request.setAttribute("areaImagesMap", areaImagesMap);
+        request.setAttribute("latestEvent", latestEvent);
+        
+        request.getRequestDispatcher("homepageUser.jsp").forward(request, response);
     } 
 
     /** 
