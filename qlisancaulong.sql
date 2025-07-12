@@ -191,17 +191,33 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[Comments](
-	[comment_id] [int] IDENTITY(1,1) NOT NULL,
-	[post_id] [int] NOT NULL,
-	[user_id] [int] NOT NULL,
-	[content] [varchar](max) NOT NULL,
-	[created_at] [datetime] NULL,
-PRIMARY KEY CLUSTERED 
-(
-	[comment_id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+    [comment_id] INT IDENTITY(1,1) NOT NULL,
+    [post_id] INT NOT NULL,
+    [user_id] INT NOT NULL,
+    [content] VARCHAR(MAX) NOT NULL,
+    [created_at] DATETIME DEFAULT GETDATE(),
+    [parent_comment_id] INT NULL,
+    PRIMARY KEY CLUSTERED ([comment_id]),
+    FOREIGN KEY ([post_id]) REFERENCES [dbo].[Posts](post_id),
+    FOREIGN KEY ([user_id]) REFERENCES [dbo].[Users](user_id),
+    FOREIGN KEY ([parent_comment_id]) REFERENCES [dbo].[Comments](comment_id)
+);
+
+/****** Object:  Table [dbo].[CommentReports]    Script Date: 7/8/2025 7:13:38 AM ******/
+SET ANSI_NULLS ON
 GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[CommentReports] (
+    report_id INT IDENTITY(1,1) PRIMARY KEY,
+    comment_id INT NOT NULL,
+    reported_by INT NOT NULL,
+    reason NVARCHAR(255),
+    created_at DATETIME DEFAULT GETDATE(),
+    FOREIGN KEY (comment_id) REFERENCES [dbo].[Comments](comment_id) ON DELETE CASCADE,
+    FOREIGN KEY (reported_by) REFERENCES [dbo].[Users](user_id)
+);
+
 /****** Object:  Table [dbo].[Courts]    Script Date: 7/8/2025 7:13:38 AM ******/
 SET ANSI_NULLS ON
 GO
@@ -390,42 +406,50 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[PostReactions](
-	[id] [int] IDENTITY(1,1) NOT NULL,
-	[post_id] [int] NOT NULL,
-	[user_id] [int] NOT NULL,
-	[reaction_type] [varchar](20) NOT NULL,
-	[reacted_at] [datetime] NULL,
-PRIMARY KEY CLUSTERED 
-(
-	[id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY],
- CONSTRAINT [UQ_UserPost] UNIQUE NONCLUSTERED 
-(
-	[post_id] ASC,
-	[user_id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
+    [id] INT IDENTITY(1,1) NOT NULL,
+    [post_id] INT NOT NULL,
+    [user_id] INT NOT NULL,
+    [reaction_type] VARCHAR(20) NOT NULL,
+    [reacted_at] DATETIME DEFAULT GETDATE(),
+    PRIMARY KEY CLUSTERED ([id]),
+    CONSTRAINT [UQ_UserPost] UNIQUE ([post_id], [user_id]),
+    FOREIGN KEY ([post_id]) REFERENCES [dbo].[Posts](post_id) ON DELETE CASCADE,
+    FOREIGN KEY ([user_id]) REFERENCES [dbo].[Users](user_id)
+);
+
+/****** Object:  Table [dbo].[PartnerPostDetails]    Script Date: 7/8/2025 7:13:38 AM ******/
+SET ANSI_NULLS ON
 GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[PartnerPostDetails] (
+    partner_post_id INT PRIMARY KEY,
+    preferred_level NVARCHAR(100),
+    preferred_gender NVARCHAR(10),
+    preferred_time NVARCHAR(100),
+    preferred_area NVARCHAR(100),
+    note NVARCHAR(MAX),
+    FOREIGN KEY (partner_post_id) REFERENCES [dbo].[Posts](post_id)
+);
+
 /****** Object:  Table [dbo].[Posts]    Script Date: 7/8/2025 7:13:38 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[Posts](
-	[post_id] [int] IDENTITY(1,1) NOT NULL,
-	[title] [nvarchar](255) NOT NULL,
-	[content] [nvarchar](max) NOT NULL,
-	[created_by] [int] NOT NULL,
-	[created_at] [datetime] NULL,
-	[image] [varchar](255) NULL,
-	[type] [varchar](20) NOT NULL,
-	[status] [varchar](20) NULL,
-PRIMARY KEY CLUSTERED 
-(
-	[post_id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
-GO
+    [post_id] INT IDENTITY(1,1) NOT NULL,
+    [title] NVARCHAR(255) NOT NULL,
+    [content] NVARCHAR(MAX) NOT NULL,
+    [created_by] INT NOT NULL,
+    [created_at] DATETIME DEFAULT GETDATE(),
+    [image] VARCHAR(255) NULL,
+    [type] VARCHAR(20) NOT NULL CHECK ([type] IN ('common', 'partner', 'news')),
+    [status] VARCHAR(20) NULL DEFAULT 'pending' CHECK ([status] IN ('rejected', 'approved', 'pending')),
+    PRIMARY KEY CLUSTERED ([post_id]),
+    FOREIGN KEY ([created_by]) REFERENCES [dbo].[Users]([user_id])
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY];
+
 /****** Object:  Table [dbo].[Promotion_Area]    Script Date: 7/8/2025 7:13:38 AM ******/
 SET ANSI_NULLS ON
 GO
