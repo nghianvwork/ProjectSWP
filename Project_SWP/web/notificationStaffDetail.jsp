@@ -8,6 +8,18 @@
 <!DOCTYPE html>
 <html>
     <head>
+    <meta charset="UTF-8">
+    <title>Chi tiết thông báo</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome (icons) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <!-- Bootstrap Bundle JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
         <meta charset="UTF-8">
         <title>Hệ thống tìm kiếm sân bãi</title>
         <style>
@@ -193,44 +205,48 @@
         </style>
     </head>
     <body>
-        <jsp:include page="homehead.jsp" />
-
-        <main class="main">
-            <div class="notification-container">
-                <div class="notification-header">
-                    <h4><i class="fas fa-bell"></i> Thông báo của bạn</h4>
-                    <a href="notifications?for=user" class="btn btn-outline-secondary btn-sm"><i class="fas fa-rotate-right"></i> Tải lại</a>
+        <!--         Navbar -->
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="#">Thông báo</a>
+                <div class="d-flex">
+                    <a class="nav-link text-light" href="login">Đăng xuất</a>
                 </div>
-                <c:choose>
-                    <c:when test="${empty allNotifications}">
-                        <div class="no-notification">
-                            <i class="fas fa-inbox fa-2x mb-2"></i>
-                            <p>Bạn chưa có thông báo nào.</p>
-                        </div>
-                    </c:when>
-                    <c:otherwise>
-                        <c:forEach var="item" items="${allNotifications}">
-                            <div class="notification-item ${item.isRead ? '' : 'unread'}">
-                                <img class="notification-img" src="${item.notificationId.imageUrl != null ? item.notificationId.imageUrl : 'images/notification-default.png'}" alt="Ảnh thông báo">
-                                <div class="notification-content">
-                                   <a href="notificationDetail?notificationId=${item.notificationId.notificationId}" class="notification-title-link">
-    <strong>${item.notificationId.title}</strong>
-</a>
-
-                                    <div class="notification-time">
-                                        ${item.notificationId.scheduledTime}
-                                    </div>
-                                </div>
-                                <c:if test="${!item.isRead}">
-                                    <div class="dot-unread" title="Chưa đọc"></div>
-                                </c:if>
-                            </div>
-                        </c:forEach>
-                    </c:otherwise>
-                </c:choose>
             </div>
-        </main>
+        </nav>
 
-        <jsp:include page="homefooter.jsp" />
-    </body>
+        <!--         Layout -->
+        <div class="container-fluid mt-4">
+
+            <div class="row">
+                <!--                 Sidebar -->
+                <div class="col-md-3">
+                    <jsp:include page="Sidebar_Staff.jsp"/>
+                </div>
+                <div class="col-md-9">
+                <main class="main col-md-9">
+                    <div class="notification-container">
+                        <div class="notification-header">
+                            <h4><i class="fas fa-bell"></i> Chi tiết thông báo</h4>
+
+                        </div>
+                        <div class="notification-detail">
+                            <h2>${notification.title}</h2>
+                            <p><strong>Thời gian:</strong> ${notification.scheduledTime}</p>
+                            <img src="${notification.imageUrl != null ? notification.imageUrl : 'images/notification-default.png'}" alt="Ảnh thông báo">
+                            <div class="content">
+                                ${notification.content}
+                            </div>
+                        </div>
+
+
+                    </div>
+                </main>
+</div>
+
+            </div>
+        </div>
+    
+
+</body>
 </html>
