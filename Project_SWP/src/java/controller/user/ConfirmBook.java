@@ -105,14 +105,14 @@ protected void doPost(HttpServletRequest request, HttpServletResponse response)
         Time startTime = Time.valueOf(startTimeStr);
         Time endTime = Time.valueOf(endTimeStr);
 
-        // Validate giờ bắt đầu < giờ kết thúc
+      
         if (startTime.after(endTime) || startTime.equals(endTime)) {
             request.setAttribute("message", "Giờ bắt đầu phải trước giờ kết thúc.");
             request.getRequestDispatcher("book_field.jsp").forward(request, response);
             return;
         }
 
-        // Kiểm tra slot có còn trống
+        
         BookingDAO bookingDAO = new BookingDAO();
         boolean isAvailable = bookingDAO.checkSlotAvailable(courtId, date, startTime, endTime);
 
@@ -122,7 +122,7 @@ protected void doPost(HttpServletRequest request, HttpServletResponse response)
             return;
         }
 
-        // ===== TÍNH LẠI GIÁ SLOT + KHUYẾN MÃI =====
+        
         CourtDAO courtDAO = new CourtDAO();
         BigDecimal pricePerHour = courtDAO.getCourtPrice(courtId);
 
@@ -132,7 +132,6 @@ protected void doPost(HttpServletRequest request, HttpServletResponse response)
 
         BigDecimal totalPrice = bookingDAO.calculateSlotPriceWithPromotion(startTime, endTime, pricePerHour, promotion);
 
-        // ===== CỘNG GIÁ DỊCH VỤ PHỤ =====
         BigDecimal extraServicePrice = BigDecimal.ZERO;
         String[] selectedServices = request.getParameterValues("selectedServices");
 
@@ -140,14 +139,14 @@ protected void doPost(HttpServletRequest request, HttpServletResponse response)
             Service_BranchDAO serviceDAO = new Service_BranchDAO();
             for (String serviceIdStr : selectedServices) {
                 int serviceId = Integer.parseInt(serviceIdStr);
-                BigDecimal servicePrice = serviceDAO.getServicePriceById(serviceId); // bạn cần có hàm này
+                BigDecimal servicePrice = serviceDAO.getServicePriceById(serviceId); 
                 extraServicePrice = extraServicePrice.add(servicePrice);
             }
         }
 
         totalPrice = totalPrice.add(extraServicePrice);
 
-        // ===== LƯU BOOKING VÀ DỊCH VỤ =====
+   
         int bookingId = bookingDAO.insertBooking1(userId, courtId, date, startTime, endTime, "pending", totalPrice);
 
         if (selectedServices != null && bookingId != -1) {

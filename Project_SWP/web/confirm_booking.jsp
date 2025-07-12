@@ -133,13 +133,7 @@
     </head>
     <body>
 
-        <!-- Header -->
-        <header class="header">
-            <div class="header-container">
-                <div class="logo">BadmintonCourt</div>
-            </div>
-        </header>
-
+        <jsp:include page="homehead.jsp" />
         <!-- Main Content -->
         <main class="main">
             <div class="title">

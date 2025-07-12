@@ -75,10 +75,10 @@
                 </div>
                 <div class="col-md-10 " style="margin-left: 280px">
                     <div class="main-content">
-                        <h3 class="mb-4 text-primary">🎫 Quản lý khuyến mãi</h3>
+                        <h3 class="mb-4 text-primary">🎫 Quản lý khuyến mại</h3>
                         <!-- Search Bar -->
                         <form action="search-promotion" method="POST" class="form-inline mb-4">
-                            <input type="text" name="searchInput" value="${searchKeyword}" class="form-control mr-2 w-50" placeholder="🔍 Tìm kiếm khuyến mãi">
+                            <input type="text" name="searchInput" value="${searchKeyword}" class="form-control mr-2 w-50" placeholder="🔍 Tìm kiếm khuyến mại">
                             <button type="submit" class="btn btn-primary">Tìm kiếm</button>
                         </form>
                         <form action="promotion-admin" method="GET" class="form-inline mb-4">
@@ -232,7 +232,7 @@
                             </li>
                         </ul>
 
-                        <button class="btn btn-success mt-4" data-toggle="modal" data-target="#addModal">+ Thêm khuyến mãi</button>
+                        <button class="btn btn-success mt-4" data-toggle="modal" data-target="#addModal">+ Thêm khuyến mại</button>
 
                         <!-- Modal Thêm khuyến mãi -->
                         <div class="modal fade" id="addModal" tabindex="-1" role="dialog">

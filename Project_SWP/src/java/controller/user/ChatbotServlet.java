@@ -14,6 +14,7 @@ import java.nio.charset.StandardCharsets;
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.regex.*;
 
@@ -56,7 +57,7 @@ public class ChatbotServlet extends HttpServlet {
 
         if (userMessage.toLowerCase().matches(".*(đặt|book).*sân.*\\d+.*từ.*đến.*")) {
             botResponse = handleBookingSubmission(userId, userMessage);
-        } else if (userMessage.toLowerCase().matches(".*(đặt|book).*sân.*\\d{4}-\\d{2}-\\d{2}.*")) {
+        } else if (userMessage.toLowerCase().matches(".*(đặt|book).*sân.*\\d{2}/\\d{2}/\\d{4}.*")) {
             botResponse = handleBookingRequest(userId, userMessage);
         } else {
             botResponse = generateGeminiResponse(userMessage);
@@ -66,51 +67,54 @@ public class ChatbotServlet extends HttpServlet {
         response.getWriter().write(botResponse);
     }
 
-    private String handleBookingRequest(Integer userId, String message) {
-        if (userId == null) {
-            return "Bạn cần đăng nhập trước khi đặt sân.";
-        }
-
-        Pattern pattern = Pattern.compile("đặt sân (\\d{4}-\\d{2}-\\d{2})");
-        Matcher matcher = pattern.matcher(message.toLowerCase());
-
-        if (!matcher.find()) {
-            return "Vui lòng nhập đúng mẫu: 'đặt sân yyyy-mm-dd'.";
-        }
-
-        try {
-            LocalDate date = LocalDate.parse(matcher.group(1));
-            CourtDAO courtDAO = new CourtDAO();
-            BookingDAO bookingDAO = new BookingDAO();
-            Service_BranchDAO serviceDAO = new Service_BranchDAO();
-
-            List<Courts> courts = courtDAO.getAllCourts();
-            StringBuilder responseBuilder = new StringBuilder("Các slot trống vào ngày " + date + ":\n");
-
-            for (Courts court : courts) {
-                List<Slot> availableSlots = bookingDAO.getAvailableSlots(court.getCourt_id(), date);
-                List<Branch_Service> services = serviceDAO.getAllAreaServices(court.getArea_id());
-
-                responseBuilder.append("\nSân ").append(court.getCourt_id()).append(":");
-                for (Slot slot : availableSlots) {
-                    responseBuilder.append("\n- Từ ").append(slot.getStart()).append(" đến ").append(slot.getEnd());
-                }
-                 responseBuilder.append("\n");
-                responseBuilder.append("\nDịch vụ: ");
-                for (Branch_Service service : services) {
-                    responseBuilder.append(service.getService().getName()).append(", ");
-                }
-                responseBuilder.setLength(responseBuilder.length() - 2); 
-                responseBuilder.append("\n");
-            }
-
-            return responseBuilder.toString();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "Có lỗi xảy ra khi lấy thông tin các slot trống. Vui lòng thử lại.";
-        }
+   private String handleBookingRequest(Integer userId, String message) {
+    if (userId == null) {
+        return "Bạn cần đăng nhập trước khi đặt sân.";
     }
+
+    Pattern pattern = Pattern.compile("đặt sân (\\d{2}/\\d{2}/\\d{4})");
+    Matcher matcher = pattern.matcher(message.toLowerCase());
+
+    if (!matcher.find()) {
+        return "Vui lòng nhập đúng mẫu: 'đặt sân dd/MM/yyyy'.";
+    }
+
+    try {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        LocalDate date = LocalDate.parse(matcher.group(1), formatter);
+
+        CourtDAO courtDAO = new CourtDAO();
+        BookingDAO bookingDAO = new BookingDAO();
+        Service_BranchDAO serviceDAO = new Service_BranchDAO();
+
+        List<Courts> courts = courtDAO.getAllCourts();
+        StringBuilder responseBuilder = new StringBuilder("Các slot trống vào ngày " + matcher.group(1) + ":\n");
+
+        for (Courts court : courts) {
+            List<Slot> availableSlots = bookingDAO.getAvailableSlots(court.getCourt_id(), date);
+            List<Branch_Service> services = serviceDAO.getAllAreaServices(court.getArea_id());
+
+            responseBuilder.append("\nSân ").append(court.getCourt_id()).append(":");
+            for (Slot slot : availableSlots) {
+                responseBuilder.append("\n- Từ ").append(slot.getStart()).append(" đến ").append(slot.getEnd());
+            }
+            responseBuilder.append("\n");
+            responseBuilder.append("\nDịch vụ: ");
+            for (Branch_Service service : services) {
+                responseBuilder.append(service.getService().getName()).append(", ");
+            }
+            responseBuilder.setLength(responseBuilder.length() - 2);
+            responseBuilder.append("\n");
+        }
+
+        return responseBuilder.toString();
+
+    } catch (Exception e) {
+        e.printStackTrace();
+        return "Có lỗi xảy ra khi lấy thông tin các slot trống. Vui lòng thử lại.";
+    }
+}
+
 
     private String handleBookingSubmission(Integer userId, String message) {
         if (userId == null) return "Bạn cần đăng nhập trước khi đặt sân.";
