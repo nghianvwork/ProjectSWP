@@ -451,7 +451,7 @@ CREATE TABLE [dbo].[PostReactions](
     [reacted_at] DATETIME DEFAULT GETDATE(),
     PRIMARY KEY CLUSTERED ([id]),
     CONSTRAINT [UQ_UserPost] UNIQUE ([post_id], [user_id]),
-    FOREIGN KEY ([post_id]) REFERENCES [dbo].[Posts](post_id) ON DELETE CASCADE,
+    FOREIGN KEY ([post_id]) REFERENCES [dbo].[Posts](post_id) ON DELETE NO ACTION,
     FOREIGN KEY ([user_id]) REFERENCES [dbo].[Users](user_id)
 );
 
@@ -605,12 +605,6 @@ GO
 ALTER TABLE [dbo].[password_reset_tokens] ADD  DEFAULT (getdate()) FOR [created_at]
 GO
 ALTER TABLE [dbo].[password_reset_tokens] ADD  DEFAULT ((0)) FOR [is_used]
-GO
-ALTER TABLE [dbo].[PostReactions] ADD  DEFAULT (getdate()) FOR [reacted_at]
-GO
-ALTER TABLE [dbo].[Posts] ADD  DEFAULT (getdate()) FOR [created_at]
-GO
-ALTER TABLE [dbo].[Posts] ADD  DEFAULT ('pending') FOR [status]
 GO
 ALTER TABLE [dbo].[Promotions] ADD  DEFAULT ('active') FOR [status]
 GO
