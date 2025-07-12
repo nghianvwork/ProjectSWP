@@ -590,8 +590,6 @@ ALTER TABLE [dbo].[ChatbotSessions] ADD  DEFAULT (getdate()) FOR [started_at]
 GO
 ALTER TABLE [dbo].[ChatbotSessions] ADD  DEFAULT ('active') FOR [session_status]
 GO
-ALTER TABLE [dbo].[Comments] ADD  DEFAULT (getdate()) FOR [created_at]
-GO
 ALTER TABLE [dbo].[EventParticipants] ADD  DEFAULT (getdate()) FOR [registered_at]
 GO
 ALTER TABLE [dbo].[Events] ADD  DEFAULT (getdate()) FOR [created_at]
