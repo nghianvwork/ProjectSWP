@@ -28,22 +28,29 @@ public class ChatbotServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        request.setCharacterEncoding("UTF-8");
-        response.setCharacterEncoding("UTF-8");
-        response.setContentType("text/plain;charset=UTF-8");
+       request.setCharacterEncoding("UTF-8");
+    response.setCharacterEncoding("UTF-8");
+    response.setContentType("text/plain;charset=UTF-8");
 
-        HttpSession session = request.getSession(false);
-        Integer userId = null;
+    HttpSession session = request.getSession(false);
+    User currentUser = (session != null) ? (User) session.getAttribute("user") : null;
+    Integer userId = (currentUser != null) ? currentUser.getUser_Id() : null;
 
-        if (session != null) {
-            User user = (User) session.getAttribute("user");
-            if (user != null) {
-                userId = user.getUser_Id();
-            }
-        }
+    String userMessage = request.getParameter("message").trim();
 
-        String userMessage = request.getParameter("message");
-        chatDAO.saveMessage(new ChatMessage(userId, userMessage, "user"));
+   
+    boolean isBookingCmd = userMessage.toLowerCase().matches(".*(đặt|book).*sân.*");
+
+    if (isBookingCmd && userId == null) {
+        
+        response.getWriter().write("️ Bạn cần đăng nhập trước khi đặt sân.");
+        return;
+    }
+
+    /* ---------- 2. Chỉ lưu khi đã qua kiểm tra ---------- */
+    chatDAO.saveMessage(new ChatMessage(userId, userMessage, "user"));
+
+   
 
         String botResponse;
 
@@ -154,11 +161,11 @@ public class ChatbotServlet extends HttpServlet {
             }
 
             if (bookingDAO.createBooking(booking)) {
-                return "✅ Đã đặt sân thành công!\nSân: " + courtId + "\nNgày: " + today + "\nTừ " + startTime + " đến " + endTime +
+                return " Đã đặt sân thành công!\nSân: " + courtId + "\nNgày: " + today + "\nTừ " + startTime + " đến " + endTime +
                         "\nTổng tiền: " + totalPrice + " VNĐ." +
                         (booking.getServices() != null ? "\nDịch vụ đi kèm: " + String.join(", ", booking.getServices()) : "");
             } else {
-                return "❌ Có lỗi xảy ra khi đặt sân. Vui lòng thử lại sau.";
+                return " Có lỗi xảy ra khi đặt sân. Vui lòng thử lại sau.";
             }
 
         } catch (Exception e) {
