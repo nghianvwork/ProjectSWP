@@ -344,7 +344,7 @@
             .hero-banner {
                 animation: fadeInUp 0.8s ease-out;
             }
-<<<<<<< HEAD
+
              #chatbot-toggle {
                 position: fixed;
                 bottom: 20px;
@@ -413,7 +413,7 @@
                 margin-right: auto;
                 max-width: 80%;
                 word-break: break-word;
-=======
+
 
             /* Event Popup Styles */
             .event-popup-overlay {
@@ -585,7 +585,7 @@
                 .event-popup-actions {
                     flex-direction: column;
                 }
->>>>>>> e13816455d2fb44de05859ef44968e87c34225ed
+
             }
         </style>
     </head>

@@ -47,7 +47,7 @@ public class ChatbotServlet extends HttpServlet {
         return;
     }
 
-    /* ---------- 2. Chỉ lưu khi đã qua kiểm tra ---------- */
+  
     chatDAO.saveMessage(new ChatMessage(userId, userMessage, "user"));
 
    
