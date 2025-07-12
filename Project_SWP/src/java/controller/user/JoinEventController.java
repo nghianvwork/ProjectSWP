@@ -46,7 +46,7 @@ public class JoinEventController extends HttpServlet {
             String token = request.getParameter("token");
             
             if (token == null || token.trim().isEmpty()) {
-                response.sendRedirect("HomePage?error=invalid_link");
+                response.sendRedirect("HomePageUser?error=invalid_link");
                 return;
             }
             
@@ -54,7 +54,7 @@ public class JoinEventController extends HttpServlet {
             int[] tokenData = TokenUtils.parseJoinEventToken(token);
             
             if (tokenData == null) {
-                response.sendRedirect("HomePage?error=invalid_token");
+                response.sendRedirect("HomePageUser?error=invalid_token");
                 return;
             }
             
@@ -72,13 +72,13 @@ public class JoinEventController extends HttpServlet {
 
 
             if (event == null || user == null) {
-                response.sendRedirect("HomePage?error=invalid_data");
+                response.sendRedirect("HomePageUser?error=invalid_data");
                 return;
             }
             
             // Kiểm tra user đã tham gia chưa
             if (eventDAO.isUserRegistered(eventId, userId)) {
-                response.sendRedirect("HomePage?info=already_joined");
+                response.sendRedirect("HomePageUser?info=already_joined");
                 return;
             }
             request.setAttribute("areaName", areaName);
@@ -89,7 +89,7 @@ public class JoinEventController extends HttpServlet {
             
         } catch (Exception e) {
             e.printStackTrace();
-            response.sendRedirect("HomePage?error=system_error");
+            response.sendRedirect("HomePageUser?error=system_error");
         }
     }
 
@@ -99,7 +99,7 @@ public class JoinEventController extends HttpServlet {
             String token = request.getParameter("token");
             
             if (token == null || token.trim().isEmpty()) {
-                response.sendRedirect("HomePage?error=invalid_token");
+                response.sendRedirect("HomePageUser?error=invalid_token");
                 return;
             }
             
@@ -107,7 +107,7 @@ public class JoinEventController extends HttpServlet {
             int[] tokenData = TokenUtils.parseJoinEventToken(token);
             
             if (tokenData == null) {
-                response.sendRedirect("HomePage?error=invalid_token");
+                response.sendRedirect("HomePageUser?error=invalid_token");
                 return;
             }
             
@@ -124,18 +124,18 @@ public class JoinEventController extends HttpServlet {
                 HttpSession session = request.getSession();
                 Event event = eventDAO.getEventById(eventId);
                 session.setAttribute("joinEventSuccess", "Bạn đã tham gia sự kiện '" + event.getName() + "' thành công!");
-                response.sendRedirect("HomePage");
+                response.sendRedirect("HomePageUser");
             } else {
-                response.sendRedirect("HomePage?error=join_failed");
+                response.sendRedirect("HomePageUser?error=join_failed");
             }
             
         } catch (Exception e) {
             e.printStackTrace();
-            response.sendRedirect("HomePage?error=system_error");
+            response.sendRedirect("HomePageUser?error=system_error");
         }
     }
 
-    // Xử lý join event từ popup homepage (không cần token)
+    // Xử lý join event từ popup homepageUser (không cần token)
     private void joinEventFromPopup(HttpServletRequest request, HttpServletResponse response) 
             throws IOException {
         try {
@@ -150,7 +150,7 @@ public class JoinEventController extends HttpServlet {
             
             String eventIdStr = request.getParameter("eventId");
             if (eventIdStr == null || eventIdStr.trim().isEmpty()) {
-                response.sendRedirect("HomePage?error=invalid_event");
+                response.sendRedirect("HomePageUser?error=invalid_event");
                 return;
             }
             
@@ -162,14 +162,14 @@ public class JoinEventController extends HttpServlet {
             // Kiểm tra event có tồn tại không
             Event event = eventDAO.getEventById(eventId);
             if (event == null) {
-                response.sendRedirect("HomePage?error=event_not_found");
+                response.sendRedirect("HomePageUser?error=event_not_found");
                 return;
             }
             
             // Kiểm tra user đã tham gia chưa
             if (eventDAO.isUserRegistered(eventId, userId)) {
                 session.setAttribute("joinEventInfo", "Bạn đã tham gia sự kiện '" + event.getName() + "' rồi!");
-                response.sendRedirect("HomePage");
+                response.sendRedirect("HomePageUser");
                 return;
             }
             
@@ -178,16 +178,16 @@ public class JoinEventController extends HttpServlet {
             
             if (success) {
                 session.setAttribute("joinEventSuccess", "Bạn đã tham gia sự kiện '" + event.getName() + "' thành công!");
-                response.sendRedirect("HomePage");
+                response.sendRedirect("HomePageUser");
             } else {
-                response.sendRedirect("HomePage?error=join_failed");
+                response.sendRedirect("HomePageUser?error=join_failed");
             }
             
         } catch (NumberFormatException e) {
-            response.sendRedirect("HomePage?error=invalid_event_id");
+            response.sendRedirect("HomePageUser?error=invalid_event_id");
         } catch (Exception e) {
             e.printStackTrace();
-            response.sendRedirect("HomePage?error=system_error");
+            response.sendRedirect("HomePageUser?error=system_error");
         }
     }
 
