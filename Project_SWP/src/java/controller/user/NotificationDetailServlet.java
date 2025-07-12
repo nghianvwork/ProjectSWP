@@ -4,21 +4,23 @@
  */
 package controller.user;
 
-import DAO.UserDAO;
+import DAO.NotificationDAO;
+import Model.Notification;
+import jakarta.servlet.annotation.WebServlet;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
-import Model.User;
-import utils.PasswordUtil;
 
-@WebServlet(name = "LoginController", urlPatterns = {"/login"})
-public class LoginController extends HttpServlet {
+/**
+ *
+ * @author lenovo
+ */
+@WebServlet(name = "NotificationDetailServlet", urlPatterns = {"/notificationDetail"})
+public class NotificationDetailServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -37,10 +39,10 @@ public class LoginController extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet LoginController</title>");
+            out.println("<title>Servlet NotificationDetailServlet</title>");            
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet LoginController at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet NotificationDetailServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -58,9 +60,18 @@ public class LoginController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.getRequestDispatcher("login.jsp").forward(request, response);
-    }
+        String idStr = request.getParameter("notificationId");
+        if (idStr != null) {
+            int id = Integer.parseInt(idStr);
+            NotificationDAO dao = new NotificationDAO();
+            Notification notification = dao.getNotificationById(id);
 
+            request.setAttribute("notification", notification);
+            request.getRequestDispatcher("notificationDetail.jsp").forward(request, response);
+        } else {
+            response.sendRedirect("notifications"); // fallback nếu thiếu ID
+        }
+    }
     /**
      * Handles the HTTP <code>POST</code> method.
      *
@@ -72,59 +83,7 @@ public class LoginController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
-        String username = request.getParameter("username");
-        String password = request.getParameter("password");
-        String remember = request.getParameter("rememberMe");
-
-        UserDAO userDAO = new UserDAO();
-
-        String hashedPassword = PasswordUtil.hashPassword(password);
-
-        User user = userDAO.login(username, hashedPassword);
-
-        if (user != null) {
-            HttpSession session = request.getSession();
-            session.setAttribute("user", user);
-
-            if ("on".equals(remember)) {
-                Cookie cUser = new Cookie("username", username);
-                Cookie cPass = new Cookie("password", password);
-                Cookie cRemember = new Cookie("remember", "on");
-
-                cUser.setMaxAge(7 * 24 * 60 * 60);    // 7 ngày
-                cPass.setMaxAge(7 * 24 * 60 * 60);
-                cRemember.setMaxAge(7 * 24 * 60 * 60);
-
-                response.addCookie(cUser);
-                response.addCookie(cPass);
-                response.addCookie(cRemember);
-            } else {
-
-                Cookie cUser = new Cookie("username", null);
-                Cookie cPass = new Cookie("password", null);
-                Cookie cRemember = new Cookie("remember", null);
-                cUser.setMaxAge(0);
-                cPass.setMaxAge(0);
-                cRemember.setMaxAge(0);
-                response.addCookie(cUser);
-                response.addCookie(cPass);
-                response.addCookie(cRemember);
-            }
-
-            if ("staff".equalsIgnoreCase(user.getRole())) {
-                response.sendRedirect("staff-dashboard");
-            } else if ("admin".equalsIgnoreCase(user.getRole())) {
-                response.sendRedirect("Admin_DashBoard.jsp");
-            } else {
-                response.sendRedirect("HomePageUser");
-            }
-
-        } else {
-
-            request.setAttribute("error", "Tên đăng nhập hoặc mật khẩu không hợp lệ");
-            request.getRequestDispatcher("login.jsp").forward(request, response);
-        }
+        processRequest(request, response);
     }
 
     /**

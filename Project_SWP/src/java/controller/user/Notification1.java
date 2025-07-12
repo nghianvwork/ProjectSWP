@@ -1,21 +1,31 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
+ */
 package controller.user;
 
 import DAO.NotificationDAO;
 import Model.NotificationReceiver;
 import Model.User;
+import jakarta.servlet.annotation.WebServlet;
+import java.io.IOException;
+import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import java.io.IOException;
 import java.util.List;
 
-@WebServlet(name = "UserNotificationServlet", urlPatterns = {"/notifications"})
-public class NotificationServlet extends HttpServlet {
+/**
+ *
+ * @author lenovo
+ */
+@WebServlet(name = "Notification1", urlPatterns = {"/Notification1"})
+public class Notification1 extends HttpServlet {
 
-    private NotificationDAO notificationDAO;
+  private NotificationDAO notificationDAO;
 
     @Override
     public void init() throws ServletException {
@@ -40,7 +50,7 @@ public class NotificationServlet extends HttpServlet {
         request.setAttribute("allNotifications", allNotifications);
        
 
-        request.getRequestDispatcher("notification-user.jsp").forward(request, response);
+        request.getRequestDispatcher("notification1.jsp").forward(request, response);
     }
 
     @Override
@@ -48,4 +58,5 @@ public class NotificationServlet extends HttpServlet {
             throws ServletException, IOException {
         doGet(request, response);
     }
-}
+    }
+
