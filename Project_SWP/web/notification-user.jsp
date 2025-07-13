@@ -213,10 +213,8 @@
                             <div class="notification-item ${item.isRead ? '' : 'unread'}">
                                 <img class="notification-img" src="${item.notificationId.imageUrl != null ? item.notificationId.imageUrl : 'images/notification-default.png'}" alt="Ảnh thông báo">
                                 <div class="notification-content">
-                                   <a href="notificationDetail?notificationId=${item.notificationId.notificationId}" class="notification-title-link">
-    <strong>${item.notificationId.title}</strong>
-</a>
-
+                                    <strong>${item.notificationId.title}</strong>
+                                    <p>${item.notificationId.content}</p>
                                     <div class="notification-time">
                                         ${item.notificationId.scheduledTime}
                                     </div>
@@ -233,24 +231,4 @@
 
         <jsp:include page="homefooter.jsp" />
     </body>
-    <c:forEach var="item" items="${allNotifications}">
-    <div class="notification-item ${item.isRead ? '' : 'unread'}">
-        <img class="notification-img" src="${item.notificationId.imageUrl != null ? item.notificationId.imageUrl : 'images/notification-default.png'}" alt="Ảnh thông báo">
-        <div class="notification-content">
-            <a href="notificationDetail?notificationId=${item.notificationId.notificationId}" 
-               class="notification-title-link"
-               data-notification-id="${item.notificationId.notificationId}"
-               onclick="return markAsReadAndRedirect(this);">
-                <strong>${item.notificationId.title}</strong>
-            </a>
-            <div class="notification-time">
-                ${item.notificationId.scheduledTime}
-            </div>
-        </div>
-        <c:if test="${!item.isRead}">
-            <div class="dot-unread" title="Chưa đọc"></div>
-        </c:if>
-    </div>
-</c:forEach>
-
 </html>
