@@ -128,6 +128,13 @@ public class ChatbotServlet extends HttpServlet {
             int courtId = Integer.parseInt(matcher.group(1));
             LocalTime localStart = LocalTime.parse(matcher.group(2));
             LocalTime localEnd = LocalTime.parse(matcher.group(3));
+              LocalDate bookingDate = LocalDate.now();           
+        LocalTime now         = LocalTime.now();           
+
+        if (bookingDate.equals(LocalDate.now()) && localStart.isBefore(now)) {
+            return " Không thể đặt sân cho khung giờ đã qua. "
+                 + "Vui lòng chọn thời gian bắt đầu > " + now.truncatedTo(java.time.temporal.ChronoUnit.MINUTES);
+        }
             Time startTime = Time.valueOf(localStart);
             Time endTime = Time.valueOf(localEnd);
 

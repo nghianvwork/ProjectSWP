@@ -103,7 +103,6 @@ public class BookFieldServlet extends HttpServlet {
                 return;
             }
 
-          
             Shift shift = shifts.get(0);
 
             BookingDAO bookingDAO = new BookingDAO();
@@ -111,6 +110,7 @@ public class BookFieldServlet extends HttpServlet {
             List<Slot> allSlots = new ArrayList<>();
             for (Shift shifted : shifts) {
                 List<Slot> slotsForShift = SlotTime.generateSlots(shifted, bookings, 60);
+
                 allSlots.addAll(slotsForShift);
             }
             request.setAttribute("court", court);
@@ -154,7 +154,6 @@ public class BookFieldServlet extends HttpServlet {
             CourtDAO courtDAO = new CourtDAO();
             Courts court = courtDAO.getCourtById(courtId);
 
-           
             Shift shift = new Shift();
             Time startTime, endTime;
             try {

@@ -46,6 +46,10 @@
             .slot-button {
                 margin: 5px 5px;
             }
+            .slot-button:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
         </style>
     </head>
     <body>
@@ -78,6 +82,7 @@
                     <label class="form-label">Chọn ca chơi:</label>
                     <div class="d-flex flex-wrap gap-2">
                         <c:forEach var="slot" items="${slots}">
+                             
                             <c:if test="${slot.available}">
                                 <form action="book-field" method="post" style="display:inline;">
                                     <input type="hidden" name="courtId" value="${court.court_id}" />
