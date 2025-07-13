@@ -14,15 +14,7 @@ public class Slot {
        private LocalTime start;
     private LocalTime end;
     private boolean available;
-   private boolean expired;
-
-public boolean isExpired() {
-    return expired;
-}
-
-public void setExpired(boolean expired) {
-    this.expired = expired;
-}
+   
 
     public Slot() {
     }
