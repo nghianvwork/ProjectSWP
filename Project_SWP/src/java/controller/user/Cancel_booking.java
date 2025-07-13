@@ -105,7 +105,6 @@ public class Cancel_booking extends HttpServlet {
             return;
         }
 
-        // Cập nhật trạng thái
         boolean success = bookingDAO.cancelBookingById(bookingId);
         session.setAttribute("cancelMessage", "Bạn đã huỷ đặt sân thành công! ");
         response.sendRedirect("booking-list?cancel=" + (success ? "success" : "failed"));

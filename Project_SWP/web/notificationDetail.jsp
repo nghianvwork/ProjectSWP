@@ -198,59 +198,22 @@
         <main class="main">
             <div class="notification-container">
                 <div class="notification-header">
-                    <h4><i class="fas fa-bell"></i> Thông báo của bạn</h4>
-                    <a href="notifications?for=user" class="btn btn-outline-secondary btn-sm"><i class="fas fa-rotate-right"></i> Tải lại</a>
+                    <h4><i class="fas fa-bell"></i> Chi tiết thông báo</h4>
+                  
                 </div>
-                <c:choose>
-                    <c:when test="${empty allNotifications}">
-                        <div class="no-notification">
-                            <i class="fas fa-inbox fa-2x mb-2"></i>
-                            <p>Bạn chưa có thông báo nào.</p>
-                        </div>
-                    </c:when>
-                    <c:otherwise>
-                        <c:forEach var="item" items="${allNotifications}">
-                            <div class="notification-item ${item.isRead ? '' : 'unread'}">
-                                <img class="notification-img" src="${item.notificationId.imageUrl != null ? item.notificationId.imageUrl : 'images/notification-default.png'}" alt="Ảnh thông báo">
-                                <div class="notification-content">
-                                   <a href="notificationDetail?notificationId=${item.notificationId.notificationId}" class="notification-title-link">
-    <strong>${item.notificationId.title}</strong>
-</a>
-
-                                    <div class="notification-time">
-                                        ${item.notificationId.scheduledTime}
-                                    </div>
-                                </div>
-                                <c:if test="${!item.isRead}">
-                                    <div class="dot-unread" title="Chưa đọc"></div>
-                                </c:if>
-                            </div>
-                        </c:forEach>
-                    </c:otherwise>
-                </c:choose>
+                       <div class="notification-detail">
+        <h2>${notification.title}</h2>
+        <p><strong>Thời gian:</strong> ${notification.scheduledTime}</p>
+        <img src="${notification.imageUrl != null ? notification.imageUrl : 'images/notification-default.png'}" alt="Ảnh thông báo">
+        <div class="content">
+            ${notification.content}
+        </div>
+    </div>
+                    
+               
             </div>
         </main>
 
         <jsp:include page="homefooter.jsp" />
     </body>
-    <c:forEach var="item" items="${allNotifications}">
-    <div class="notification-item ${item.isRead ? '' : 'unread'}">
-        <img class="notification-img" src="${item.notificationId.imageUrl != null ? item.notificationId.imageUrl : 'images/notification-default.png'}" alt="Ảnh thông báo">
-        <div class="notification-content">
-            <a href="notificationDetail?notificationId=${item.notificationId.notificationId}" 
-               class="notification-title-link"
-               data-notification-id="${item.notificationId.notificationId}"
-               onclick="return markAsReadAndRedirect(this);">
-                <strong>${item.notificationId.title}</strong>
-            </a>
-            <div class="notification-time">
-                ${item.notificationId.scheduledTime}
-            </div>
-        </div>
-        <c:if test="${!item.isRead}">
-            <div class="dot-unread" title="Chưa đọc"></div>
-        </c:if>
-    </div>
-</c:forEach>
-
 </html>

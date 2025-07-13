@@ -165,7 +165,33 @@ public class BookingDAO extends DBContext {
         }
         return result;
     }
+    public int insertBooking1(int userId, int courtId, LocalDate date, Time startTime, Time endTime, String status, BigDecimal totalPrice) {
+    String sql = "INSERT INTO Bookings (user_id, court_id, date, start_time, end_time, status, total_price) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    int bookingId = -1;
 
+    try (PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+        ps.setInt(1, userId);
+        ps.setInt(2, courtId);
+        ps.setDate(3, java.sql.Date.valueOf(date));
+        ps.setTime(4, startTime);
+        ps.setTime(5, endTime);
+        ps.setString(6, status); // e.g., "pending"
+        ps.setBigDecimal(7, totalPrice); // truyền giá đã tính toán
+
+        int affectedRows = ps.executeUpdate();
+        if (affectedRows > 0) {
+            try (ResultSet rs = ps.getGeneratedKeys()) {
+                if (rs.next()) {
+                    bookingId = rs.getInt(1); // lấy booking_id vừa tạo
+                }
+            }
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+
+    return bookingId;
+}
     public List<Bookings> getBookingsByCourtAndDate(int courtId, LocalDate date) {
         List<Bookings> bookings = new ArrayList<>();
         String sql = "SELECT * FROM Bookings WHERE court_id = ? AND date = ? AND status NOT IN ('cancelled', 'rejected')";
@@ -383,33 +409,7 @@ public class BookingDAO extends DBContext {
         return bookingId;
     }
 
-    public int insertBooking1(int userId, int courtId, LocalDate date, Time startTime, Time endTime, String status, BigDecimal totalPrice) {
-        String sql = "INSERT INTO Bookings (user_id, court_id, date, start_time, end_time, status, total_price) VALUES (?, ?, ?, ?, ?, ?, ?)";
-        int bookingId = -1;
 
-        try (PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            ps.setInt(1, userId);
-            ps.setInt(2, courtId);
-            ps.setDate(3, java.sql.Date.valueOf(date));
-            ps.setTime(4, startTime);
-            ps.setTime(5, endTime);
-            ps.setString(6, status); // e.g., "pending"
-            ps.setBigDecimal(7, totalPrice); // truyền giá đã tính toán
-
-            int affectedRows = ps.executeUpdate();
-            if (affectedRows > 0) {
-                try (ResultSet rs = ps.getGeneratedKeys()) {
-                    if (rs.next()) {
-                        bookingId = rs.getInt(1); // lấy booking_id vừa tạo
-                    }
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return bookingId;
-    }
 
     public Bookings getBookingById1(int bookingId) {
         String sql = "SELECT * FROM Bookings WHERE booking_id = ?";
@@ -861,44 +861,68 @@ public class BookingDAO extends DBContext {
     }
 
 // Doanh thu từng tháng trong 1 năm
-    public Map<String, BigDecimal> getRevenueByMonth(int year) {
-        Map<String, BigDecimal> result = new LinkedHashMap<>();
-        String sql = "SELECT MONTH([date]) AS month, SUM([total_price]) AS total "
-                + "FROM [Bookings] WHERE YEAR([date]) = ? AND [status] != 'cancelled' "
-                + "GROUP BY MONTH([date]) ORDER BY month";
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, year);
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                int month = rs.getInt("month");
-                BigDecimal total = rs.getBigDecimal("total");
-                result.put(String.format("%02d", month), total != null ? total : BigDecimal.ZERO);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return result;
+public Map<String, BigDecimal> getRevenueByMonth(int year, Integer courtId) {
+    Map<String, BigDecimal> result = new LinkedHashMap<>();
+    StringBuilder sql = new StringBuilder("SELECT MONTH([date]) AS month, SUM([total_price]) AS total " +
+                 "FROM [Bookings] WHERE YEAR([date]) = ? AND [status] != 'cancelled'");
+
+    if (courtId != null) {
+        sql.append(" AND court_id = ?");
     }
 
-// Doanh thu từng tuần (ISO week) trong 1 năm
-    public Map<String, BigDecimal> getRevenueByWeek(int year) {
-        Map<String, BigDecimal> result = new LinkedHashMap<>();
-        String sql = "SELECT DATEPART(iso_week, [date]) AS week, SUM([total_price]) AS total "
-                + "FROM [Bookings] WHERE YEAR([date]) = ? AND [status] != 'cancelled' "
-                + "GROUP BY DATEPART(iso_week, [date]) ORDER BY week";
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, year);
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                int week = rs.getInt("week");
-                BigDecimal total = rs.getBigDecimal("total");
-                result.put(String.valueOf(week), total != null ? total : BigDecimal.ZERO);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+    sql.append(" GROUP BY MONTH([date]) ORDER BY month");
+
+    try (PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+        ps.setInt(1, year);
+        if (courtId != null) {
+            ps.setInt(2, courtId);
         }
-        return result;
+
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            int month = rs.getInt("month");
+            BigDecimal total = rs.getBigDecimal("total");
+            result.put(String.format("%02d", month), total != null ? total : BigDecimal.ZERO);
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
     }
+    return result;
+}
+
+// Doanh thu từng tuần (ISO week) trong 1 năm
+
+public Map<String, BigDecimal> getRevenueByWeek(int year, Integer courtId) {
+    Map<String, BigDecimal> result = new LinkedHashMap<>();
+    StringBuilder sql = new StringBuilder(
+        "SELECT DATEPART(iso_week, [date]) AS week, SUM([total_price]) AS total " +
+        "FROM [Bookings] WHERE YEAR([date]) = ? AND [status] != 'cancelled'"
+    );
+
+    if (courtId != null) {
+        sql.append(" AND court_id = ?");
+    }
+
+    sql.append(" GROUP BY DATEPART(iso_week, [date]) ORDER BY week");
+
+    try (PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+        ps.setInt(1, year);
+        if (courtId != null) {
+            ps.setInt(2, courtId);
+        }
+
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            int week = rs.getInt("week");
+            BigDecimal total = rs.getBigDecimal("total");
+            result.put(String.valueOf(week), total != null ? total : BigDecimal.ZERO);
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+
+    return result;
+}
 
     public BigDecimal calculateSlotPriceWithPromotion(
             Time startTime,

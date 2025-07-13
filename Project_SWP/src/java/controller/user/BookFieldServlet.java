@@ -103,7 +103,6 @@ public class BookFieldServlet extends HttpServlet {
                 return;
             }
 
-            // Mặc định dùng ca đầu tiên
             Shift shift = shifts.get(0);
 
             BookingDAO bookingDAO = new BookingDAO();
@@ -111,6 +110,7 @@ public class BookFieldServlet extends HttpServlet {
             List<Slot> allSlots = new ArrayList<>();
             for (Shift shifted : shifts) {
                 List<Slot> slotsForShift = SlotTime.generateSlots(shifted, bookings, 60);
+
                 allSlots.addAll(slotsForShift);
             }
             request.setAttribute("court", court);
@@ -154,13 +154,6 @@ public class BookFieldServlet extends HttpServlet {
             CourtDAO courtDAO = new CourtDAO();
             Courts court = courtDAO.getCourtById(courtId);
 
-            if (date.isBefore(LocalDate.now())) {
-                request.setAttribute("message", "Không thể đặt lịch cho ngày đã qua.");
-                request.setAttribute("court", court);
-                request.setAttribute("selectedDate", date);
-                request.getRequestDispatcher("book_field.jsp").forward(request, response);
-                return;
-            }
             Shift shift = new Shift();
             Time startTime, endTime;
             try {
@@ -175,14 +168,48 @@ public class BookFieldServlet extends HttpServlet {
                 request.getRequestDispatcher("book_field.jsp").forward(request, response);
                 return;
             }
+            if (date.isEqual(LocalDate.now())) {
+                java.time.LocalTime now = java.time.LocalTime.now();
+                java.time.LocalTime start = startTime.toLocalTime();
+                if (start.isBefore(now)) {
+                    ShiftDAO shiftDAO = new ShiftDAO();
+                    List<Shift> shifts = shiftDAO.getShiftsByCourt(courtId);
 
+                    BookingDAO bookingDAO = new BookingDAO();
+                    List<Bookings> bookings = bookingDAO.getBookingsByCourtAndDate(courtId, date);
+                    List<Slot> allSlots = new ArrayList<>();
+                    for (Shift shifted : shifts) {
+                        List<Slot> slotsForShift = SlotTime.generateSlots(shifted, bookings, 60);
+                        allSlots.addAll(slotsForShift);
+                    }
+
+                    request.setAttribute("slots", allSlots);
+                    request.setAttribute("message", "Không thể đặt khung giờ đã trôi qua trong ngày hôm nay.");
+                    request.setAttribute("court", court);
+                    request.setAttribute("selectedDate", date);
+                    request.getRequestDispatcher("book_field.jsp").forward(request, response);
+                    return;
+                }
+            }
             BookingDAO bookingDAO = new BookingDAO();
             boolean isAvailable = bookingDAO.checkSlotAvailable(courtId, date, startTime, endTime);
 
             if (!isAvailable) {
-                request.setAttribute("message", "Khoảng thời gian này đã có người đặt.");
+
+                ShiftDAO shiftDAO = new ShiftDAO();
+                List<Shift> shifts = shiftDAO.getShiftsByCourt(courtId);
+
+                List<Bookings> bookings = bookingDAO.getBookingsByCourtAndDate(courtId, date);
+                List<Slot> allSlots = new ArrayList<>();
+                for (Shift shifted : shifts) {
+                    List<Slot> slotsForShift = SlotTime.generateSlots(shifted, bookings, 60);
+                    allSlots.addAll(slotsForShift);
+                }
+
+                request.setAttribute("slots", allSlots);
+                request.setAttribute("message", "Khoảng thời gian đã có người đặt.");
                 request.setAttribute("court", court);
-                request.setAttribute("selectedDate", date);
+                request.setAttribute("selectedDate", date.toString());
                 request.getRequestDispatcher("book_field.jsp").forward(request, response);
                 return;
             }
