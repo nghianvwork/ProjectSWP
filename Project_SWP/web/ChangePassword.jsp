@@ -1,7 +1,8 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <!DOCTYPE html>
 <html>
+<<<<<<< HEAD
     <head>
         <meta charset="UTF-8">
         <title>Đổi mật khẩu</title>
@@ -462,7 +463,7 @@
             });
         </script>
         <script>
-            // CAPTCHA functionality
+           
             let currentCaptcha = '';
 
             function generateCaptcha() {
@@ -487,10 +488,10 @@
                 return userInput === currentCaptcha;
             }
 
-            // Initialize CAPTCHA
+       
             updateCaptcha();
 
-            // Refresh CAPTCHA button
+          
             document.getElementById('refreshCaptcha').addEventListener('click', function () {
                 updateCaptcha();
                 this.style.transform = 'rotate(360deg)';
@@ -499,7 +500,7 @@
                 }, 300);
             });
 
-            // CAPTCHA input validation
+           
             document.getElementById('captchaInput').addEventListener('input', function () {
                 this.value = this.value.toUpperCase();
                 if (this.value.length === 6) {
@@ -516,7 +517,7 @@
                 }
             });
 
-            // Form submission with CAPTCHA validation
+           
             document.getElementById('loginForm').addEventListener('submit', function (e) {
                 if (!validateCaptcha()) {
                     e.preventDefault();
@@ -530,7 +531,7 @@
                 btn.classList.add('loading');
                 btn.disabled = true;
 
-                // Add captcha value to form data
+                
                 const hiddenInput = document.createElement('input');
                 hiddenInput.type = 'hidden';
                 hiddenInput.name = 'captchaCode';
@@ -543,7 +544,7 @@
                 }, 3000);
             });
 
-            // Enhanced input interactions
+            
             document.querySelectorAll('.form-input, .captcha-input').forEach(input => {
                 input.addEventListener('focus', function () {
                     const label = this.closest('.form-group').querySelector('.form-label');
@@ -560,18 +561,19 @@
                 });
             });
 
-            // Auto-refresh CAPTCHA every 5 minutes for security
+           
             setInterval(updateCaptcha, 300000);
 
-            // Prevent right-click on CAPTCHA
+       
             document.getElementById('captchaCode').addEventListener('contextmenu', function (e) {
                 e.preventDefault();
             });
 
-            // Prevent text selection on CAPTCHA
+            
             document.getElementById('captchaCode').addEventListener('selectstart', function (e) {
                 e.preventDefault();
             });
         </script>
     </body>
+
 </html>

@@ -408,7 +408,6 @@ public int countAllAreas() {
     }
     return 0;
 }
-
     public String getAreaNameById(int areaId) {
         String sql = "SELECT name FROM Areas WHERE area_id = ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {

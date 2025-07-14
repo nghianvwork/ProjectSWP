@@ -421,7 +421,6 @@ body {
                                             <th>Tên ca</th>
                                             <th>Thời gian bắt đầu</th>
                                             <th>Thời gian kết thúc</th>
-                                            
                                             <th>Hành động</th>
                                         </tr>
                                     </thead>
@@ -432,7 +431,6 @@ body {
                                                 <td><strong>${shift.shiftName}</strong></td>
                                                 <td><i class="fas fa-play text-success"></i> ${shift.startTime}</td>
                                                 <td><i class="fas fa-stop text-danger"></i> ${shift.endTime}</td>
-                                               
                                                 <td>
                                                     <a href="delete-shift?shiftId=${shift.shiftId}&area_id=${area_id}" 
                                                        onclick="return confirmDelete('ca làm việc này')" 
@@ -576,7 +574,6 @@ body {
                             <label><i class="fas fa-stop"></i> Thời gian kết thúc</label>
                             <input type="time" name="endTime" class="form-control" step="1800" required />
                         </div>
-                        
                     </div>
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-custom">

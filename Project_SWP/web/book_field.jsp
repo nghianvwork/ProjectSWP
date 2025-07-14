@@ -46,10 +46,12 @@
             .slot-button {
                 margin: 5px 5px;
             }
+
             .slot-button:disabled {
                 cursor: not-allowed;
                 opacity: 0.6;
             }
+
         </style>
     </head>
     <body>
@@ -61,7 +63,7 @@
                 <div class="alert alert-danger">${message}</div>
             </c:if>
 
-
+            <!-- Form GET: chỉ để chọn lại ngày -->
             <form action="book-field" method="get" id="dateForm">
                 <input type="hidden" name="courtId" value="${court.court_id}" />
                 <div class="mb-3">
@@ -74,7 +76,7 @@
                 </div>
             </form>
 
-      
+
             <form action="book-field" method="post">
                 <input type="hidden" name="courtId" value="${court.court_id}" />
                 <input type="hidden" name="date" value="${selectedDate}" />
@@ -111,6 +113,7 @@
                             </c:forEach>
                         </div>
                     </c:forEach>
+
                 </div>
             </form>
 
@@ -118,4 +121,3 @@
         <jsp:include page="homefooter.jsp" />
     </body>
 </html>
-
