@@ -147,7 +147,6 @@ public class BookingDAO extends DBContext {
         return result;
     }
 
-    // Top booked courts of manager
     public Map<String, Integer> getTopBookedCourts(int managerId, int limit) {
         Map<String, Integer> result = new LinkedHashMap<>();
         String sql = "SELECT TOP " + limit + " c.court_number AS name, COUNT(*) AS c FROM Bookings b "
@@ -175,14 +174,14 @@ public class BookingDAO extends DBContext {
         ps.setDate(3, java.sql.Date.valueOf(date));
         ps.setTime(4, startTime);
         ps.setTime(5, endTime);
-        ps.setString(6, status); // e.g., "pending"
-        ps.setBigDecimal(7, totalPrice); // truyền giá đã tính toán
+        ps.setString(6, status); 
+        ps.setBigDecimal(7, totalPrice); 
 
         int affectedRows = ps.executeUpdate();
         if (affectedRows > 0) {
             try (ResultSet rs = ps.getGeneratedKeys()) {
                 if (rs.next()) {
-                    bookingId = rs.getInt(1); // lấy booking_id vừa tạo
+                    bookingId = rs.getInt(1); 
                 }
             }
         }

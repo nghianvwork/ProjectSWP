@@ -17,7 +17,7 @@ public class Shift {
     private Time startTime;
     private Time endTime;
 
-    // Constructors
+   
     public Shift() {}
 
     public Shift(int areaId, String shiftName, Time startTime, Time endTime) {
@@ -35,7 +35,7 @@ public class Shift {
         this.endTime = endTime;
     }
 
-    // Getter and Setter methods
+  
     public int getShiftId() {
         return shiftId;
     }

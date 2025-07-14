@@ -30,7 +30,9 @@ import java.math.BigDecimal;
 import java.sql.Time;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -75,59 +77,55 @@ public class BookFieldServlet extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        HttpSession session = request.getSession();
-        User user = (User) session.getAttribute("user");
+protected void doGet(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException {
+    HttpSession session = request.getSession();
+    User user = (User) session.getAttribute("user");
 
-        if (user == null) {
-            response.sendRedirect("login");
+    if (user == null) {
+        response.sendRedirect("login");
+        return;
+    }
+
+    try {
+        int courtId = Integer.parseInt(request.getParameter("courtId"));
+        String dateParam = request.getParameter("date");
+        LocalDate date = (dateParam != null && !dateParam.isEmpty()) ? LocalDate.parse(dateParam) : LocalDate.now();
+
+        CourtDAO courtDAO = new CourtDAO();
+        Courts court = courtDAO.getCourtById(courtId);
+
+        ShiftDAO shiftDAO = new ShiftDAO();
+        List<Shift> shifts = shiftDAO.getShiftsByCourt(courtId);
+        if (shifts == null || shifts.isEmpty()) {
+            request.setAttribute("message", "Không tìm thấy ca hoạt động cho sân.");
+            request.setAttribute("court", court);
+            request.setAttribute("selectedDate", date);
+            request.getRequestDispatcher("book_field.jsp").forward(request, response);
             return;
         }
 
-        try {
-            int courtId = Integer.parseInt(request.getParameter("courtId"));
-            String dateParam = request.getParameter("date");
-            LocalDate date = (dateParam != null && !dateParam.isEmpty()) ? LocalDate.parse(dateParam) : LocalDate.now();
+        BookingDAO bookingDAO = new BookingDAO();
+        List<Bookings> bookings = bookingDAO.getBookingsByCourtAndDate(courtId, date);
 
-            CourtDAO courtDAO = new CourtDAO();
-            Courts court = courtDAO.getCourtById(courtId);
-
-            ShiftDAO shiftDAO = new ShiftDAO();
-            List<Shift> shifts = shiftDAO.getShiftsByCourt(courtId);
-            if (shifts == null || shifts.isEmpty()) {
-                request.setAttribute("message", "Không tìm thấy ca hoạt động cho sân.");
-                request.setAttribute("court", court);
-                request.setAttribute("selectedDate", date);
-                request.getRequestDispatcher("book_field.jsp").forward(request, response);
-                return;
-            }
-
-            Shift shift = shifts.get(0);
-
-            BookingDAO bookingDAO = new BookingDAO();
-            List<Bookings> bookings = bookingDAO.getBookingsByCourtAndDate(courtId, date);
-            List<Slot> allSlots = new ArrayList<>();
-            for (Shift shifted : shifts) {
-                List<Slot> slotsForShift = SlotTime.generateSlots(shifted, bookings, 60);
-
-                allSlots.addAll(slotsForShift);
-            }
-            request.setAttribute("court", court);
-            request.setAttribute("slots", allSlots);
-            request.setAttribute("selectedDate", date);
-
-            request.getRequestDispatcher("book_field.jsp").forward(request, response);
-            for (Slot s : allSlots) {
-                System.out.println(">>> SLOT: " + s.getStart() + " - " + s.getEnd() + " | Avail: " + s.isAvailable());
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            request.setAttribute("message", "Đã xảy ra lỗi.");
-            request.getRequestDispatcher("error.jsp").forward(request, response);
+       
+        Map<Shift, List<Slot>> shiftSlots = new LinkedHashMap<>();
+        for (Shift shifted : shifts) {
+            List<Slot> slotsForShift = SlotTime.generateSlots(shifted, bookings, 60); 
+            shiftSlots.put(shifted, slotsForShift);
         }
+        request.setAttribute("court", court);
+        request.setAttribute("shiftSlots", shiftSlots);
+        request.setAttribute("selectedDate", date);
+
+        request.getRequestDispatcher("book_field.jsp").forward(request, response);
+
+    } catch (Exception e) {
+        e.printStackTrace();
+        request.setAttribute("message", "Đã xảy ra lỗi.");
+        request.getRequestDispatcher("error.jsp").forward(request, response);
     }
+}
 
     /**
      * Handles the HTTP <code>POST</code> method.
