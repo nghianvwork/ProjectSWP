@@ -176,7 +176,10 @@
                     <div class="profile-dropdown" style="position: relative; margin-right: 10px;">
                         <a href="viewprofile.jsp" class="header-btn profile-btn" 
                            style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                            <% if (user != null) { %>
                             <span style="font-weight: bold;"><%=user.getFirstname()%> <%=user.getLastname()%></span>
+                            <% } %>
+                            
                             <!-- Có thể thêm icon avatar hoặc mũi tên ▼ -->
                             <!--<img src="avatar.png" style="width:30px; height:30px; border-radius:50%; margin-left:4px;" />-->
                             <span style="font-size: 13px; margin-left:4px;">▼</span>
