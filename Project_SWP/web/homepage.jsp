@@ -152,18 +152,28 @@
             }
 
             /* Hero Banner */
-            .hero-banner {
-                border-radius: 20px;
-                overflow: hidden;
-                margin-bottom: 3rem;
-                box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            }
-
-            .hero-banner img {
+            .banner-slider {
+                position: relative;
                 width: 100%;
-                height: 400px;
-                object-fit: cover;
+                max-width: 1200px;
+                margin: 0 auto;
+            }
+            .banner-slide {
+                display: none;
+                position: absolute;
+                width: 100%;
+            }
+            .banner-slide.active {
                 display: block;
+            }
+            .banner-caption {
+                position: absolute;
+                bottom: 20px;
+                left: 30px;
+                background: rgba(0,0,0,0.4);
+                color: #fff;
+                padding: 10px 20px;
+                border-radius: 5px;
             }
 
             .title {
@@ -200,7 +210,7 @@
             .court-info {
                 padding: 1.5rem;
             }
-            
+
             .court-info p{
                 margin-bottom: 0.5rem;
             }
@@ -492,11 +502,11 @@
             }
 
             @keyframes slideIn {
-                from { 
+                from {
                     opacity: 0;
                     transform: translateY(-50px) scale(0.9);
                 }
-                to { 
+                to {
                     opacity: 1;
                     transform: translateY(0) scale(1);
                 }
@@ -507,11 +517,11 @@
                 .event-popup {
                     max-width: 95%;
                 }
-                
+
                 .event-popup-content {
                     padding: 20px;
                 }
-                
+
                 .event-popup-actions {
                     flex-direction: column;
                 }
@@ -535,11 +545,23 @@
         </header>
 
         <!-- Navigation -->
+        <!-- Navigation -->
         <nav class="nav">
             <div class="nav-container">
                 <div class="nav-item active"><a href="HomePage">Trang Chủ</a></div>
-                <div class="nav-item"><a href="login.jsp">Danh Sách Sân Bãi</a></div>
-                <div class="nav-item"><a href="login.jsp">Danh sách đặt sân</a></div>
+                <div class="nav-dropdown" style="position: relative; display: inline-block;">
+                    <a class="nav-item" style="padding:10px 18px; cursor:pointer; display:inline-block;">
+                        Danh sách <span style="font-size:13px;">▼</span>
+                    </a>
+                    <div class="dropdown-content" style="
+                         display: none; position: absolute; left: 0; background: #fff; min-width: 210px;
+                         box-shadow: 0 2px 8px rgba(0,0,0,0.16); border-radius: 10px; z-index: 10;
+                         ">
+                        <a class="nav-item" href="login.jsp" style="padding: 12px; display: block; text-decoration: none; color: #222;">Danh Sách Sân Bãi</a>
+                        <a class="nav-item" href="login.jsp" style="padding: 12px; display: block; text-decoration: none; color: #222;">Danh sách đặt sân</a>
+                        <a class="nav-item" href="login.jsp" style="padding: 12px; display: block; text-decoration: none; color: #222;">Danh sách huấn luyện viên</a>
+                    </div>
+                </div>
                 <div class="nav-item"><a href="login.jsp">Bài Viết</a></div>
                 <div class="nav-item"><a href="login.jsp">Giới Thiệu</a></div>
                 <div class="nav-item">Liên Hệ</div>
@@ -555,14 +577,14 @@
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" style="float: right; background: none; border: none; font-size: 20px; cursor: pointer;">&times;</button>
                 </div>
             </c:if>
-            
+
             <c:if test="${not empty errorMessage}">
                 <div class="alert alert-danger alert-dismissible fade show" role="alert" style="margin-bottom: 20px; padding: 15px; background-color: #f8d7da; border: 1px solid #f5c6cb; border-radius: 8px; color: #721c24;">
                     <i class="fas fa-exclamation-circle"></i> <strong>Lỗi!</strong> ${errorMessage}
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" style="float: right; background: none; border: none; font-size: 20px; cursor: pointer;">&times;</button>
                 </div>
             </c:if>
-            
+
             <c:if test="${not empty infoMessage}">
                 <div class="alert alert-info alert-dismissible fade show" role="alert" style="margin-bottom: 20px; padding: 15px; background-color: #d1ecf1; border: 1px solid #bee5eb; border-radius: 8px; color: #0c5460;">
                     <i class="fas fa-info-circle"></i> <strong>Thông tin!</strong> ${infoMessage}
@@ -571,16 +593,24 @@
             </c:if>
 
             <!-- Hero Banner -->
-            <div class="hero-banner">
-                <img src="./uploads/hinh_nen.jpg" alt="Badminton Court Banner" />
+            <div class="banner-slider" style="height: 400px;">
+                <c:forEach var="banner" items="${bannerList}">
+                    <div class="banner-slide">
+                        <img src="${pageContext.request.contextPath}/${banner.imageUrl}" alt="${banner.title}" style="width:100%;height:400px;object-fit:cover;">
+                        <div class="banner-caption">
+                            <h2>${banner.title}</h2>
+                            <p>${banner.caption}</p>
+                        </div>
+                    </div>
+                </c:forEach>
             </div>
 
             <div class="title">
                 <h1>Danh sách khu vực nổi bật</h1>
             </div>
-            
 
-            
+
+
             <!-- Courts Grid -->
             <div class="courts-grid">
                 <c:forEach var="top" items="${listTop3}">
@@ -666,7 +696,7 @@
                     <div class="event-popup-content">
                         <div class="event-popup-title">${latestEvent.name}</div>
                         <div class="event-popup-subtitle">${latestEvent.title}</div>
-                        
+
                         <div class="event-popup-info">
                             <h4>🏸 Thông tin sự kiện</h4>
                             <div class="event-info-item">
@@ -684,11 +714,11 @@
                                 </div>
                             </c:if>
                         </div>
-                        
-                                                 <div class="event-popup-actions">
-                             <a href="login.jsp?redirect=join-event&action=joinFromPopup&eventId=${latestEvent.eventId}" class="event-popup-btn primary">Đăng nhập để tham gia</a>
-                             <button class="event-popup-btn secondary" onclick="closeEventPopup()">Để sau</button>
-                         </div>
+
+                        <div class="event-popup-actions">
+                            <a href="login.jsp?redirect=join-event&action=joinFromPopup&eventId=${latestEvent.eventId}" class="event-popup-btn primary">Đăng nhập để tham gia</a>
+                            <button class="event-popup-btn secondary" onclick="closeEventPopup()">Để sau</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -696,10 +726,10 @@
 
         <script>
             // Hiển thị popup khi trang load xong (sau 2 giây)
-            window.addEventListener('load', function() {
+            window.addEventListener('load', function () {
                 var popup = document.getElementById('eventPopup');
                 if (popup) {
-                    setTimeout(function() {
+                    setTimeout(function () {
                         popup.style.display = 'flex';
                     }, 2000);
                 }
@@ -716,7 +746,7 @@
             }
 
             // Click overlay để đóng popup
-            document.addEventListener('click', function(e) {
+            document.addEventListener('click', function (e) {
                 var popup = document.getElementById('eventPopup');
                 if (popup && e.target === popup) {
                     closeEventPopup();
@@ -724,7 +754,7 @@
             });
 
             // Kiểm tra nếu user đã đóng popup trong session này
-            window.addEventListener('load', function() {
+            window.addEventListener('load', function () {
                 if (localStorage.getItem('eventPopupClosed') === 'true') {
                     var popup = document.getElementById('eventPopup');
                     if (popup) {
@@ -734,9 +764,35 @@
             });
 
             // Xóa localStorage khi user rời khỏi trang
-            window.addEventListener('beforeunload', function() {
+            window.addEventListener('beforeunload', function () {
                 localStorage.removeItem('eventPopupClosed');
             });
+        </script>
+        <script>
+            // JS chuyển slide đơn giản
+            window.onload = function () {
+                let slides = document.querySelectorAll('.banner-slide');
+                let idx = 0;
+                if (slides.length > 0)
+                    slides[0].classList.add('active');
+                setInterval(function () {
+                    slides[idx].classList.remove('active');
+                    idx = (idx + 1) % slides.length;
+                    slides[idx].classList.add('active');
+                }, 4000);
+            }
+
+            // Hiện dropdown khi hover vào nav-btn hoặc menu
+            const navDropdown = document.querySelector('.nav-dropdown');
+            const navDropdownContent = navDropdown.querySelector('.dropdown-content');
+
+            navDropdown.addEventListener('mouseenter', function () {
+                navDropdownContent.style.display = 'block';
+            });
+            navDropdown.addEventListener('mouseleave', function () {
+                navDropdownContent.style.display = 'none';
+            });
+
         </script>
 
     </body>
