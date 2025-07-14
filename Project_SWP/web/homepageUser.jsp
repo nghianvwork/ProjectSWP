@@ -194,7 +194,14 @@
 
         <!-- Chatbot Panel -->
         <div id="chatbot-container">
-            <div id="chatbox"></div>
+            <div id="chatbox">
+                
+                <c:forEach var="msg" items="${chatHistory}">
+      <div class="msg-${msg.senderType}">
+          <span><c:out value="${msg.content}"/></span>
+      </div>
+  </c:forEach>
+            </div>
             <div style="display: flex; margin-top: 5px;">
                 <input type="text" id="userMessage" placeholder="Nhập tin nhắn..."
                        style="flex: 1; padding: 8px; border-radius: 6px 0 0 6px; border: 1px solid #ccc; outline: none;">
@@ -206,6 +213,21 @@
         </div>
         <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
         <script>
+                   var chatHistory = [
+    <c:forEach var="msg" items="${chatHistory}">
+        {role: '${msg.senderType}', message: '<c:out value="${msg.content}"/>'},
+    </c:forEach>
+];
+                    $(document).ready(function () {
+                        var box = $("#chatbox");
+                        chatHistory.forEach(function (msg) {
+                            if (msg.role === 'user')
+                                box.append('<div class="msg-user"><span>' + escapeHTML(msg.message) + '</span></div>');
+                            else
+                                box.append('<div class="msg-bot"><span>' + escapeHTML(msg.message) + '</span></div>');
+                        });
+                        box.scrollTop(box[0].scrollHeight);
+                    });
                     function toggleChatbot() {
                         const panel = document.getElementById("chatbot-container");
                         panel.style.display = (panel.style.display === "none" || panel.style.display === "") ? "block" : "none";

@@ -372,15 +372,17 @@ public class PromotionDAO extends DBContext {
         }
         return areaNames;
     }
-public boolean isDuplicatePromotion(String title, LocalDate startDate, LocalDate endDate) {
-    String sql = "SELECT COUNT(*) FROM Promotion " +
-                 "WHERE title = ? " +
-                 "AND NOT (? > end_date OR ? < start_date)";
+public boolean isDuplicatePromotionForArea(String title, LocalDate startDate, LocalDate endDate, int areaId) {
+    String sql = "SELECT COUNT(*) FROM Promotions p " +
+                 "JOIN Promotion_Area pa ON p.promotion_id = pa.promotion_id " +
+                 "WHERE p.title = ? AND pa.area_id = ? " +
+                 "AND NOT (? > p.end_date OR ? < p.start_date)";
     try (
          PreparedStatement ps = conn.prepareStatement(sql)) {
         ps.setString(1, title);
-        ps.setDate(2, java.sql.Date.valueOf(endDate));
-        ps.setDate(3, java.sql.Date.valueOf(startDate));
+        ps.setInt(2, areaId);
+        ps.setDate(3, java.sql.Date.valueOf(endDate));
+        ps.setDate(4, java.sql.Date.valueOf(startDate));
         ResultSet rs = ps.executeQuery();
         if (rs.next()) {
             return rs.getInt(1) > 0;
@@ -390,6 +392,7 @@ public boolean isDuplicatePromotion(String title, LocalDate startDate, LocalDate
     }
     return false;
 }
+
 
     public static void main(String[] args) {
         PromotionDAO dao = new PromotionDAO();

@@ -95,12 +95,13 @@ throws ServletException, IOException {
         PromotionDAO dao = new PromotionDAO();
 
        
-        if (dao.isDuplicatePromotion(title, startDate, endDate)) {
-            req.getSession().setAttribute("error", "Đã tồn tại khuyến mãi với tên này và khoảng ngày giao nhau!");
-            response.sendRedirect("promotion-admin");
-            return;
-        }
-
+        for(Integer areaId : areaIds){
+    if (dao.isDuplicatePromotionForArea(title, startDate, endDate, areaId)) {
+        req.getSession().setAttribute("success", "Đã tồn tại khuyến mãi với tên này và ngày giao nhau cho khu vực!");
+        response.sendRedirect("promotion-admin");
+        return;
+    }
+}
         int newPromotionId = dao.insertPromotion(promotion);
 
         for(Integer areaId : areaIds){

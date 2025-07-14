@@ -20,11 +20,29 @@ import java.util.regex.*;
 
 @WebServlet(name = "ChatbotServlet", urlPatterns = {"/chatbot"})
 public class ChatbotServlet extends HttpServlet {
-
+   
     private static final String GEMINI_API_KEY = "AIzaSyDNuTvU_1Q3bS-LXSqFymuEcVpESv6thl8";
     private static final String GEMINI_ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=" + GEMINI_API_KEY;
     private ChatDAO chatDAO = new ChatDAO();
+   @Override
+protected void doGet(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException {
+    request.setCharacterEncoding("UTF-8");
+    response.setCharacterEncoding("UTF-8");
+    response.setContentType("text/html;charset=UTF-8");
 
+    HttpSession session = request.getSession(false);
+    User currentUser = (session != null) ? (User) session.getAttribute("user") : null;
+    Integer userId = (currentUser != null) ? currentUser.getUser_Id() : null;
+
+    List<ChatMessage> chatHistory = new ArrayList<>();
+    if (userId != null) {
+        chatHistory = chatDAO.getMessagesByUser(userId);
+    }
+       System.out.println(chatHistory);
+    request.setAttribute("chatHistory", chatHistory);
+    request.getRequestDispatcher("homepageUser.jsp").forward(request, response);
+}
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
