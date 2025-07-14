@@ -417,20 +417,22 @@ body {
                                 <table id="shiftTable" class="table">
                                     <thead>
                                         <tr>
-                                            <th>STT</th>
+                                           
                                             <th>Tên ca</th>
                                             <th>Thời gian bắt đầu</th>
                                             <th>Thời gian kết thúc</th>
+                                            <th>Giá (VND)</th>
                                             <th>Hành động</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <c:forEach var="shift" items="${listShift}" varStatus="loop">
                                             <tr>
-                                                <td>${loop.count}</td>
+                                               
                                                 <td><strong>${shift.shiftName}</strong></td>
                                                 <td><i class="fas fa-play text-success"></i> ${shift.startTime}</td>
                                                 <td><i class="fas fa-stop text-danger"></i> ${shift.endTime}</td>
+                                                <td><i class="fas fa-stop text-primary"></i> ${shift.price}</td>
                                                 <td>
                                                     <a href="delete-shift?shiftId=${shift.shiftId}&area_id=${area_id}" 
                                                        onclick="return confirmDelete('ca làm việc này')" 
@@ -546,8 +548,7 @@ body {
             </div>
         </div>
 
-        <!-- Modals -->
-        <!-- Add Shift Modal -->
+      
         <div class="modal fade" id="addShiftModal" tabindex="-1" role="dialog">
             <div class="modal-dialog" role="document">
                 <form action="add-shift" method="post" class="modal-content" onsubmit="showLoading()">
@@ -573,6 +574,10 @@ body {
                         <div class="form-group">
                             <label><i class="fas fa-stop"></i> Thời gian kết thúc</label>
                             <input type="time" name="endTime" class="form-control" step="1800" required />
+                        </div>
+                         <div class="form-group">
+                            <label><i class="fas fa-stop"></i> Thời gian kết thúc</label>
+                            <input type="number" name="price" class="form-control"  required />
                         </div>
                     </div>
                     <div class="modal-footer">

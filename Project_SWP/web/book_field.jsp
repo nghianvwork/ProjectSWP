@@ -63,7 +63,6 @@
                 <div class="alert alert-danger">${message}</div>
             </c:if>
 
-            <!-- Form GET: chỉ để chọn lại ngày -->
             <form action="book-field" method="get" id="dateForm">
                 <input type="hidden" name="courtId" value="${court.court_id}" />
                 <div class="mb-3">
@@ -86,8 +85,8 @@
                         <div class="mb-2">
                             <b>
                                 Ca: 
-                                <c:out value="${entry.key.shiftName}"/>
-                                (<c:out value="${entry.key.startTime}"/> - <c:out value="${entry.key.endTime}"/>)
+                                <c:out value="${entry.key.shiftName}"/> -   <c:out value="${entry.key.price}(VND)"/>
+                                (<c:out value="${entry.key.startTime}"/> - <c:out value="${entry.key.endTime}"/> )
                             </b>
                         </div>
                         <div class="d-flex flex-wrap gap-2 mb-3">
@@ -99,6 +98,7 @@
                                             <input type="hidden" name="date" value="${selectedDate}" />
                                             <input type="hidden" name="startTime" value="${slot.start}" />
                                             <input type="hidden" name="endTime" value="${slot.end}" />
+                                            <input type="hidden" name="shiftId" value="${entry.key.shiftId}" />
                                             <button type="submit" class="btn btn-success btn-sm slot-button">
                                                 ${slot.start} - ${slot.end}
                                             </button>

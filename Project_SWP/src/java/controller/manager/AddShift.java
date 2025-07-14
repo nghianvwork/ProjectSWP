@@ -82,14 +82,26 @@ protected void doPost(HttpServletRequest request, HttpServletResponse response)
         String shiftName = request.getParameter("shiftName");
         String start = request.getParameter("startTime");
         String end = request.getParameter("endTime");
+        String priceStr = request.getParameter("price");
 
-        if (start == null || end == null || start.isEmpty() || end.isEmpty()) {
-            String msg = URLEncoder.encode("Thiếu thời gian bắt đầu hoặc kết thúc", "UTF-8");
+        if (start == null || end == null || start.isEmpty() || end.isEmpty() ||
+            priceStr == null || priceStr.isEmpty()) {
+            String msg = URLEncoder.encode("Thiếu thông tin thời gian hoặc giá ca", "UTF-8");
             response.sendRedirect("detailBranch?area_id=" + areaId + "&message=" + msg);
             return;
         }
-       
-    
+
+        // Parse giá tiền ca, kiểm tra hợp lệ
+        BigDecimal price;
+        try {
+            price = new BigDecimal(priceStr);
+            if (price.compareTo(BigDecimal.ZERO) < 0) throw new NumberFormatException();
+        } catch (NumberFormatException ex) {
+            String msg = URLEncoder.encode("Giá ca phải là số hợp lệ lớn hơn hoặc bằng 0", "UTF-8");
+            response.sendRedirect("detailBranch?area_id=" + areaId + "&message=" + msg);
+            return;
+        }
+
         Time startTime = Time.valueOf(start + ":00");
         Time endTime = Time.valueOf(end + ":00");
 
@@ -132,7 +144,8 @@ protected void doPost(HttpServletRequest request, HttpServletResponse response)
             }
         }
 
-        Shift shift = new Shift(areaId, shiftName, startTime, endTime);
+        // Lưu ca mới với giá
+        Shift shift = new Shift(areaId, shiftName, startTime, endTime, price);
         dao.addShift(shift);
 
         response.sendRedirect("detailBranch?area_id=" + areaId);
@@ -142,6 +155,7 @@ protected void doPost(HttpServletRequest request, HttpServletResponse response)
         response.sendRedirect("error.jsp");
     }
 }
+
 
 
 
