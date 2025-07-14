@@ -10,7 +10,7 @@ public class DBContext {
       
         String url = "jdbc:sqlserver://localhost:1433;"
 
-                   + "databaseName=SWP;"
+                   + "databaseName=SWP_HoangTanBao;"
                    + "user=sa;"
                    + "password=123;"
                    + "encrypt=true;"

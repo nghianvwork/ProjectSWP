@@ -1,11 +1,15 @@
-<%-- 
+ <%-- 
+
     Document   : homepageUser
     Created on : May 26, 2025, 10:48:19 PM
     Author     : sangn
 --%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<<<<<<< HEAD
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+=======
+>>>>>>> 01cf337edfd47836872828a5f0e8a855ccc69a1f
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
@@ -371,14 +375,11 @@
         <body>
             <jsp:include page="homehead.jsp" />
             <div id="chatbot-toggle" onclick="toggleChatbot()">💬</div>
-            <div>
-                ChatHistory size: <c:out value="${fn:length(chatHistory)}"/>
-            </div>
-           
+
+
+            <!-- Chatbot Panel -->
             <div id="chatbot-container">
-                <div id="chatbox">
-                 
-                </div>
+                <div id="chatbox"></div>
                 <div style="display: flex;
                      margin-top: 5px;">
                     <input type="text" id="userMessage" placeholder="Nhập tin nhắn..."
@@ -398,6 +399,7 @@
                     </button>
                 </div>
             </div>
+
             <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
             <script>
                         function toggleChatbot() {
