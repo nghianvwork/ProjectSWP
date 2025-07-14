@@ -8,6 +8,7 @@ import Dal.DBContext;
 
 import Model.Branch_Service;
 import Model.Service;
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -30,7 +31,18 @@ public class Service_BranchDAO extends DBContext {
             System.out.println("Connect failed");
         }
     }
-
+   public BigDecimal getServicePriceById(int serviceId) throws SQLException {
+    String sql = "SELECT price FROM BadmintonService WHERE service_id = ?";
+    try (
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+        ps.setInt(1, serviceId);
+        ResultSet rs = ps.executeQuery();
+        if (rs.next()) {
+            return rs.getBigDecimal("price");
+        }
+    }
+    return BigDecimal.ZERO;
+}
     public void addServiceToArea(int areaId, int serviceId) {
         String sql = "INSERT INTO Areas_Services (area_id, service_id) VALUES (?, ?)";
         try (
