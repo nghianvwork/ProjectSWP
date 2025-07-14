@@ -14,6 +14,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Time;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -266,6 +267,28 @@ public class BookingDAO extends DBContext {
             e.printStackTrace();
             return false;
         }
+    }
+
+    // Check all 60-minute slots between startTime and endTime are available
+    public boolean checkContinuousSlotsAvailable(int courtId, LocalDate date, Time startTime, Time endTime) {
+        List<Slot> slots = getAvailableSlots(courtId, date);
+        java.time.LocalTime current = startTime.toLocalTime();
+        java.time.LocalTime end = endTime.toLocalTime();
+        while (current.isBefore(end)) {
+            java.time.LocalTime next = current.plusMinutes(60);
+            boolean found = false;
+            for (Slot s : slots) {
+                if (s.getStart().equals(current) && s.getEnd().equals(next) && s.isAvailable()) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                return false;
+            }
+            current = next;
+        }
+        return true;
     }
 
     public boolean checkSlotAvailableAdmin(int courtId, LocalDate date, Time startTime, Time endTime) {
@@ -683,20 +706,21 @@ public class BookingDAO extends DBContext {
 
             // Recalculate price based on court and services
             Bookings current = getBookingById(bookingId);
-            double total = 0;
             Courts court = new CourtDAO().getCourtById(current.getCourt_id());
-            if (court != null) {
-                total += court.getPrice();
-            }
+            PromotionDAO proDao = new PromotionDAO();
+            Promotion pro = court != null ? proDao.getCurrentPromotionForArea(court.getArea_id(), date) : null;
+            BigDecimal pricePerHour = new CourtDAO().getCourtPrice(current.getCourt_id());
+            BigDecimal total1 = calculateSlotPriceWithPromotion(startTime, endTime, pricePerHour, pro);
+            BigDecimal total = calculateSlotPriceWithPromotionByShift(current.getCourt_id(), startTime, endTime, pro);
             if (serviceIds != null) {
                 for (int sid : serviceIds) {
                     Service s = ServiceDAO.getServiceById(sid);
                     if (s != null) {
-                        total += s.getPrice();
+                        total = total.add(BigDecimal.valueOf(s.getPrice()));
                     }
                 }
             }
-            ps.setDouble(5, total);
+            ps.setBigDecimal(5, total);
             ps.setInt(6, bookingId);
 
             int rows = ps.executeUpdate();
@@ -741,6 +765,39 @@ public class BookingDAO extends DBContext {
             e.printStackTrace();
         }
         return false;
+    }
+
+    // Similar to checkContinuousSlotsAvailable but ignore current booking
+    public boolean checkContinuousSlotsAvailableForUpdate(int bookingId, int courtId, LocalDate date,
+            Time startTime, Time endTime) {
+        List<Slot> slots = new ArrayList<>();
+        try {
+            ShiftDAO shiftDAO = new ShiftDAO();
+            List<Shift> shifts = shiftDAO.getShiftsByCourt(courtId);
+            List<Bookings> bookings = getBookingsByCourtAndDate(courtId, date);
+            bookings.removeIf(b -> b.getBooking_id() == bookingId);
+            for (Shift sh : shifts) {
+                List<Slot> sl = SlotTime.generateSlots(sh, bookings, 60);
+                for (Slot s : sl) if (s.isAvailable()) slots.add(s);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        java.time.LocalTime current = startTime.toLocalTime();
+        java.time.LocalTime end = endTime.toLocalTime();
+        while (current.isBefore(end)) {
+            java.time.LocalTime next = current.plusMinutes(60);
+            boolean found = false;
+            for (Slot s : slots) {
+                if (s.getStart().equals(current) && s.getEnd().equals(next) && s.isAvailable()) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) return false;
+            current = next;
+        }
+        return true;
     }
 
     public List<Bookings> getBookingsByCourtId(int courtId) {
@@ -862,45 +919,108 @@ public class BookingDAO extends DBContext {
         return BigDecimal.ZERO;
     }
 
-    // Doanh thu từng tháng trong 1 năm
-    public Map<String, BigDecimal> getRevenueByMonth(int year) {
-        Map<String, BigDecimal> result = new LinkedHashMap<>();
-        String sql = "SELECT MONTH([date]) AS month, SUM([total_price]) AS total " +
-                "FROM [Bookings] WHERE YEAR([date]) = ? AND [status] != 'cancelled' " +
-                "GROUP BY MONTH([date]) ORDER BY month";
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, year);
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                int month = rs.getInt("month");
-                BigDecimal total = rs.getBigDecimal("total");
-                result.put(String.format("%02d", month), total != null ? total : BigDecimal.ZERO);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return result;
+   // Doanh thu từng tháng trong 1 năm
+public Map<String, BigDecimal> getRevenueByMonth(int year, Integer courtId) {
+    Map<String, BigDecimal> result = new LinkedHashMap<>();
+    StringBuilder sql = new StringBuilder("SELECT MONTH([date]) AS month, SUM([total_price]) AS total " +
+                 "FROM [Bookings] WHERE YEAR([date]) = ? AND [status] != 'cancelled'");
+
+    if (courtId != null) {
+        sql.append(" AND court_id = ?");
     }
 
-    // Doanh thu từng tuần (ISO week) trong 1 năm
-    public Map<String, BigDecimal> getRevenueByWeek(int year) {
-        Map<String, BigDecimal> result = new LinkedHashMap<>();
-        String sql = "SELECT DATEPART(iso_week, [date]) AS week, SUM([total_price]) AS total " +
-                "FROM [Bookings] WHERE YEAR([date]) = ? AND [status] != 'cancelled' " +
-                "GROUP BY DATEPART(iso_week, [date]) ORDER BY week";
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, year);
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                int week = rs.getInt("week");
-                BigDecimal total = rs.getBigDecimal("total");
-                result.put(String.valueOf(week), total != null ? total : BigDecimal.ZERO);
+    sql.append(" GROUP BY MONTH([date]) ORDER BY month");
+
+    try (PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+        ps.setInt(1, year);
+        if (courtId != null) {
+            ps.setInt(2, courtId);
+        }
+
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            int month = rs.getInt("month");
+            BigDecimal total = rs.getBigDecimal("total");
+            result.put(String.format("%02d", month), total != null ? total : BigDecimal.ZERO);
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return result;
+}
+
+// Doanh thu từng tuần (ISO week) trong 1 năm
+
+public Map<String, BigDecimal> getRevenueByWeek(int year, Integer courtId) {
+    Map<String, BigDecimal> result = new LinkedHashMap<>();
+    StringBuilder sql = new StringBuilder(
+        "SELECT DATEPART(iso_week, [date]) AS week, SUM([total_price]) AS total " +
+        "FROM [Bookings] WHERE YEAR([date]) = ? AND [status] != 'cancelled'"
+    );
+
+    if (courtId != null) {
+        sql.append(" AND court_id = ?");
+    }
+
+    sql.append(" GROUP BY DATEPART(iso_week, [date]) ORDER BY week");
+
+    try (PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+        ps.setInt(1, year);
+        if (courtId != null) {
+            ps.setInt(2, courtId);
+        }
+
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            int week = rs.getInt("week");
+            BigDecimal total = rs.getBigDecimal("total");
+            result.put(String.valueOf(week), total != null ? total : BigDecimal.ZERO);
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+
+    return result;
+}
+    public BigDecimal calculateSlotPriceWithPromotionByShift(int courtId,
+            Time startTime, Time endTime, Promotion promotion) {
+        BigDecimal total = BigDecimal.ZERO;
+        try {
+            ShiftDAO shiftDAO = new ShiftDAO();
+            List<Shift> shifts = shiftDAO.getShiftsByCourt(courtId);
+            LocalTime start = startTime.toLocalTime();
+            LocalTime end = endTime.toLocalTime();
+            for (Shift sh : shifts) {
+                LocalTime shStart = sh.getStartTime().toLocalTime();
+                LocalTime shEnd = sh.getEndTime().toLocalTime();
+                if (end.isAfter(shStart) && start.isBefore(shEnd)) {
+                    LocalTime segmentStart = start.isAfter(shStart) ? start : shStart;
+                    LocalTime segmentEnd = end.isBefore(shEnd) ? end : shEnd;
+                    long minutes = java.time.Duration.between(segmentStart, segmentEnd).toMinutes();
+                    long shiftMinutes = java.time.Duration.between(shStart, shEnd).toMinutes();
+                    if (minutes > 0 && shiftMinutes > 0) {
+                        BigDecimal pricePerMinute = sh.getPrice().divide(BigDecimal.valueOf(shiftMinutes), 4, RoundingMode.HALF_UP);
+                        total = total.add(pricePerMinute.multiply(BigDecimal.valueOf(minutes)));
+                    }
+                }
+            }
+
+            if (promotion != null) {
+                if (promotion.getDiscountPercent() > 0) {
+                    BigDecimal percent = BigDecimal.valueOf(promotion.getDiscountPercent()).divide(BigDecimal.valueOf(100));
+                    total = total.subtract(total.multiply(percent));
+                }
+                if (promotion.getDiscountAmount() > 0) {
+                    total = total.subtract(BigDecimal.valueOf(promotion.getDiscountAmount()));
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return result;
+        if (total.compareTo(BigDecimal.ZERO) < 0) total = BigDecimal.ZERO;
+        return total.setScale(0, RoundingMode.HALF_UP);
     }
+
 
     public BigDecimal calculateSlotPriceWithPromotion(
             Time startTime,
