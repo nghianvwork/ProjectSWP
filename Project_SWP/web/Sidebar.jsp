@@ -252,6 +252,9 @@
                     <li class="nav-item">
                         <a class="nav-link" href="promotion-admin">QUẢN LÝ KHUYẾN MÃI</a>
                     </li>
+                     <li class="nav-item">
+                    <a class="nav-link" href="manage-event">QUẢN LÝ SỰ KIỆN</a>
+                </li>
                     <li class="nav-item">
                         <a class="nav-link" href="faq-list">QUẢN LÝ CÂU HỎI THƯỜNG GẶP</a>
                     </li>

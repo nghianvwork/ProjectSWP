@@ -215,7 +215,13 @@
                 </div>
                 <div class="nav-item"><a href="PostView.jsp">Bài Viết</a></div>
                 <div class="nav-item"><a href="AboutUs.jsp">Giới Thiệu</a></div>                
-                <div class="nav-item"> <a href="faq-list?for=user">FAQ</a></div>
+                               <div class="nav-item"> <a href="faq-list?for=user">FAQ</a></div>
+
+
+
+
+            </div>
+        </nav>
 
             </div>
         </nav>

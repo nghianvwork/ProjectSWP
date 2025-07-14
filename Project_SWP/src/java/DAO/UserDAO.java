@@ -119,7 +119,7 @@ public class UserDAO extends DBContext {
 
     // Xóa user
     public void deleteUser(int userId) {
-        String sql = "DELETE FROM Users WHERE user_id = ?";
+        String sql = "UPDATE Users SET status = 'deletePermantly' where user_id = ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, userId);
             ps.executeUpdate();
@@ -159,7 +159,18 @@ public class UserDAO extends DBContext {
         return null;
     }
 
-    public Object[] checkUserByUsernameOrEmail(String username, String email) {
+    public void updateUserRole(int userId, String newRole) {
+        String sql = "UPDATE Users SET role = ? WHERE user_Id = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, newRole);
+            ps.setInt(2, userId);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public Object[] checkUserByUsernameOrEmail(String username, String email) throws ClassNotFoundException, SQLException {
         User userByUsername = null;
         User userByEmail = null;
 
@@ -173,7 +184,7 @@ public class UserDAO extends DBContext {
                     userByUsername = extractUserFromResultSet(rs);
                 }
             }
-
+            System.out.println(userByUsername);
             // Check email
             String sqlEmail = "SELECT * FROM Users WHERE email = ?";
             try (PreparedStatement ps = conn.prepareStatement(sqlEmail)) {
@@ -188,7 +199,9 @@ public class UserDAO extends DBContext {
 
             // Logic xác định kết quả
             if (userByUsername != null && userByEmail != null) {
+
                 if (userByUsername.getUser_Id() == userByEmail.getUser_Id()) {
+
                     return new Object[]{0, userByUsername}; // cả hai đều đúng và là cùng user
                 } else {
                     return new Object[]{4, null}; // đúng cả 2 nhưng là 2 người khác nhau (trường hợp bất thường)
@@ -207,6 +220,9 @@ public class UserDAO extends DBContext {
         }
     }
 
+    // Lưu token quên mật khẩu
+    // Lưu token quên mật khẩu
+    // Lưu token quên mật khẩu
     // Lưu token quên mật khẩu
     public void saveResetToken(int userId, String token) {
         String sql = "INSERT INTO password_reset_tokens (user_id, token) VALUES (?, ?)";
@@ -647,6 +663,11 @@ public class UserDAO extends DBContext {
             e.printStackTrace();
         }
         return 0;
+    }
+
+    public static void main(String[] args) {
+        UserDAO dao = new UserDAO();
+        dao.deleteUser(1);
     }
 
     private String getDateCondition(String filter) {
