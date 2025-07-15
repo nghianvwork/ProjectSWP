@@ -1,10 +1,4 @@
-USE [master]
-GO
-/****** Object:  Database [SWP]    Script Date: 7/8/2025 7:13:37 AM ******/
-CREATE DATABASE [SWP]
-USE [SWP]
-GO
-
+﻿
 /****** Object:  Table [dbo].[Users]    Script Date: 7/8/2025 7:13:38 AM ******/
 SET ANSI_NULLS ON
 GO
@@ -484,6 +478,7 @@ CREATE TABLE [dbo].[CommentReports] (
     FOREIGN KEY (comment_id) REFERENCES [dbo].[Comments](comment_id) ON DELETE CASCADE,
     FOREIGN KEY (reported_by) REFERENCES [dbo].[Users](user_id)
 );
+
 /****** Object:  Table [dbo].[Promotion_Area]    Script Date: 7/8/2025 7:13:38 AM ******/
 SET ANSI_NULLS ON
 GO
@@ -571,19 +566,7 @@ PRIMARY KEY CLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-CREATE TABLE [dbo].[Coaches](
-    [coach_id] INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
-    [area_id] INT NOT NULL,
-    [fullname] NVARCHAR(100) NOT NULL,
-    [email] NVARCHAR(100) NOT NULL,
-    [phone] NVARCHAR(20) NOT NULL,
-    [specialty] NVARCHAR(255) NULL,
-    [description] NVARCHAR(MAX) NULL,
-    [image_url] NVARCHAR(255) NULL,
-    [status] NVARCHAR(50) DEFAULT 'active',
-    CONSTRAINT FK_Coaches_Area FOREIGN KEY (area_id) REFERENCES [dbo].[Areas](area_id)
-) ON [PRIMARY]
-GO
+
 ALTER TABLE [dbo].[BadmintonService] ADD  DEFAULT ('Active') FOR [status]
 GO
 ALTER TABLE [dbo].[BadmintonService] ADD  DEFAULT (getdate()) FOR [created_at]
@@ -601,6 +584,10 @@ GO
 ALTER TABLE [dbo].[ChatbotSessions] ADD  DEFAULT (getdate()) FOR [started_at]
 GO
 ALTER TABLE [dbo].[ChatbotSessions] ADD  DEFAULT ('active') FOR [session_status]
+GO
+ALTER TABLE Comments ALTER COLUMN content NVARCHAR(MAX) NOT NULL;
+GO
+ALTER TABLE Comments ADD status INT DEFAULT 1;
 GO
 ALTER TABLE [dbo].[EventParticipants] ADD  DEFAULT (getdate()) FOR [registered_at]
 GO
@@ -756,3 +743,4 @@ USE [master]
 GO
 ALTER DATABASE [SWP] SET  READ_WRITE 
 GO
+

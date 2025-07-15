@@ -31,33 +31,27 @@ public class AddService extends HttpServlet {
         double price = Double.parseDouble(request.getParameter("price"));
         String description = request.getParameter("description");
         String status = request.getParameter("status");
-
         if (status == null || status.isEmpty()) {
             status = "Active";
         }
 
+        // Xử lý file ảnh (upload thẳng vào /web/uploads/service_images)
         Part filePart = request.getPart("image_file");
-        String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
-
-        String projectRoot = System.getProperty("user.dir");
-        String savePath = projectRoot + File.separator + "uploads" + File.separator + "service_images";
-
-        File fileSaveDir = new File(savePath);
-        if (!fileSaveDir.exists()) {
-            fileSaveDir.mkdirs();
+        String fileName = null;
+        if (filePart != null && filePart.getSize() > 0) {
+            fileName = System.currentTimeMillis() + "_" + Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
+            String uploadPath = getServletContext().getRealPath("/uploads");
+            File uploadDir = new File(uploadPath);
+            if (!uploadDir.exists()) uploadDir.mkdirs();
+            filePart.write(uploadPath + File.separator + fileName);
         }
-
-        String newFileName = System.currentTimeMillis() + "_" + fileName;
-        String imagePath = "uploads/service_images/" + newFileName;
-        String fullSavePath = savePath + File.separator + newFileName;
-
-        filePart.write(fullSavePath);
 
         if (ServiceDAO.isDuplicateService(name)) {
             response.sendRedirect("ViewEquipments?status=duplicate");
             return;
         }
 
+        String imagePath = (fileName != null) ? "uploads" + fileName : null;
         Service s = new Service(0, name, price, description, imagePath, status);
 
         try {

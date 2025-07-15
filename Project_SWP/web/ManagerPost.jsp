@@ -54,15 +54,18 @@
             <a href="login" class="logout-button">Logout</a>
         </div>
 
-        <div class="row g-0">
+        <div class="sidebar">
             <c:choose>
                 <c:when test="${sessionScope.user.role eq 'staff'}">
-                    <jsp:include page="Sidebar_Staff.jsp" />
+                    <jsp:include page="Sidebar_Staff.jsp"/>
                 </c:when>
                 <c:otherwise>
-                    <jsp:include page="Sidebar.jsp" />
+                    <jsp:include page="Sidebar.jsp"/>
                 </c:otherwise>
             </c:choose>
+        </div>
+
+        <div class="row g-0">
             <div class="col-10 pt-5 px-4">
                 <div class="card card-main px-4 py-3 " style="width:100%; max-width:1200px; margin-left: 270px;">
                     <div class="d-flex align-items-center mb-3">
@@ -106,10 +109,18 @@
                         </thead>
                         <tbody>
                             <%
-    List<Post> posts = (List<Post>) request.getAttribute("posts");
-    SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-    if (posts != null && !posts.isEmpty()) {
-        for (Post p : posts) {
+                                List<Post> posts = (List<Post>) request.getAttribute("posts");
+                                if (posts == null) posts = new ArrayList<>();
+                                SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+                                Model.User user = (Model.User) session.getAttribute("user");
+                                if (posts.isEmpty()) {
+                            %>
+                            <tr>
+                                <td colspan="8" class="text-center">Không có bài viết phù hợp</td>
+                            </tr>
+                            <%
+                                } else {
+                                    for (Post p : posts) {
                             %>
                             <tr>
                                 <td><%= p.getPostId() %></td>
@@ -136,83 +147,124 @@
                                     <% } else { %><%= p.getStatus() %><% } %>
                                 </td>
                                 <td>
-                                    <button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#editModal<%=p.getPostId()%>">
-                                        Chi tiết / Sửa
-                                    </button>
+                                    <!-- Nút chi tiết luôn hiển thị -->
+                                    <button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#detailModal<%=p.getPostId()%>">Chi tiết</button>
+                                    <!-- Nút sửa chỉ cho chính chủ -->
+                                    <% if (user != null && p.getCreatedBy() == user.getUser_Id()) { %>
+                                    <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editModal<%=p.getPostId()%>">Sửa</button>
+                                    <% } %>
                                 </td>
                             </tr>
 
-                            <!-- Modal chỉnh sửa + duyệt bài -->
-                        <div class="modal fade" id="editModal<%=p.getPostId()%>" tabindex="-1" aria-labelledby="editModalLabel<%=p.getPostId()%>" aria-hidden="true">
+                            <!-- Modal Chi Tiết -->
+                        <div class="modal fade" id="detailModal<%=p.getPostId()%>" tabindex="-1" aria-hidden="true">
                             <div class="modal-dialog modal-lg">
                                 <div class="modal-content">
-                                    <form action="UpdatePostManager" method="post">
-                                        <input type="hidden" name="postId" value="<%=p.getPostId()%>" />
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Chi tiết bài viết</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <p><strong>Tiêu đề:</strong> <%= p.getTitle() %></p>
+                                        <p><strong>Nội dung:</strong> <pre style="white-space:pre-line;"><%= p.getContent() %></pre></p>
+                                        <p>
+                                            <strong>Ảnh:</strong>
+                                            <% if (p.getImage() != null && !p.getImage().isEmpty()) { %>
+                                            <img src="<%= request.getContextPath() %>/uploads/<%= p.getImage() %>" style="width:120px;">
+                                            <% } else { %>
+                                            <span>Chưa có ảnh</span>
+                                            <% } %>
+                                        </p>
+                                        <p><strong>Loại:</strong> <%= p.getType() %></p>
+                                        <p><strong>Người đăng:</strong> <%= p.getCreatedByName() %></p>
+                                        <p><strong>Trạng thái:</strong>
+                                            <% if ("pending".equals(p.getStatus())) { %>
+                                            Chờ duyệt
+                                            <% } else if ("approved".equals(p.getStatus())) { %>
+                                            Đã duyệt
+                                            <% } else if ("rejected".equals(p.getStatus())) { %>
+                                            Từ chối
+                                            <% } else { %>
+                                            <%= p.getStatus() %>
+                                            <% } %>
+                                        </p>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <form action="UpdatePostManager" method="post" style="display:inline;">
+                                            <input type="hidden" name="postId" value="<%=p.getPostId()%>" />
+                                            <button type="submit" name="action" value="approve" class="btn btn-success">Duyệt bài</button>
+                                        </form>
+                                        <form action="UpdatePostManager" method="post" style="display:inline;">
+                                            <input type="hidden" name="postId" value="<%=p.getPostId()%>" />
+                                            <button type="submit" name="action" value="reject" class="btn btn-danger">Từ chối</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Modal Sửa (chính chủ mới có) -->
+                        <div class="modal fade" id="editModal<%=p.getPostId()%>" tabindex="-1" aria-hidden="true">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content">
+                                    <form action="UpdatePostManager" method="post" enctype="multipart/form-data">
+                                        <input type="hidden" name="postId" value="<%=p.getPostId()%>"/>
                                         <div class="modal-header">
-                                            <h5 class="modal-title" id="editModalLabel<%=p.getPostId()%>">Chỉnh sửa bài viết</h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                                            <h5 class="modal-title">Sửa bài viết</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                         </div>
                                         <div class="modal-body">
                                             <div class="mb-3">
-                                                <strong class="form-label">Tiêu đề</strong>
-                                                <input type="text" name="title" class="form-control" value="<%=p.getTitle()%>" required />
+                                                <label class="form-label">Tiêu đề</label>
+                                                <input type="text" name="title" class="form-control" value="<%=p.getTitle()%>" required>
                                             </div>
                                             <div class="mb-3">
-                                                <strong class="form-label">Nội dung</strong>
+                                                <label class="form-label">Nội dung</label>
                                                 <textarea name="content" rows="6" class="form-control" required><%=p.getContent()%></textarea>
                                             </div>
                                             <div class="mb-3">
-                                                <strong class="form-label">Loại bài viết</strong>
+                                                <label class="form-label">Loại bài viết</label>
                                                 <select name="type" class="form-select" required>
                                                     <option value="news" <%= "news".equals(p.getType()) ? "selected" : "" %>>Tin tức</option>
                                                     <option value="common" <%= "common".equals(p.getType()) ? "selected" : "" %>>Phổ thông</option>
                                                     <option value="partner" <%= "partner".equals(p.getType()) ? "selected" : "" %>>Tìm đối</option>
                                                 </select>
                                             </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Ảnh bài viết (upload mới nếu muốn đổi)</label>
+                                                <input type="file" name="image" class="form-control" accept="image/*">
+                                                <div class="mt-2">
+                                                    <% if (p.getImage() != null && !p.getImage().isEmpty()) { %>
+                                                    <img src="<%= request.getContextPath() %>/uploads/<%= p.getImage() %>" style="width:90px;height:90px;object-fit:cover;border-radius:8px;">
+                                                    <% } else { %>
+                                                    <span style="color:#aaa;">Chưa có ảnh</span>
+                                                    <% } %>
+                                                </div>
+                                            </div>
                                             <p><strong>Người đăng:</strong> <%=p.getCreatedByName()%></p>
-                                            <p><strong>Ngày tạo:</strong> <%= df.format(p.getCreatedAt()) %></p>
-                                            <select class="form-select me-2" style="width: 130px;" name="status">
-    <option value="">Tất cả trạng thái</option>
-    <option value="pending" <%= "pending".equals(request.getParameter("status")) ? "selected" : "" %>>Chờ duyệt</option>
-    <option value="approved" <%= "approved".equals(request.getParameter("status")) ? "selected" : "" %>>Đã duyệt</option>
-    <option value="rejected" <%= "rejected".equals(request.getParameter("status")) ? "selected" : "" %>>Từ chối</option>
-</select>
+                                            <p><strong>Ngày tạo:</strong> <%= new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm").format(p.getCreatedAt()) %></p>
                                         </div>
                                         <div class="modal-footer">
                                             <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
-                                            <form action="UpdatePostManager" method="post" style="display:inline;">
-                                                <input type="hidden" name="postId" value="<%=p.getPostId()%>" />
-                                                <button type="submit" name="action" value="approve" class="btn btn-success">Duyệt bài</button>
-                                            </form>
-                                            <form action="UpdatePostManager" method="post" style="display:inline;">
-                                                <input type="hidden" name="postId" value="<%=p.getPostId()%>" />
-                                                <button type="submit" name="action" value="reject" class="btn btn-warning">Từ chối</button>
-                                            </form>
-                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
                                         </div>
                                     </form>
                                 </div>
                             </div>
                         </div>
                         <%
-                                }
-                            } else {
-                        %>
-                        <tr>
-                            <td colspan="7" class="text-center">Không có bài viết phù hợp</td>
-                        </tr>
-                        <%
-                            }
+                                } // end for
+                            } // end else
                         %>
                         </tbody>
                     </table>
+
                     <!-- Phân trang -->
                     <%
                         Integer currentPage = (Integer) request.getAttribute("currentPage");
                         Integer totalPages = (Integer) request.getAttribute("totalPages");
                         if (currentPage == null) currentPage = 1;
                         if (totalPages == null) totalPages = 1;
-
                         String typeParam = request.getParameter("type") != null ? "&type=" + request.getParameter("type") : "";
                         String searchParam = request.getParameter("search") != null ? "&search=" + request.getParameter("search") : "";
                     %>
@@ -226,6 +278,7 @@
                         </ul>
                     </div>
 
+                    <!-- Modal Thêm bài viết mới (giữ nguyên như cũ) -->
                     <div class="modal fade" id="addPostModal" tabindex="-1" aria-labelledby="addPostModalLabel" aria-hidden="true">
                         <div class="modal-dialog modal-lg">
                             <div class="modal-content">
@@ -250,7 +303,6 @@
                                         </div>
                                         <div class="mb-3">
                                             <label class="form-label">Loại bài viết</label>
-
                                             <select class="form-select" name="type" required>
                                                 <option value="news">Tin tức</option>
                                                 <option value="common">Phổ thông</option>
@@ -266,7 +318,8 @@
                             </div>
                         </div>
                     </div>
-                </div>
+
+                </div> <!-- end card-main -->
             </div>
         </div>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
