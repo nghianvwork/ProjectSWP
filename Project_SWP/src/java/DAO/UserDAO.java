@@ -170,7 +170,7 @@ public class UserDAO extends DBContext {
         }
     }
 
-    public Object[] checkUserByUsernameOrEmail(String username, String email) throws ClassNotFoundException, SQLException {
+    public Object[] checkUserByUsernameOrEmail(String username, String email) {
         User userByUsername = null;
         User userByEmail = null;
 
@@ -196,12 +196,11 @@ public class UserDAO extends DBContext {
             }
             int te = userByUsername.getUser_Id();
             int ss = userByEmail.getUser_Id();
-
+            
             // Logic xác định kết quả
             if (userByUsername != null && userByEmail != null) {
-
-                if (userByUsername.getUser_Id() == userByEmail.getUser_Id()) {
-
+                if (userByUsername.getUser_Id()== userByEmail.getUser_Id()) {
+                  
                     return new Object[]{0, userByUsername}; // cả hai đều đúng và là cùng user
                 } else {
                     return new Object[]{4, null}; // đúng cả 2 nhưng là 2 người khác nhau (trường hợp bất thường)

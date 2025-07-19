@@ -8,6 +8,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 import java.io.*;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -116,74 +117,103 @@ public class ChatbotServlet extends HttpServlet {
 }
 
 
-    private String handleBookingSubmission(Integer userId, String message) {
-        if (userId == null) return "Bạn cần đăng nhập trước khi đặt sân.";
+   private String handleBookingSubmission(Integer userId, String message) {
+    if (userId == null) return "Bạn cần đăng nhập trước khi đặt sân.";
 
-        Pattern pattern = Pattern.compile("đặt sân (\\d+) từ (\\d{2}:\\d{2}) đến (\\d{2}:\\d{2})(?: với dịch vụ (.*))?");
-        Matcher matcher = pattern.matcher(message.toLowerCase());
+    Pattern pattern = Pattern.compile("đặt sân (\\d+) từ (\\d{2}:\\d{2}) đến (\\d{2}:\\d{2})(?: với dịch vụ (.*))?");
+    Matcher matcher = pattern.matcher(message.toLowerCase());
 
-        if (!matcher.find()) return "Câu lệnh chưa đúng định dạng. Hãy nhập: đặt sân [id] từ hh:mm đến hh:mm với dịch vụ [tên dịch vụ, cách nhau bởi dấu phẩy nếu nhiều]";
+    if (!matcher.find())
+        return "Câu lệnh chưa đúng định dạng. Hãy nhập: đặt sân [id] từ hh:mm đến hh:mm với dịch vụ [tên dịch vụ, cách nhau bởi dấu phẩy nếu nhiều]";
 
-        try {
-            int courtId = Integer.parseInt(matcher.group(1));
-            LocalTime localStart = LocalTime.parse(matcher.group(2));
-            LocalTime localEnd = LocalTime.parse(matcher.group(3));
-              LocalDate bookingDate = LocalDate.now();           
-        LocalTime now         = LocalTime.now();           
+    try {
+        int courtId = Integer.parseInt(matcher.group(1));
+        LocalTime localStart = LocalTime.parse(matcher.group(2));
+        LocalTime localEnd = LocalTime.parse(matcher.group(3));
+        LocalDate today = LocalDate.now();
 
-        if (bookingDate.equals(LocalDate.now()) && localStart.isBefore(now)) {
-            return " Không thể đặt sân cho khung giờ đã qua. "
-                 + "Vui lòng chọn thời gian bắt đầu > " + now.truncatedTo(java.time.temporal.ChronoUnit.MINUTES);
+        
+        if (today.equals(LocalDate.now()) && localStart.isBefore(LocalTime.now())) {
+            return "Không thể đặt sân cho khung giờ đã qua. Vui lòng chọn thời gian bắt đầu lớn hơn hiện tại.";
         }
-            Time startTime = Time.valueOf(localStart);
-            Time endTime = Time.valueOf(localEnd);
 
-            LocalDate today = LocalDate.now();
-            CourtDAO courtDAO = new CourtDAO();
-            Courts court = courtDAO.getCourtById(courtId);
-            if (court == null) return "Không tìm thấy sân có ID: " + courtId;
+        Time startTime = Time.valueOf(localStart);
+        Time endTime = Time.valueOf(localEnd);
 
-            BookingDAO bookingDAO = new BookingDAO();
-            if (!bookingDAO.checkSlotAvailable(courtId, today, startTime, endTime)) {
-                return "Slot đã được đặt. Vui lòng chọn slot khác.";
+        CourtDAO courtDAO = new CourtDAO();
+        Courts court = courtDAO.getCourtById(courtId);
+        if (court == null) return "Không tìm thấy sân có ID: " + courtId;
+
+      
+        ShiftDAO shiftDAO = new ShiftDAO();
+        Shift shift = shiftDAO.findShiftContainSlot(courtId, startTime, endTime);
+        if (shift == null) return "Không tìm thấy ca phù hợp với giờ đặt.";
+
+      
+        BookingDAO bookingDAO = new BookingDAO();
+        if (!bookingDAO.checkSlotAvailable(courtId, today, startTime, endTime)) {
+            return "Slot đã được đặt. Vui lòng chọn slot khác.";
+        }
+
+        
+        BigDecimal totalPrice = shift.getPrice();
+
+      
+        PromotionDAO proDAO = new PromotionDAO();
+        Promotion promotion = proDAO.getCurrentPromotionForArea(court.getArea_id(), today);
+        if (promotion != null) {
+            if (promotion.getDiscountPercent() > 0) {
+                BigDecimal percent = BigDecimal.valueOf(promotion.getDiscountPercent())
+                        .divide(BigDecimal.valueOf(100), 4, RoundingMode.HALF_UP);
+                totalPrice = totalPrice.subtract(totalPrice.multiply(percent));
             }
+            if (promotion.getDiscountAmount() > 0) {
+                totalPrice = totalPrice.subtract(BigDecimal.valueOf(promotion.getDiscountAmount()));
+            }
+            if (totalPrice.compareTo(BigDecimal.ZERO) < 0) totalPrice = BigDecimal.ZERO;
+        }
 
-            PromotionDAO proDAO = new PromotionDAO();
-            Promotion promotion = proDAO.getCurrentPromotionForArea(court.getArea_id(), today);
-            BigDecimal pricePerHour = courtDAO.getCourtPrice(courtId);
-            BigDecimal totalPrice = bookingDAO.calculateSlotPriceWithPromotion(startTime, endTime, pricePerHour, promotion);
-
-            Bookings booking = new Bookings();
-            booking.setUser_id(userId);
-            booking.setCourt_id(courtId);
-            booking.setDate(today);
-            booking.setStart_time(startTime);
-            booking.setEnd_time(endTime);
-            booking.setTotal_price(totalPrice.doubleValue());
-            booking.setStatus("pending");
-
-            if (matcher.group(4) != null) {
-                String[] services = matcher.group(4).split(",");
-                List<String> serviceList = new ArrayList<>();
-                for (String s : services) {
-                    serviceList.add(s.trim());
+       
+        List<String> serviceList = new ArrayList<>();
+        if (matcher.group(4) != null) {
+            String[] services = matcher.group(4).split(",");
+            Service_BranchDAO serviceDAO = new Service_BranchDAO();
+            for (String s : services) {
+                String serviceName = s.trim();
+                BigDecimal servicePrice = serviceDAO.getServicePriceByName(serviceName, court.getArea_id());
+                if (servicePrice != null) {
+                    totalPrice = totalPrice.add(servicePrice);
+                    serviceList.add(serviceName);
                 }
-                booking.setServices(serviceList);
             }
-
-            if (bookingDAO.createBooking(booking)) {
-                return " Đã đặt sân thành công!\nSân: " + courtId + "\nNgày: " + today + "\nTừ " + startTime + " đến " + endTime +
-                        "\nTổng tiền: " + totalPrice + " VNĐ." +
-                        (booking.getServices() != null ? "\nDịch vụ đi kèm: " + String.join(", ", booking.getServices()) : "");
-            } else {
-                return " Có lỗi xảy ra khi đặt sân. Vui lòng thử lại sau.";
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "Có lỗi trong quá trình xử lý. Vui lòng thử lại.";
         }
+
+        
+        Bookings booking = new Bookings();
+        booking.setUser_id(userId);
+        booking.setCourt_id(courtId);
+        booking.setDate(today);
+        booking.setStart_time(startTime);
+        booking.setEnd_time(endTime);
+        booking.setTotal_price(totalPrice.doubleValue());
+        booking.setStatus("pending");
+        booking.setServices(serviceList.isEmpty() ? null : serviceList);
+
+        if (bookingDAO.createBooking(booking)) {
+            return "Đã đặt sân thành công!\nSân: " + courtId + "\nNgày: " + today +
+                   "\nTừ " + startTime + " đến " + endTime +
+                   "\nTổng tiền: " + totalPrice.setScale(0, RoundingMode.HALF_UP) + " VNĐ." +
+                   (booking.getServices() != null ? "\nDịch vụ đi kèm: " + String.join(", ", booking.getServices()) : "");
+        } else {
+            return "Có lỗi xảy ra khi đặt sân. Vui lòng thử lại sau.";
+        }
+
+    } catch (Exception e) {
+        e.printStackTrace();
+        return "Có lỗi trong quá trình xử lý. Vui lòng thử lại.";
     }
+}
+
 
     private String generateGeminiResponse(String message) {
         try {

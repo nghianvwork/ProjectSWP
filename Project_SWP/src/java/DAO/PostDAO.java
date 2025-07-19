@@ -85,8 +85,7 @@ public class PostDAO {
         }
 
         PreparedStatement stmt = conn.prepareStatement(sql.toString());
-
-        for (int i = 0; i < params.size(); i++) {
+for (int i = 0; i < params.size(); i++) {
             stmt.setObject(i + 1, params.get(i));
         }
 
@@ -170,7 +169,7 @@ public class PostDAO {
 
         if (type != null && !type.isEmpty()) {
             stmt.setString(index++, type);
-        }
+}
         if (keyword != null && !keyword.isEmpty()) {
             stmt.setString(index++, "%" + keyword + "%");
         }
@@ -247,8 +246,7 @@ public class PostDAO {
         StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM Posts WHERE created_by = ?");
         List<Object> params = new ArrayList<>();
         params.add(userId);
-
-        if (type != null && !type.isEmpty()) {
+if (type != null && !type.isEmpty()) {
             sql.append(" AND type = ?");
             params.add(type);
         }

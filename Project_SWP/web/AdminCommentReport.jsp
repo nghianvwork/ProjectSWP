@@ -68,8 +68,7 @@
                 transition: all 0.3s ease;
                 box-shadow: 0 2px 4px rgba(231, 76, 60, 0.3);
             }
-
-            .logout-button:hover {
+.logout-button:hover {
                 transform: translateY(-2px);
                 box-shadow: 0 4px 8px rgba(231, 76, 60, 0.4);
                 color: white;
@@ -174,7 +173,7 @@
             }
 
             .table thead th {
-                background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
                 color: white;
                 font-weight: 600;
                 border: none;
@@ -277,7 +276,7 @@
 
             .loading-spinner {
                 display: none;
-                text-align: center;
+text-align: center;
                 padding: 40px;
             }
 
@@ -354,6 +353,17 @@
             </a>
         </div>
 
+        <div class="sidebar">
+            <c:choose>
+                <c:when test="${sessionScope.user.role eq 'staff'}">
+                    <jsp:include page="Sidebar_Staff.jsp"/>
+                </c:when>
+                <c:otherwise>
+                    <jsp:include page="Sidebar.jsp"/>
+                </c:otherwise>
+            </c:choose>
+        </div>
+
         <div class="main-content">
             <!-- Statistics Cards -->
             <div class="stats-cards">
@@ -368,7 +378,7 @@
                     <div class="stat-icon">
                         <i class="fas fa-comments"></i>
                     </div>
-                    <div class="stat-number"><%= reportList.size() %></div>
+<div class="stat-number"><%= reportList.size() %></div>
                     <div class="stat-label">Bình luận vi phạm</div>
                 </div>
             </div>
@@ -413,7 +423,7 @@
                                 <th width="15%">Người bị báo cáo</th>
                                 <th width="15%">Người báo cáo</th>
                                 <th width="12%">Lý do</th>
-                                <th width="13%">Thời gian</th>
+<th width="13%">Thời gian</th>
                                 <th width="8%">Xem bài</th>
                                 <th width="7%">Hành động</th>
                             </tr>
@@ -465,7 +475,7 @@
                                     </a>
                                 </td>
                             </tr>
-                            <%
+<%
                                 }
                             %>
                         </tbody>
@@ -496,35 +506,8 @@
             </div>
         </div>
 
-        <jsp:include page="Sidebar.jsp" />
+
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<!--        <script>
-//                                       // Loading animation
-//                                       document.addEventListener('DOMContentLoaded', function () {
-//                                           const spinner = document.getElementById('loadingSpinner');
-//                                           const content = document.querySelector('.table-container, .empty-state');
-//
-//                                           if (spinner)
-//                                               spinner.style.display = 'block';
-//
-//                                           setTimeout(() => {
-//                                               if (spinner)
-//                                                   spinner.style.display = 'none';
-//                                               if (content)
-//                                                   content.style.display = 'block';
-//                                           }, 500);
-//                                       });
-//
-//                                       // Table row hover effects
-//                                       document.querySelectorAll('.table tbody tr').forEach(row => {
-//                                           row.addEventListener('mouseenter', function () {
-//                                               this.style.backgroundColor = 'rgba(52, 152, 219, 0.1)';
-//                                           });
-//                                           row.addEventListener('mouseleave', function () {
-//                                               this.style.backgroundColor = '';
-//                                           });
-//                                       });
-        </script>-->
     </body>
 </html>

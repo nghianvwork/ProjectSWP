@@ -70,7 +70,7 @@ public class PromotionAdmin extends HttpServlet {
             request.setAttribute("numberOfPages", numberOfPages);
         }
 
-        // Gán danh sách khu vực cho mỗi promotion
+      
         for (Promotion p : list) {
             List<String> areaNames = dao.getAreaNamesByPromotionId(p.getPromotionId());
             p.setAreaNames(areaNames);
@@ -79,7 +79,7 @@ public class PromotionAdmin extends HttpServlet {
         AreaDAO areaDAO = new AreaDAO();
         List<Branch> areaList = areaDAO.getAllAreas();
 
-        request.setAttribute("promotionList", list); // Danh sách thực sự được dùng
+        request.setAttribute("promotionList", list); 
         request.setAttribute("areaList", areaList);
 
         request.getRequestDispatcher("manage-promotion.jsp").forward(request, response);

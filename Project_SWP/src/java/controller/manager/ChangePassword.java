@@ -138,8 +138,7 @@ protected void doPost(HttpServletRequest request, HttpServletResponse response)
     dao.updatePassword(user);
 
     
-    request.setAttribute("success", "Đổi mật khẩu thành công! Bạn có thể đăng nhập lại.");
-    
+  
    
     request.getRequestDispatcher("ChangePassword.jsp").forward(request, response);
 }

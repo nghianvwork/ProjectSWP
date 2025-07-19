@@ -76,7 +76,7 @@
                     <div class="d-flex align-items-center mb-3" style="gap: 10px;">
                         <form class="d-flex align-items-center flex-grow-1" style="max-width: 650px;" action="ViewPostManager" method="get">
                             <span class="search-icon">🔍</span>
-                            <input type="text" class="form-control ps-5 me-2" placeholder="Tìm tiêu đề, người đăng..." name="search" value="${param.search != null ? param.search : ''}"/>
+<input type="text" class="form-control ps-5 me-2" placeholder="Tìm tiêu đề, người đăng..." name="search" value="${param.search != null ? param.search : ''}"/>
                             <select class="form-select me-2" style="width: 130px;" name="type">
                                 <option value="">Tất cả thể loại</option>
                                 <option value="news" ${param.type == 'news' ? 'selected' : ''}>Tin tức</option>
@@ -116,7 +116,7 @@
                                 if (posts.isEmpty()) {
                             %>
                             <tr>
-                                <td colspan="8" class="text-center">Không có bài viết phù hợp</td>
+<td colspan="8" class="text-center">Không có bài viết phù hợp</td>
                             </tr>
                             <%
                                 } else {
@@ -160,7 +160,7 @@
                         <div class="modal fade" id="detailModal<%=p.getPostId()%>" tabindex="-1" aria-hidden="true">
                             <div class="modal-dialog modal-lg">
                                 <div class="modal-content">
-                                    <div class="modal-header">
+<div class="modal-header">
                                         <h5 class="modal-title">Chi tiết bài viết</h5>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                     </div>
@@ -197,7 +197,7 @@
                                         <form action="UpdatePostManager" method="post" style="display:inline;">
                                             <input type="hidden" name="postId" value="<%=p.getPostId()%>" />
                                             <button type="submit" name="action" value="reject" class="btn btn-danger">Từ chối</button>
-                                        </form>
+</form>
                                     </div>
                                 </div>
                             </div>
@@ -234,7 +234,7 @@
                                                 <label class="form-label">Ảnh bài viết (upload mới nếu muốn đổi)</label>
                                                 <input type="file" name="image" class="form-control" accept="image/*">
                                                 <div class="mt-2">
-                                                    <% if (p.getImage() != null && !p.getImage().isEmpty()) { %>
+<% if (p.getImage() != null && !p.getImage().isEmpty()) { %>
                                                     <img src="<%= request.getContextPath() %>/uploads/<%= p.getImage() %>" style="width:90px;height:90px;object-fit:cover;border-radius:8px;">
                                                     <% } else { %>
                                                     <span style="color:#aaa;">Chưa có ảnh</span>
@@ -279,7 +279,7 @@
                     </div>
 
                     <!-- Modal Thêm bài viết mới (giữ nguyên như cũ) -->
-                    <div class="modal fade" id="addPostModal" tabindex="-1" aria-labelledby="addPostModalLabel" aria-hidden="true">
+<div class="modal fade" id="addPostModal" tabindex="-1" aria-labelledby="addPostModalLabel" aria-hidden="true">
                         <div class="modal-dialog modal-lg">
                             <div class="modal-content">
                                 <form action="AddPostManager" method="post" enctype="multipart/form-data">
@@ -320,7 +320,7 @@
                     </div>
 
                 </div> <!-- end card-main -->
-            </div>
+</div>
         </div>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     </body>

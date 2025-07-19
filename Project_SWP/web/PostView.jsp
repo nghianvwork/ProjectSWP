@@ -54,7 +54,7 @@
     <% if (typeParam == null || typeParam.isEmpty()) { %>
     <div class="row">
         <!-- Cột to bên trái: bài tin tức mới nhất -->
-        <div class="col-md-6">
+<div class="col-md-6">
             <% Post n = newsFeatured; %>
             <% if (n != null) { %>
             <div class="card mb-4 shadow" style="overflow:hidden;">
@@ -102,7 +102,7 @@
                             📅 <%= df.format(p.getCreatedAt()) %> | 🏷️ <%= p.getType() %>
                         </div>
                     </div>
-                </div>
+</div>
             </div>
             <% }
             } else { %>
@@ -163,7 +163,7 @@
                         </div>
 
                         <div class="mb-3">
-                            <label for="content" class="form-label">Nội dung</label>
+<label for="content" class="form-label">Nội dung</label>
                             <textarea class="form-control" name="content" id="content" rows="6" required></textarea>
                         </div>
 
@@ -207,7 +207,7 @@
                             
                             <div class="mb-3">
                                 <label class="form-label">Khu vực mong muốn <span style="color:red">*</span></label>
-                                <input type="text" class="form-control" name="preferred_area" placeholder="Ví dụ: Hà Nội, Cầu Giấy, Hà Đông,...">
+<input type="text" class="form-control" name="preferred_area" placeholder="Ví dụ: Hà Nội, Cầu Giấy, Hà Đông,...">
                             </div>
                             
                             <div class="mb-3">

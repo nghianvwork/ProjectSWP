@@ -110,7 +110,7 @@
 
             .btn {
                 padding: 6px 12px;
-                border-radius: 6px;
+border-radius: 6px;
                 font-weight: bold;
                 text-decoration: none;
                 display: inline-block;
@@ -218,7 +218,7 @@
         <jsp:include page="Sidebar.jsp" />
         <%
             List<Service> service = (List<Service>) request.getAttribute("service");
-            if (service == null) service = java.util.Collections.emptyList();
+if (service == null) service = java.util.Collections.emptyList();
            String status = request.getParameter("status");
         %>
 
@@ -276,7 +276,7 @@
                                     <button type="button" class="btn btn-warning"
                                             data-bs-toggle="modal" 
                                             data-bs-target="#editServiceModal<%= eq.getService_id() %>">
-                                        Sửa
+Sửa
                                     </button>
                                     <button type="button" class="btn btn-danger"
                                             data-bs-toggle="modal" 
@@ -329,7 +329,7 @@
                             </div>
                             <div class="mb-3">
                                 <label>Giá</label>
-                                <input type="number" class="form-control" name="price" value="<%= eq.getPrice() %>" required>
+<input type="number" class="form-control" name="price" value="<%= eq.getPrice() %>" required>
                             </div>
                             <div class="mb-3">
                                 <label>Mô tả</label>
@@ -374,7 +374,7 @@
                     <div class="modal-body delete-modal-content">
                         <div class="delete-modal-icon">⚠️</div>
                         <h5>Bạn có chắc chắn muốn xóa dịch vụ này?</h5>
-                        <p><strong>Tên dịch vụ:</strong> <%= eq.getName() %></p>
+<p><strong>Tên dịch vụ:</strong> <%= eq.getName() %></p>
                         <p><strong>ID:</strong> <%= eq.getService_id() %></p>
                         <p class="text-muted">Hành động này không thể hoàn tác!</p>
                     </div>
@@ -424,7 +424,7 @@
 
                             <div style="margin-bottom: 12px;">
                                 <label style="display: block; margin-bottom: 6px;">Trạng thái:</label>
-                                <div style="display: flex; gap: 30px;">
+<div style="display: flex; gap: 30px;">
                                     <label><input type="radio" name="status" value="Active" checked> Active</label>
                                     <label><input type="radio" name="status" value="Inactive"> Inactive</label>
                                 </div>

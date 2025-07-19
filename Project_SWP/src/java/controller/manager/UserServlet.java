@@ -85,15 +85,19 @@ public class UserServlet extends HttpServlet {
             String dobStr = request.getParameter("date_of_birth");
 
             // Kiểm tra trùng username / email / phone
-            Object[] checkResult = userDAO.checkUserByUsernameOrEmail(username, email);
-            User userByUsername = (User) checkResult[1];
-            User userByEmail = (User) checkResult[1];
             boolean phoneExists = userDAO.isPhoneExists(phone);
+            Object[] checkResult = userDAO.checkUserByUsernameOrEmail(username, email);
+            int code = (int) checkResult[0];
 
-            if (userByUsername != null) {
+            if (code == 0) {
+                // Username & email đều tồn tại, trùng cùng user
+                request.setAttribute("error", "Tên đăng nhập và Email đã tồn tại.");
+            } else if (code == 1) {
                 request.setAttribute("error", "Tên đăng nhập đã tồn tại.");
-            } else if (userByEmail != null) {
+            } else if (code == 2) {
                 request.setAttribute("error", "Email đã tồn tại.");
+            } else if (code == 4) {
+                request.setAttribute("error", "Tên đăng nhập và Email đã thuộc 2 người khác nhau.");
             } else if (phoneExists) {
                 request.setAttribute("error", "Số điện thoại đã tồn tại.");
             }
@@ -188,7 +192,6 @@ public class UserServlet extends HttpServlet {
 
         response.sendRedirect("users");
     }
- 
 
     public static String generateRandomPassword() {
         int length = 6;

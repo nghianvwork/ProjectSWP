@@ -95,7 +95,6 @@ protected void doPost(HttpServletRequest request, HttpServletResponse response)
     }
 
     try {
-       
         int userId = user.getUser_Id();
         int courtId = Integer.parseInt(request.getParameter("courtId"));
         String dateStr = request.getParameter("date");
@@ -105,48 +104,35 @@ protected void doPost(HttpServletRequest request, HttpServletResponse response)
         Time startTime = Time.valueOf(startTimeStr);
         Time endTime = Time.valueOf(endTimeStr);
 
-      
-        if (startTime.after(endTime) || startTime.equals(endTime)) {
-            request.setAttribute("message", "Giờ bắt đầu phải trước giờ kết thúc.");
-            request.getRequestDispatcher("book_field.jsp").forward(request, response);
-            return;
-        }
+        // LẤY totalPrice từ request (giá thuê sân đã tính, đã KM, chưa dịch vụ)
+        String totalPriceStr = request.getParameter("totalPrice");
+        BigDecimal totalPrice = new BigDecimal(totalPriceStr);
 
-        
-        BookingDAO bookingDAO = new BookingDAO();
-        boolean isAvailable = bookingDAO.checkSlotAvailable(courtId, date, startTime, endTime);
-
-        if (!isAvailable) {
-            request.setAttribute("message", "Khoảng thời gian đã có người đặt.");
-            request.getRequestDispatcher("book_field.jsp").forward(request, response);
-            return;
-        }
-
-        
-        CourtDAO courtDAO = new CourtDAO();
-        BigDecimal pricePerHour = courtDAO.getCourtPrice(courtId);
-
-        Courts court = courtDAO.getCourtById(courtId);
-        PromotionDAO promotionDAO = new PromotionDAO();
-        Promotion promotion = promotionDAO.getCurrentPromotionForArea(court.getArea_id(), date);
-
-        BigDecimal totalPrice = bookingDAO.calculateSlotPriceWithPromotion(startTime, endTime, pricePerHour, promotion);
-
+        // CỘNG GIÁ DỊCH VỤ (nếu có)
         BigDecimal extraServicePrice = BigDecimal.ZERO;
         String[] selectedServices = request.getParameterValues("selectedServices");
-
         if (selectedServices != null) {
             Service_BranchDAO serviceDAO = new Service_BranchDAO();
             for (String serviceIdStr : selectedServices) {
                 int serviceId = Integer.parseInt(serviceIdStr);
-                BigDecimal servicePrice = serviceDAO.getServicePriceById(serviceId); 
-                extraServicePrice = extraServicePrice.add(servicePrice);
+                BigDecimal servicePrice = serviceDAO.getServicePriceById(serviceId);
+                if (servicePrice != null) {
+                    extraServicePrice = extraServicePrice.add(servicePrice);
+                }
             }
         }
 
+        // Tổng cuối cùng
         totalPrice = totalPrice.add(extraServicePrice);
 
-   
+        // Đảm bảo không âm và làm tròn (nếu muốn)
+        if (totalPrice.compareTo(BigDecimal.ZERO) < 0) {
+            totalPrice = BigDecimal.ZERO;
+        }
+        totalPrice = totalPrice.setScale(0, BigDecimal.ROUND_HALF_UP);
+
+        // Tiếp tục lưu booking, lưu dịch vụ...
+        BookingDAO bookingDAO = new BookingDAO();
         int bookingId = bookingDAO.insertBooking1(userId, courtId, date, startTime, endTime, "pending", totalPrice);
 
         if (selectedServices != null && bookingId != -1) {
@@ -158,13 +144,14 @@ protected void doPost(HttpServletRequest request, HttpServletResponse response)
         }
 
         response.sendRedirect("booking-list");
-       
+
     } catch (Exception e) {
         e.printStackTrace();
         request.setAttribute("message", "Có lỗi xảy ra khi xử lý đặt sân.");
         request.getRequestDispatcher("error.jsp").forward(request, response);
     }
 }
+
 
 
 

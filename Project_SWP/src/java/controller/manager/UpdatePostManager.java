@@ -77,7 +77,7 @@ public class UpdatePostManager extends HttpServlet {
             Post post = postDAO.getPostById(postId);
             if (post == null) {
                 response.sendRedirect("ViewPostManager");
-                return;
+return;
             }
 
             request.setAttribute("post", post);
@@ -160,8 +160,7 @@ public class UpdatePostManager extends HttpServlet {
             response.sendError(500, "Lỗi hệ thống");
         }
     }
-
-        /**
+/**
          * Returns a short description of the servlet.
          *
          * @return a String containing servlet description
