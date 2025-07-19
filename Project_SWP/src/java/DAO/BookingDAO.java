@@ -24,6 +24,9 @@ import Dal.DBContext;
 import Model.BookingScheduleDTO;
 import Model.Bookings;
 import Model.Courts;
+import Model.Service;
+import DAO.ServiceDAO;
+import DAO.BookingServiceDAO;
 import Model.Promotion;
 import Model.Service;
 import Model.Shift;
@@ -1059,30 +1062,71 @@ public Map<String, BigDecimal> getRevenueByWeek(int year, Integer courtId) {
         return slotPrice.setScale(0, RoundingMode.HALF_UP);
     }
 
-    public int getTotalBookings() {
-        String sql = "SELECT COUNT(*) FROM Bookings WHERE status != 'cancelled'";
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ResultSet rs = ps.executeQuery();
+    // Lấy tổng số lượt đặt sân
+    public int getTotalBookings(String filter) {
+        String sql = "SELECT COUNT(*) FROM Bookings " + getDateCondition(filter);
+        try (Connection conn = new DBContext().getConnection(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
             if (rs.next()) {
                 return rs.getInt(1);
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return 0;
     }
 
-    public double getTotalRevenue() {
-        String sql = "SELECT SUM(total_price) FROM Bookings WHERE status != 'cancelled'";
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ResultSet rs = ps.executeQuery();
+    // Lấy tổng doanh thu
+    public double getTotalRevenue(String filter) {
+        String sql = "SELECT SUM(total_price) FROM Bookings " + getDateCondition(filter);
+        try (Connection conn = new DBContext().getConnection(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
             if (rs.next()) {
                 return rs.getDouble(1);
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return 0;
+    }
+
+    // Lấy đánh giá trung bình
+    public double getAvgRating(String filter) {
+        String sql = "SELECT AVG(CAST(rating AS float)) FROM Bookings WHERE rating IS NOT NULL " + getExtraDateCondition(filter);
+        try (Connection conn = new DBContext().getConnection(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                return rs.getDouble(1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    // Điều kiện lọc ngày
+    private String getDateCondition(String filter) {
+        switch (filter) {
+            case "today":
+                return "WHERE CAST(date AS DATE) = CAST(GETDATE() AS DATE)";
+            case "week":
+                return "WHERE DATEPART(week, date) = DATEPART(week, GETDATE()) AND YEAR(date) = YEAR(GETDATE())";
+            case "month":
+                return "WHERE MONTH(date) = MONTH(GETDATE()) AND YEAR(date) = YEAR(GETDATE())";
+            default:
+                return "";
+        }
+    }
+
+    // Cho AVG (phía sau WHERE rating IS NOT NULL)
+    private String getExtraDateCondition(String filter) {
+        switch (filter) {
+            case "today":
+                return " AND CAST(date AS DATE) = CAST(GETDATE() AS DATE)";
+            case "week":
+                return " AND DATEPART(week, date) = DATEPART(week, GETDATE()) AND YEAR(date) = YEAR(GETDATE())";
+            case "month":
+                return " AND MONTH(date) = MONTH(GETDATE()) AND YEAR(date) = YEAR(GETDATE())";
+            default:
+                return "";
+        }
     }
 
 }

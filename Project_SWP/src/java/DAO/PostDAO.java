@@ -292,14 +292,14 @@ public class PostDAO {
     }
 
     public void updatePost(Post post) throws SQLException {
-        String sql = "UPDATE Posts SET title = ?, content = ?, type = ? WHERE post_id = ? AND created_by = ?";
+        String sql = "UPDATE Posts SET title = ?, content = ?, type = ?, image = ? WHERE post_id = ? AND created_by = ?";
         PreparedStatement stmt = conn.prepareStatement(sql);
         stmt.setString(1, post.getTitle());
         stmt.setString(2, post.getContent());
         stmt.setString(3, post.getType());
-        stmt.setInt(4, post.getPostId());
-        stmt.setInt(5, post.getCreatedBy());
-        stmt.setString(6, post.getImage());
+        stmt.setString(4, post.getImage());
+        stmt.setInt(5, post.getPostId());
+        stmt.setInt(6, post.getCreatedBy());
         stmt.executeUpdate();
     }
 
