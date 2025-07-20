@@ -1,9 +1,6 @@
-USE [master]
-GO
-/****** Object:  Database [SWP]    Script Date: 7/8/2025 7:13:37 AM ******/
-CREATE DATABASE [SWP]
-USE [SWP]
-GO
+
+
+
 
 /****** Object:  Table [dbo].[Users]    Script Date: 7/8/2025 7:13:38 AM ******/
 SET ANSI_NULLS ON
@@ -161,6 +158,7 @@ CREATE TABLE [dbo].[Bookings](
 	[status] [nvarchar](50) NULL,
 	[rating] [int] NULL,
 	[total_price] [decimal](10, 2) NULL,
+	[review_comment] [nvarchar] Null,
 PRIMARY KEY CLUSTERED 
 (
 	[booking_id] ASC
@@ -565,6 +563,7 @@ CREATE TABLE [dbo].[Shift](
 	[shift_name] [varchar](255) NOT NULL,
 	[start_time] [time](7) NOT NULL,
 	[end_time] [time](7) NOT NULL,
+	[price] [decimal]  NOT NULL
 PRIMARY KEY CLUSTERED 
 (
 	[shift_id] ASC
@@ -674,7 +673,7 @@ GO
 ALTER TABLE [dbo].[EventParticipants] CHECK CONSTRAINT [FK_EventParticipants_Users]
 GO
 ALTER TABLE [dbo].[Events]  WITH CHECK ADD  CONSTRAINT [FK_Events_Areas] FOREIGN KEY([area_id])
-REFERENCES [dbo].[Areas] ([area_id])
+REFERENCES [dbo].[Areas] ([area_id]) ON DELETE CASCADE
 GO
 ALTER TABLE [dbo].[Events] CHECK CONSTRAINT [FK_Events_Areas]
 GO
@@ -706,7 +705,7 @@ ALTER TABLE [dbo].[Posts]  WITH CHECK ADD FOREIGN KEY([created_by])
 REFERENCES [dbo].[Users] ([user_id])
 GO
 ALTER TABLE [dbo].[Promotion_Area]  WITH CHECK ADD FOREIGN KEY([area_id])
-REFERENCES [dbo].[Areas] ([area_id])
+REFERENCES [dbo].[Areas] ([area_id]) ON DELETE CASCADE
 GO
 ALTER TABLE [dbo].[Promotion_Area]  WITH CHECK ADD FOREIGN KEY([promotion_id])
 REFERENCES [dbo].[Promotions] ([promotion_id])
