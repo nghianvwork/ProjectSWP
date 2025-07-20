@@ -109,13 +109,13 @@
                             <input type="text" name="searchInput" value="${searchKeyword}" class="form-control mr-2 w-50" placeholder="🔍 Tìm kiếm theo tên khu vực">
                             <button type="submit" class="btn btn-primary">Tìm kiếm</button>
                         </form>
-
-
+                       
                         <!-- Regions Table -->
                         <div class="table-responsive">
                             <table class="table table-hover table-bordered">
                                 <thead class="thead-dark">
                                     <tr>
+                                        <th>STT</th>
                                         <th>Tên</th>
                                         <th>Địa chỉ</th>
                                         <th class="col-small">Số lượng sân</th>
@@ -138,6 +138,7 @@
                                 <tbody>
                                     <c:forEach var="a" items="${area}" varStatus="loop">
                                         <tr>
+                                            <td>${loop.index +1} </td>
                                             <td>${a.name}</td>
                                             <td>${a.location}</td>
                                             <td>
@@ -260,7 +261,7 @@
                                                 <input type="text" name="address" class="form-control">
                                             </div>
 
-                                           
+
 
                                             <div class="form-group">
                                                 <label>Giờ mở cửa</label>

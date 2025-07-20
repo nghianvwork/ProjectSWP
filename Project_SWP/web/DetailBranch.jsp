@@ -265,7 +265,7 @@
                 </div>
                 <div class="col-md-10" style="margin-left: 280px">
                     <div class="main-content">
-                        <h1 class="page-title">Chi tiết khu vực: ${area_id}</h1>
+                        <h1 class="page-title">Chi tiết khu vực: ${areaDetail.name}</h1>
 
                         <!-- Statistics Cards -->
                         <div class="row mb-4">
@@ -593,7 +593,7 @@
                             <input type="time" name="endTime" class="form-control" step="1800" required />
                         </div>
                         <div class="form-group">
-                            <label><i class="fas fa-stop"></i> Thời gian kết thúc</label>
+                            <label><i class="fas fa-stop"></i> Giá </label>
                             <input type="number" name="price" class="form-control"  required />
                         </div>
                     </div>

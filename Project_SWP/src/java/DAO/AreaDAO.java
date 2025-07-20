@@ -31,6 +31,7 @@ public class AreaDAO extends DBContext {
             System.out.println("Connect failed");
         }
     }
+  
 public List<Branch> getAllAreas(int offset, int limit) {
     List<Branch> list = new ArrayList<>();
     String sql = "SELECT * FROM Areas ORDER BY area_id OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
@@ -221,7 +222,51 @@ public List<Branch> getAllAreas(int offset, int limit) {
         e.printStackTrace();
     }
 }
+public List<Branch> getAreasByNameStaff(String nameStaff, int offset, int limit) {
+    List<Branch> list = new ArrayList<>();
+    String sql = "SELECT * FROM Areas WHERE nameStaff = ? ORDER BY area_id OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+    try (Connection con = getConnection();
+         PreparedStatement ps = con.prepareStatement(sql)) {
+        ps.setString(1, nameStaff);
+        ps.setInt(2, offset);
+        ps.setInt(3, limit);
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            // map dữ liệu vào Branch, add vào list
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return list;
+}
+public int countAreasByNameStaff(String nameStaff) {
+    int count = 0;
+    String sql = "SELECT COUNT(*) FROM Areas WHERE nameStaff = ?";
+    try (Connection con = getConnection();
+         PreparedStatement ps = con.prepareStatement(sql)) {
+        ps.setString(1, nameStaff);
+        ResultSet rs = ps.executeQuery();
+        if (rs.next()) count = rs.getInt(1);
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return count;
+}
 
+public List<String> getAllNameStaff() {
+    List<String> list = new ArrayList<>();
+    String sql = "SELECT DISTINCT nameStaff FROM Areas";
+    try (Connection con = getConnection();
+         PreparedStatement ps = con.prepareStatement(sql)) {
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            list.add(rs.getString(1));
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return list;
+}
 
     public void deleteById(int areaId) {
         String sql = "delete from Areas where area_id = ?";
@@ -423,30 +468,7 @@ public int countAllAreas() {
     }
     public static void main(String[] args) {
          Branch branch = new Branch();
-//        branch.setName("Sân cầu lông 1A");
-//        branch.setLocation("123 Đường ABC, Quận 1, TP.HCM");
-//        branch.setManager_id(2);       
-//        branch.setEmptyCourt(5);         
-//        branch.setOpenTime(java.sql.Time.valueOf("07:00:00"));
-//        branch.setCloseTime(java.sql.Time.valueOf("22:00:00"));
-//        branch.setDescription("Khu vực sân tiêu chuẩn quốc tế, phòng rộng.");
-//        branch.setPhone_branch("0909000111");
-//        branch.setNameStaff("Nguyễn Văn Quản Lý");
-//
-//        // Tạo DAO và gọi addRegion
-//        try {
-//            // Đảm bảo đã khởi tạo kết nối JDBC trong RegionDAO
-//            AreaDAO regionDAO = new AreaDAO(); // hoặc tên DAO bạn đang dùng
-//            regionDAO.addRegion(branch);
-//            System.out.println("Thêm khu vực thành công!");
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            System.out.println("Lỗi khi thêm khu vực: " + e.getMessage());
-//        }
-//AreaDAO dao =  new AreaDAO();
-//   List<Branch> list = dao.getAllArea();
-//   for(Branch l : list) {
-//       System.out.println(l);
-//   }
+        AreaDAO dao = new AreaDAO();
+        dao.deleteById(14);
     }
 }
