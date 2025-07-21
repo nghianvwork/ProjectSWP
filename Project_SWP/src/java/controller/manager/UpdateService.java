@@ -79,7 +79,7 @@ public class UpdateService extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
-protected void doPost(HttpServletRequest request, HttpServletResponse response)
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
             request.setCharacterEncoding("UTF-8");
@@ -89,24 +89,31 @@ protected void doPost(HttpServletRequest request, HttpServletResponse response)
             double price = Double.parseDouble(request.getParameter("price"));
             String description = request.getParameter("description");
             String status = request.getParameter("status");
+            String category = request.getParameter("category"); // Lấy category
 
+            // Lấy thông tin cũ để lấy lại ảnh nếu không upload mới
             Service oldService = ServiceDAO.getServiceById(service_id);
             String oldImageUrl = oldService != null ? oldService.getImage_url() : null;
 
+            // Xử lý ảnh mới
             Part filePart = request.getPart("image_file");
             String fileName = null;
             if (filePart != null && filePart.getSize() > 0) {
                 fileName = System.currentTimeMillis() + "_" + Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
                 String uploadPath = getServletContext().getRealPath("/uploads");
                 File uploadDir = new File(uploadPath);
-                if (!uploadDir.exists()) uploadDir.mkdirs();
+                if (!uploadDir.exists()) {
+                    uploadDir.mkdirs();
+                }
                 filePart.write(uploadPath + File.separator + fileName);
             }
 
             // Nếu không upload file mới, giữ nguyên ảnh cũ
-            String image_url = (fileName != null) ? "uploads" + fileName : oldImageUrl;
+            String image_url = (fileName != null) ? "uploads/" + fileName : oldImageUrl;
 
-            Service service = new Service(service_id, name, price, description, image_url, status);
+            // Tạo đối tượng Service với đủ 7 tham số
+            Service service = new Service(service_id, name, price, description, image_url, status, category);
+
             boolean result = ServiceDAO.updateService(service);
 
             response.sendRedirect("ViewEquipments?status=updated");

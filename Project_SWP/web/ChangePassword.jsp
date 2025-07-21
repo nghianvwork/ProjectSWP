@@ -347,9 +347,7 @@
                                 <c:when test="${error == 'incorrect'}">
                                     Mật khẩu cũ không đúng! Vui lòng kiểm tra lại.
                                 </c:when>
-                                <c:when test="${error == 'mismatch'}">
-                                    Mật khẩu mới không khớp! Vui lòng nhập lại.
-                                </c:when>
+                                
                                 <c:otherwise>
                                     ${error}
                                 </c:otherwise>
@@ -440,27 +438,7 @@
                         strengthBar.classList.add('strength-strong');
                     }
                 });
-                function validatePasswordMatch() {
-                    if (confirmPassword.value && newPassword.value !== confirmPassword.value) {
-                        confirmPassword.style.borderColor = '#ff6b6b';
-                        return false;
-                    } else if (confirmPassword.value) {
-                        confirmPassword.style.borderColor = '#66bb6a';
-                        return true;
-                    }
-                    return true;
-                }
-                confirmPassword.addEventListener('input', validatePasswordMatch);
-                newPassword.addEventListener('input', validatePasswordMatch);
-                form.addEventListener('submit', function (e) {
-                    if (newPassword.value !== confirmPassword.value) {
-                        e.preventDefault();
-                        confirmPassword.style.borderColor = '#ff6b6b';
-                        confirmPassword.focus();
-                        return false;
-                    }
-                    submitBtn.innerHTML = 'Đang xử lý...';
-                });
+              
             });
         </script>
         <script>
