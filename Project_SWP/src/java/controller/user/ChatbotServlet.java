@@ -24,7 +24,21 @@ public class ChatbotServlet extends HttpServlet {
     private static final String GEMINI_API_KEY = "AIzaSyDNuTvU_1Q3bS-LXSqFymuEcVpESv6thl8";
     private static final String GEMINI_ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=" + GEMINI_API_KEY;
     private ChatDAO chatDAO = new ChatDAO();
- 
+     @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException {
+    HttpSession session = request.getSession(false);
+    User user = (session != null) ? (User) session.getAttribute("user") : null;
+    Integer userId = (user != null) ? user.getUser_Id() : null;
+    List<ChatMessage> chatHistory = new ArrayList<>();
+    if (userId != null) {
+        chatHistory = chatDAO.getMessagesByUser(userId);
+    }
+    request.setAttribute("chatHistory", chatHistory);
+         System.out.println("lich su:" +chatHistory);
+    request.getRequestDispatcher("homepageUser.jsp").forward(request, response); 
+}
+
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -67,14 +81,11 @@ public class ChatbotServlet extends HttpServlet {
         response.getWriter().write(botResponse);
     }
 
-   private String handleBookingRequest(Integer userId, String message) {
-    if (userId == null) {
-        return "Bạn cần đăng nhập trước khi đặt sân.";
-    }
+  private String handleBookingRequest(Integer userId, String message) {
+    if (userId == null) return "Bạn cần đăng nhập trước khi đặt sân.";
 
     Pattern pattern = Pattern.compile("đặt sân (\\d{2}/\\d{2}/\\d{4})");
     Matcher matcher = pattern.matcher(message.toLowerCase());
-
     if (!matcher.find()) {
         return "Vui lòng nhập đúng mẫu: 'đặt sân dd/MM/yyyy'.";
     }
@@ -83,30 +94,58 @@ public class ChatbotServlet extends HttpServlet {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         LocalDate date = LocalDate.parse(matcher.group(1), formatter);
 
+        AreaDAO areaDAO = new AreaDAO();
         CourtDAO courtDAO = new CourtDAO();
         BookingDAO bookingDAO = new BookingDAO();
         Service_BranchDAO serviceDAO = new Service_BranchDAO();
 
-        List<Courts> courts = courtDAO.getAllCourts();
-        StringBuilder responseBuilder = new StringBuilder("Các slot trống vào ngày " + matcher.group(1) + ":\n");
+        StringBuilder responseBuilder = new StringBuilder();
+        responseBuilder.append("\n");
+        responseBuilder.append(" DANH SÁCH SLOT TRỐNG NGÀY ").append(matcher.group(1)).append("**\n");
+        responseBuilder.append("----------\n\n");
 
-        for (Courts court : courts) {
-            List<Slot> availableSlots = bookingDAO.getAvailableSlots(court.getCourt_id(), date);
-            List<Branch_Service> services = serviceDAO.getAllAreaServices(court.getArea_id());
+        List<Branch> areas = areaDAO.getAllAreas();
+        for (Branch area : areas) {
+            responseBuilder.append(" **Khu vực: ").append(area.getName())
+                           .append("** (ID: ").append(area.getArea_id()).append(")\n");
+            responseBuilder.append("---------------\n");
 
-            responseBuilder.append("\nSân ").append(court.getCourt_id()).append(":");
-            for (Slot slot : availableSlots) {
-                responseBuilder.append("\n- Từ ").append(slot.getStart()).append(" đến ").append(slot.getEnd());
+            List<Courts> courts = courtDAO.getCourtsByAreaId(area.getArea_id());
+            if (courts == null || courts.isEmpty()) {
+                responseBuilder.append("   Không có sân nào trong khu vực này.\n\n");
+                continue;
             }
-            responseBuilder.append("\n");
-            responseBuilder.append("\nDịch vụ: ");
-            for (Branch_Service service : services) {
-                responseBuilder.append(service.getService().getName()).append(", ");
+
+            for (Courts court : courts) {
+                responseBuilder.append("  Sân: ").append(court.getCourt_number())
+                               .append(" (ID: ").append(court.getCourt_id()).append(")\n");
+
+                List<Slot> availableSlots = bookingDAO.getAvailableSlots(court.getCourt_id(), date);
+                if (availableSlots == null || availableSlots.isEmpty()) {
+                    responseBuilder.append("      - Không còn slot trống.\n");
+                } else {
+                    for (Slot slot : availableSlots) {
+                        responseBuilder.append("      - [").append(slot.getStart())
+                                       .append(" - ").append(slot.getEnd()).append("]\n");
+                    }
+                }
+                responseBuilder.append("\n---");
             }
-            responseBuilder.setLength(responseBuilder.length() - 2);
-            responseBuilder.append("\n--------");
+
+  
+            List<Branch_Service> services = serviceDAO.getAllAreaServices(area.getArea_id());
+            responseBuilder.append("  ️ Dịch vụ: ");
+            if (services == null || services.isEmpty()) {
+                responseBuilder.append("Không có\n");
+            } else {
+                for (Branch_Service service : services) {
+                    responseBuilder.append(service.getService().getName()).append(", ");
+                }
+                responseBuilder.setLength(responseBuilder.length() - 2); // Xoá dấu phẩy cuối
+                responseBuilder.append("\n");
+            }
+            responseBuilder.append("=================\n\n");
         }
-
         return responseBuilder.toString();
 
     } catch (Exception e) {
