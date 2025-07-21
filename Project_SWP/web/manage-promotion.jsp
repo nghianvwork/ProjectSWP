@@ -115,6 +115,7 @@
                             <table class="table table-hover table-bordered">
                                 <thead class="thead-dark">
                                     <tr>
+                                        <th>STT</th>
                                         <th>Tiêu đề</th>
                                         <th>Miêu tả</th>
                                         <th>Giảm (%)</th>
@@ -129,6 +130,7 @@
                                 <tbody>
                                     <c:forEach var="promo" items="${promotionList}" varStatus="loop">
                                         <tr>
+                                             <td>${loop.index + 1}</td>
                                             <td>${promo.title}</td>
                                             <td>${promo.description}</td>
                                             <td>${promo.discountPercent}</td>

@@ -1,4 +1,4 @@
- <%-- 
+<%-- 
 
     Document   : homepageUser
     Created on : May 26, 2025, 10:48:19 PM
@@ -376,9 +376,15 @@
             <div id="chatbot-toggle" onclick="toggleChatbot()">💬</div>
 
 
-            <!-- Chatbot Panel -->
+          
             <div id="chatbot-container">
-                <div id="chatbox"></div>
+                <div id="chatbox">
+                    <c:forEach var="msg" items="${chatHistory}">
+                        <div class="msg-${msg.senderType}">
+                            <span><c:out value="${msg.content}"/></span>
+                        </div>
+                    </c:forEach>
+                </div>
                 <div style="display: flex;
                      margin-top: 5px;">
                     <input type="text" id="userMessage" placeholder="Nhập tin nhắn..."
@@ -435,6 +441,8 @@
                                     .replace(/</g, "&lt;")
                                     .replace(/>/g, "&gt;");
                         }
+
+
             </script>
             <main class="main">
 

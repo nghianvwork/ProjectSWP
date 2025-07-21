@@ -105,11 +105,20 @@
                         <h3 class="mb-4 text-primary">🏙 Quản lí khu vực</h3>
 
                         <!-- Search Bar -->
-                        <form action="search-branch" method="POST" class="form-inline mb-4">
-                            <input type="text" name="searchInput" value="${searchKeyword}" class="form-control mr-2 w-50" placeholder="🔍 Tìm kiếm theo tên khu vực">
-                            <button type="submit" class="btn btn-primary">Tìm kiếm</button>
-                        </form>
                        
+                        <form action="view-region" method="get" class="form-inline mb-4">
+                            <input type="text" name="searchInput" value="${searchKeyword}" class="form-control mr-2 w-50" placeholder="🔍 Tìm kiếm theo tên khu vực">
+                            <select name="staffId" class="form-control mr-2" style="width:220px;">
+                                <option value="">-- Lọc theo quản lý --</option>
+                                <c:forEach var="s" items="${staffList}">
+                                    <option value="${s.user_Id}" ${staffId == s.user_Id ? 'selected' : ''}>
+                                        ${s.lastname} ${s.firstname}
+                                    </option>
+                                </c:forEach>
+                            </select>
+                            <button type="submit" class="btn btn-primary">Lọc / Tìm kiếm</button>
+                        </form>
+
                         <!-- Regions Table -->
                         <div class="table-responsive">
                             <table class="table table-hover table-bordered">

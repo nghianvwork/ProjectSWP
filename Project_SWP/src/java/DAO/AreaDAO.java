@@ -32,6 +32,57 @@ public class AreaDAO extends DBContext {
         }
     }
   
+public int countAreasWithFilter(Integer staffId, String search) {
+    StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM Areas WHERE 1=1");
+    if (staffId != null) sql.append(" AND manager_id = ?");
+    if (search != null && !search.trim().isEmpty()) sql.append(" AND name LIKE ?");
+    try (PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+        int idx = 1;
+        if (staffId != null) ps.setInt(idx++, staffId);
+        if (search != null && !search.trim().isEmpty()) ps.setString(idx++, "%" + search.trim() + "%");
+        ResultSet rs = ps.executeQuery();
+        if (rs.next()) return rs.getInt(1);
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return 0;
+}
+
+
+public List<Branch> getAreasWithFilter(Integer staffId, String search, int offset, int limit) {
+    List<Branch> list = new ArrayList<>();
+    StringBuilder sql = new StringBuilder("SELECT * FROM Areas WHERE 1=1");
+    if (staffId != null) sql.append(" AND manager_id = ?");
+    if (search != null && !search.trim().isEmpty()) sql.append(" AND name LIKE ?");
+    sql.append(" ORDER BY area_id OFFSET ? ROWS FETCH NEXT ? ROWS ONLY");
+    try (PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+        int idx = 1;
+        if (staffId != null) ps.setInt(idx++, staffId);
+        if (search != null && !search.trim().isEmpty()) ps.setString(idx++, "%" + search.trim() + "%");
+        ps.setInt(idx++, offset);
+        ps.setInt(idx, limit);
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            
+            Branch ar = new Branch();
+          ar.setArea_id(rs.getInt("area_id"));
+            ar.setName(rs.getString("name"));
+            ar.setLocation(rs.getString("location"));
+            ar.setManager_id(rs.getInt("manager_id"));
+            ar.setEmptyCourt(rs.getInt("court"));
+            ar.setOpenTime(rs.getTime("open_time"));
+            ar.setCloseTime(rs.getTime("close_time"));
+            ar.setDescription(rs.getString("descriptions"));
+            ar.setPhone_branch(rs.getString("phone_area"));
+            ar.setNameStaff(rs.getString("nameStaff"));
+            list.add(ar);
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return list;
+}
+
 public List<Branch> getAllAreas(int offset, int limit) {
     List<Branch> list = new ArrayList<>();
     String sql = "SELECT * FROM Areas ORDER BY area_id OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
