@@ -127,7 +127,7 @@
                                         <th>STT</th>
                                         <th>Tên</th>
                                         <th>Địa chỉ</th>
-                                        <th class="col-small">Số lượng sân</th>
+                                      
                                         <th class="col-time">Thời gian mở cửa</th>
                                         <th class="col-time">Thời gian đóng cửa</th>
                                         <th class="col-description">Mô tả</th>
@@ -148,11 +148,10 @@
                                     <c:forEach var="a" items="${area}" varStatus="loop">
                                         <tr>
                                             <td>${loop.index +1} </td>
-                                            <td>${a.name}</td>
+                                            <td><a href="courts?area_id=${a.area_id}"> ${a.name}</a>
+                                               </td>
                                             <td>${a.location}</td>
-                                            <td>
-                                                <a href="courts?area_id=${a.area_id}">${a.emptyCourt}</a>
-                                            </td>
+                                            
                                             <td>${a.openTime}</td>
                                             <td>${a.closeTime}</td>
                                             <td>${a.description}</td>
@@ -256,13 +255,13 @@
                                 <div class="modal-content">
                                     <form action="add-region" method="POST">
                                         <div class="modal-header">
-                                            <h5 class="modal-title">Add Region</h5>
+                                            <h5 class="modal-title">Thêm khu vực</h5>
                                             <button type="button" class="close text-white" data-dismiss="modal">&times;</button>
                                         </div>
                                         <div class="modal-body">
 
                                             <div class="form-group">
-                                                <label>Tên địa điểm</label>
+                                                <label>Tên khu vực</label>
                                                 <input type="text" name="regionName" class="form-control" required>
                                             </div>
                                             <div class="form-group">

@@ -109,6 +109,12 @@
                                 <button class="close-btn" onclick="closeNotification()">&times;</button>
                             </div>
                         </c:if>
+                             <c:if test="${not empty sessionScope.error}">
+                            <div id="notification" class="notification success">
+                                <i class="fas fa-check-circle"></i> ${sessionScope.error}
+                                <button class="close-btn" onclick="closeNotification()">&times;</button>
+                            </div>
+                        </c:if>
 
                       
                         <div class="table-responsive">
