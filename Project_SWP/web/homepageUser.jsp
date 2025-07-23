@@ -376,15 +376,25 @@
             <div id="chatbot-toggle" onclick="toggleChatbot()">💬</div>
 
 
-          
+
             <div id="chatbot-container">
                 <div id="chatbox">
+                    <c:if test="${empty chatHistory}">
+                        <div class="msg-bot">
+                            <span>
+                                Xin chào! Bạn có thể sử dụng các mẫu sau để đặt sân:<br>
+                                - đặt sân dd/mm/yyy (để xem các slot trống của các sân trong ngày)<br>
+                                - đặt sân 1 từ 15:00 đến 17:00 ngày dd/mm/yyyy với dịch vụ nước, khăn
+                            </span>
+                        </div>
+                    </c:if>
                     <c:forEach var="msg" items="${chatHistory}">
                         <div class="msg-${msg.senderType}">
                             <span><c:out value="${msg.content}"/></span>
                         </div>
                     </c:forEach>
                 </div>
+
                 <div style="display: flex;
                      margin-top: 5px;">
                     <input type="text" id="userMessage" placeholder="Nhập tin nhắn..."
@@ -403,6 +413,8 @@
                         Gửi
                     </button>
                 </div>
+               
+
             </div>
 
             <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>

@@ -80,12 +80,12 @@
                 <input type="hidden" name="courtId" value="${court.court_id}" />
                 <input type="hidden" name="date" value="${selectedDate}" />
                 <div class="mb-3">
-                    <label class="form-label">Chọn ca chơi:</label>
+                    <label class="form-label">Chọn ca:</label>
                     <c:forEach var="entry" items="${shiftSlots}">
                         <div class="mb-2">
                             <b>
-                                Ca: 
-                                <c:out value="${entry.key.shiftName}"/> -   <c:out value="${entry.key.price}(VND)"/>
+                                Ca chơi: 
+                                <c:out value="${entry.key.shiftName}"/> -   <c:out value="${entry.key.price}(VND/1 ca chơi)"/>
                                 (<c:out value="${entry.key.startTime}"/> - <c:out value="${entry.key.endTime}"/> )
                             </b>
                         </div>

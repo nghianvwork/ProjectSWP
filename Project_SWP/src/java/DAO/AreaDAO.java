@@ -476,21 +476,21 @@ public List<String> getAllNameStaff() {
         }
     }
 
-    public boolean isRegionNameExist(String name, int managerId) {
-        String sql = "SELECT COUNT(*) FROM Areas WHERE name = ? AND manager_id = ?";
-        try (
-                PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, name);
-            ps.setInt(2, managerId);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                return rs.getInt(1) > 0;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+    public boolean isRegionNameExist(String name) {
+    String sql = "SELECT COUNT(*) FROM Areas WHERE LOWER(name) = ? ";
+    try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        ps.setString(1, name.trim().toLowerCase());
+        
+        ResultSet rs = ps.executeQuery();
+        if (rs.next()) {
+            return rs.getInt(1) > 0;
         }
-        return false;
+    } catch (Exception e) {
+        e.printStackTrace();
     }
+    return false;
+}
+
 public int countAllAreas() {
     String sql = "SELECT COUNT(*) AS Total FROM Areas";
     try {
