@@ -343,8 +343,8 @@
         }
 
         .slot-button.active {
-            border: 2px solid #1e7e34;
-            background: #218838 !important;
+            border: 2px solid #c82333;
+            background: #dc3545 !important;
             color: #fff;
         }
     </style>
