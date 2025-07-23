@@ -45,7 +45,7 @@ public class ViewBranch extends HttpServlet {
             User user = (User) session.getAttribute("user");
             if (user != null && "admin".equals(user.getRole())) {
                 int page = 1;
-                int recordsPerpage = 3;
+                int recordsPerpage = 6;
                 if (request.getParameter("page") != null) {
                     try {
                         page = Integer.parseInt(request.getParameter("page"));
@@ -104,12 +104,12 @@ public class ViewBranch extends HttpServlet {
     }
 
     private boolean validateToken(String token) {
-        // Xác thực token, ví dụ kiểm tra token trong cơ sở dữ liệu
-        return token.endsWith("_0810_token"); // Ví dụ đơn giản
+     
+        return token.endsWith("_0810_token");
     }
 
     private String getUsernameFromToken(String token) {
-        // Lấy username từ token
+      
         return token.replace("_0810_token", "");
     }
 

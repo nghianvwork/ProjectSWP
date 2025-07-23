@@ -383,8 +383,8 @@
                         <div class="msg-bot">
                             <span>
                                 Xin chào! Bạn có thể sử dụng các mẫu sau để đặt sân:<br>
-                                - đặt sân dd/mm/yyy (để xem các slot trống của các sân trong ngày)<br>
-                                - đặt sân 1 từ 15:00 đến 17:00 ngày dd/mm/yyyy với dịch vụ nước, khăn
+                                Bước 1: Để xem các slot trống trong ngày hãy nhập: Đặt sân dd/mm/yyyy (với dd/mm/yyyy là ngày muốn xem)<br>
+                                Bước 2: Để đặt sân kèm dịch vụ hãy nhập:  Đặt sân &lt;ID&gt; từ &lt;hh:mm&gt; đến &lt;hh:mm&gt; ngày dd/mm/yyyy với dịch vụ &lt;tên dịch vụ&gt;
                             </span>
                         </div>
                     </c:if>
@@ -458,7 +458,7 @@
             </script>
             <main class="main">
 
-                <!-- Thông báo thành công/lỗi -->
+                
                 <c:if test="${not empty joinEventSuccess}">
                     <div class="alert alert-success alert-dismissible fade show" role="alert" style="margin-bottom: 20px;
                          padding: 15px;
