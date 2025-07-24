@@ -45,13 +45,9 @@ public class AddBranch extends HttpServlet {
         Time closeTime = Time.valueOf(request.getParameter("closeTime") + ":00");
         String description = request.getParameter("description");
         String phone_branch = request.getParameter("phone_branch");
-        int empty = 0;
+        
 
-        try {
-            empty = Integer.parseInt(request.getParameter("emptyCourt"));
-        } catch (NumberFormatException e) {
-            System.out.println("Lỗi chuyển đổi số lượng sân: " + e.getMessage());
-        }
+      
         if (openTime.compareTo(closeTime) >= 0) {
             session.setAttribute("success", "Thời gian mở cửa phải trước thời gian đóng cửa!");
             response.sendRedirect("view-region");
@@ -66,7 +62,7 @@ public class AddBranch extends HttpServlet {
         Branch area = new Branch();
         area.setName(name);
         area.setLocation(address);
-        area.setEmptyCourt(empty);
+    
         area.setOpenTime(openTime);
         area.setCloseTime(closeTime);
         area.setDescription(description);

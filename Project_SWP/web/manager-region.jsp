@@ -105,7 +105,7 @@
                         <h3 class="mb-4 text-primary">🏙 Quản lí khu vực</h3>
 
                         <!-- Search Bar -->
-                       
+
                         <form action="view-region" method="get" class="form-inline mb-4">
                             <input type="text" name="searchInput" value="${searchKeyword}" class="form-control mr-2 w-50" placeholder="🔍 Tìm kiếm theo tên khu vực">
                             <select name="staffId" class="form-control mr-2" style="width:220px;">
@@ -127,7 +127,7 @@
                                         <th>STT</th>
                                         <th>Tên</th>
                                         <th>Địa chỉ</th>
-                                      
+
                                         <th class="col-time">Thời gian mở cửa</th>
                                         <th class="col-time">Thời gian đóng cửa</th>
                                         <th class="col-description">Mô tả</th>
@@ -149,9 +149,9 @@
                                         <tr>
                                             <td>${loop.index +1} </td>
                                             <td><a href="courts?area_id=${a.area_id}"> ${a.name}</a>
-                                               </td>
+                                            </td>
                                             <td>${a.location}</td>
-                                            
+
                                             <td>${a.openTime}</td>
                                             <td>${a.closeTime}</td>
                                             <td>${a.description}</td>
@@ -199,21 +199,22 @@
                                                                     </div>
                                                                     <div class="form-group">
                                                                         <label>Chọn nhân viên quản lí</label>
-                                                                        <select name="manager_id" class="form-control" required>
+                                                                        <select name="manager_id" class="form-control manager-select" required>
                                                                             <option value="">-- Chọn nhân viên --</option>
                                                                             <c:forEach var="staff" items="${staffList}">
                                                                                 <option value="${staff.user_Id}"
-                                                                                        <c:if test="${a.manager_id == staff.user_Id}">selected</c:if>
-                                                                                            >
-                                                                                        ${staff.lastname} ${staff.firstname}
+                                                                                        data-phone="${staff.phoneNumber}"
+                                                                                        <c:if test="${a.manager_id == staff.user_Id}">selected</c:if>>
+                                                                                    ${staff.lastname} ${staff.firstname}
                                                                                 </option>
                                                                             </c:forEach>
                                                                         </select>
                                                                     </div>
                                                                     <div class="form-group">
                                                                         <label>Số điện thoại quản lí </label>
-                                                                        <input type="text" name="phone_branch" class="form-control" value="${a.phone_branch}">
+                                                                        <input type="number" name="phone_branch" class="form-control phone-input" value="${a.phone_branch}" readonly>
                                                                     </div>
+
 
                                                                 </div>
                                                                 <div class="modal-footer">
@@ -287,18 +288,21 @@
                                                 </div>
                                                 <div class="form-group">
                                                     <label>Chọn nhân viên quản lí</label>
-                                                    <select name="manager_id" class="form-control" required>
+                                                    <select name="manager_id" class="form-control" id="addManagerSelect" required>
                                                         <option value="">-- Chọn nhân viên --</option>
                                                         <c:forEach var="staff" items="${staffList}">
-                                                            <option value="${staff.user_Id}">
-                                                                ${staff.lastname} ${staff.firstname}
+                                                            <option value="${staff.user_Id}" data-phone="${staff.phoneNumber}">
+                                                                ${staff.firstname} ${staff.lastname}
                                                             </option>
                                                         </c:forEach>
                                                     </select>
+
+
+
                                                 </div>
                                                 <div class="form-group">
                                                     <label>Số điện thoại quản lí </label>
-                                                    <input type="text" name="phone_branch" class="form-control" required="">
+                                                    <input type="number" name="phone_branch" class="form-control" id="addPhoneInput" readonly>
                                                 </div>
                                             </div>
                                             <div class="modal-footer">
@@ -322,31 +326,55 @@
         <% } %>
         });
     </script>-->
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+            var managerSelect = document.getElementById('addManagerSelect');
+            var phoneInput = document.getElementById('addPhoneInput');
+            function showPhone() {
+            var selectedOption = managerSelect.options[managerSelect.selectedIndex];
+            var phone = selectedOption.getAttribute('data-phone') || '';
+            phoneInput.value = phone;
+            }
+            managerSelect.addEventListener('change', showPhone);
+            showPhone();
+            });
+            document.querySelectorAll('.manager-select').forEach(function(select) {
+            var phoneInput = select.closest('.modal-body').querySelector('.phone-input');
+            function showPhone() {
+            var selectedOption = select.options[select.selectedIndex];
+            var phone = selectedOption.getAttribute('data-phone') || '';
+            phoneInput.value = phone;
+            }
+            select.addEventListener('change', showPhone);
+            showPhone();
+            });
+            });</script>
 
         <script>
 
             function confirmDelete() {
-                return confirm("Do you want to delete this?");
+            return confirm("Do you want to delete this?");
             }
             function closeNotification() {
-                const notification = document.getElementById('notification');
-                if (notification) {
-                    notification.style.animation = 'slideOutRight 0.3s ease-out';
-                    setTimeout(() => {
-                        notification.style.display = 'none';
-                    }, 300);
-                }
+            const notification = document.getElementById('notification');
+            if (notification) {
+            notification.style.animation = 'slideOutRight 0.3s ease-out';
+            setTimeout(() => {
+            notification.style.display = 'none';
+            }, 300);
+            }
             }
         </script>
         <c:if test="${not empty error}">
             <script>
                 Swal.fire({
-                    title: "Tồn tại !",
-                    text: "Tồn tại địa điểm rồi!",
-                    icon: "warning"
+                title: "Tồn tại !",
+                        text: "Tồn tại địa điểm rồi!",
+                        icon: "warning"
                 });
             </script>
         </c:if>
+
 
         <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>

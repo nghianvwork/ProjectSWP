@@ -81,6 +81,9 @@ public class ViewBranch extends HttpServlet {
                 UserDAO userDAO = new UserDAO();
                 List<User> staffList = userDAO.getAllStaff();
                 request.setAttribute("staffList", staffList);
+                for (User staff : staffList) {
+    System.out.println("Staff: " + staff.getLastname() + ", Phone: " + staff.getPhone_number());
+}
 
                 String error = (String) session.getAttribute("error");
                 if (error != null) {

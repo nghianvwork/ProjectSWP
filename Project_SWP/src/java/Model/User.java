@@ -30,7 +30,7 @@ public class User {
     private Date dateOfBirth;
     private String fullName = firstname + lastname;
     private boolean sendMail;
-
+  
     public User() {
     }
 
@@ -119,6 +119,9 @@ public class User {
 
     public void setGender(String gender) {
         this.gender = gender;
+    }
+    public String getPhoneNumber() {
+        return phone_number;
     }
 
     public String getFirstname() {
