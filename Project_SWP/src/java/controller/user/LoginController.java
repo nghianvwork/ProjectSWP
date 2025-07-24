@@ -69,21 +69,22 @@ public class LoginController extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+@Override
+protected void doPost(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException {
 
-        String username = request.getParameter("username");
-        String password = request.getParameter("password");
-        String remember = request.getParameter("rememberMe");
+    String username = request.getParameter("username");
+    String password = request.getParameter("password");
+    String remember = request.getParameter("rememberMe");
 
-        UserDAO userDAO = new UserDAO();
+    UserDAO userDAO = new UserDAO();
 
-        String hashedPassword = PasswordUtil.hashPassword(password);
+    String hashedPassword = PasswordUtil.hashPassword(password);
 
-        User user = userDAO.login(username, hashedPassword);
+    User user = userDAO.login(username, hashedPassword);
 
-        if (user != null) {
+    if (user != null) {
+        if ("active".equalsIgnoreCase(user.getStatus())) {
             HttpSession session = request.getSession();
             session.setAttribute("user", user);
 
@@ -100,7 +101,6 @@ public class LoginController extends HttpServlet {
                 response.addCookie(cPass);
                 response.addCookie(cRemember);
             } else {
-
                 Cookie cUser = new Cookie("username", null);
                 Cookie cPass = new Cookie("password", null);
                 Cookie cRemember = new Cookie("remember", null);
@@ -112,20 +112,26 @@ public class LoginController extends HttpServlet {
                 response.addCookie(cRemember);
             }
 
+            // Chuyển hướng dựa vào vai trò
             if ("staff".equalsIgnoreCase(user.getRole())) {
                 response.sendRedirect("staff-dashboard");
             } else if ("admin".equalsIgnoreCase(user.getRole())) {
-                response.sendRedirect("AdminDashBoard?filter=all");
+                response.sendRedirect("Admin_DashBoard.jsp");
             } else {
                 response.sendRedirect("HomePageUser");
             }
-
         } else {
-
-            request.setAttribute("error", "Tên đăng nhập hoặc mật khẩu không hợp lệ");
+            
+            request.setAttribute("error", "Tài khoản của bạn chưa được kích hoạt hoặc đã bị khóa.");
             request.getRequestDispatcher("login.jsp").forward(request, response);
         }
+    } else {
+        // Sai tài khoản hoặc mật khẩu
+        request.setAttribute("error", "Tên đăng nhập hoặc mật khẩu không hợp lệ");
+        request.getRequestDispatcher("login.jsp").forward(request, response);
     }
+}
+
 
     /**
      * Returns a short description of the servlet.

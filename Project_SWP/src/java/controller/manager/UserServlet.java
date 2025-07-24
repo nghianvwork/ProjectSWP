@@ -19,7 +19,7 @@ import utils.PasswordUtil;
 public class UserServlet extends HttpServlet {
 
     private UserDAO userDAO;
-    private static final int PAGE_SIZE = 5;
+    private static final int PAGE_SIZE = 10;
 
     @Override
     public void init() {
@@ -85,19 +85,15 @@ public class UserServlet extends HttpServlet {
             String dobStr = request.getParameter("date_of_birth");
 
             // Kiểm tra trùng username / email / phone
-            boolean phoneExists = userDAO.isPhoneExists(phone);
             Object[] checkResult = userDAO.checkUserByUsernameOrEmail(username, email);
-            int code = (int) checkResult[0];
+            User userByUsername = (User) checkResult[1];
+            User userByEmail = (User) checkResult[1];
+            boolean phoneExists = userDAO.isPhoneExists(phone);
 
-            if (code == 0) {
-                // Username & email đều tồn tại, trùng cùng user
-                request.setAttribute("error", "Tên đăng nhập và Email đã tồn tại.");
-            } else if (code == 1) {
+            if (userByUsername != null) {
                 request.setAttribute("error", "Tên đăng nhập đã tồn tại.");
-            } else if (code == 2) {
+            } else if (userByEmail != null) {
                 request.setAttribute("error", "Email đã tồn tại.");
-            } else if (code == 4) {
-                request.setAttribute("error", "Tên đăng nhập và Email đã thuộc 2 người khác nhau.");
             } else if (phoneExists) {
                 request.setAttribute("error", "Số điện thoại đã tồn tại.");
             }
@@ -180,18 +176,53 @@ public class UserServlet extends HttpServlet {
             response.sendRedirect("users");
             return;
 
-        } else if ("delete".equals(action)) {
-            String userIdStr = request.getParameter("userId");
-            int userId = 0;
-            try {
-                userId = Integer.parseInt(userIdStr);
-            } catch (Exception ex) {
-            }
-            userDAO.deleteUser(userId);
-        }
+        }else if ("delete".equals(action)) {
+    String userIdStr = request.getParameter("userId");
+    int userId = 0;
+    int currentPage = 1;
+    try {
+        userId = Integer.parseInt(userIdStr);
+    } catch (Exception ex) {
+    }
+    // Lấy page hiện tại (nếu có)
+    String pageStr = request.getParameter("page");
+    if (pageStr != null) {
+        try {
+            currentPage = Integer.parseInt(pageStr);
+        } catch (Exception ex) {}
+    }
+    userDAO.deleteUser(userId);
+
+    // Tính lại tổng số user và tổng số trang
+    String keyword = request.getParameter("keyword");
+    String status = request.getParameter("status");
+    int totalUsers = userDAO.countUsersByFilter(keyword, status);
+    int totalPages = (int) Math.ceil((double) totalUsers / PAGE_SIZE);
+
+    // Nếu sau khi xóa mà trang hiện tại vượt quá số trang, đẩy về trang cuối
+    if (currentPage > totalPages && totalPages > 0) {
+        currentPage = totalPages;
+    }
+    // Nếu tất cả user đã bị xóa, đảm bảo currentPage là 1
+    if (totalPages == 0) {
+        currentPage = 1;
+    }
+
+    // Redirect kèm tham số page, keyword, status nếu có
+    String url = "users?page=" + currentPage;
+    if (keyword != null && !keyword.isEmpty()) {
+        url += "&keyword=" + keyword;
+    }
+    if (status != null && !status.isEmpty()) {
+        url += "&status=" + status;
+    }
+    response.sendRedirect(url);
+    return;
+}
 
         response.sendRedirect("users");
     }
+ 
 
     public static String generateRandomPassword() {
         int length = 6;

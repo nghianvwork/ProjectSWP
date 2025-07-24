@@ -205,57 +205,65 @@ public class ManageEventController extends HttpServlet {
         request.getRequestDispatcher("event/event-participants.jsp").forward(request, response);
     }
 
-    private void sendEventEmail(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        try {
-            int eventId = Integer.parseInt(request.getParameter("id"));
-            EventDAO eventDAO = new EventDAO();
-            UserDAO userDAO = new UserDAO();
-            
-            // Lấy thông tin sự kiện
-            Event event = eventDAO.getEventById(eventId);
-            if (event == null) {
-                response.sendRedirect("manage-event?error=event_not_found");
-                return;
+private void sendEventEmail(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    try {
+        int eventId = Integer.parseInt(request.getParameter("id"));
+        EventDAO eventDAO = new EventDAO();
+        UserDAO userDAO = new UserDAO();
+
+        // Lấy thông tin sự kiện
+        Event event = eventDAO.getEventById(eventId);
+        if (event == null) {
+            response.sendRedirect("manage-event?error=event_not_found");
+            return;
+        }
+
+        // Lấy danh sách tất cả user có role "user"
+        List<User> users = userDAO.getUsersByRole("user");
+
+        // Lọc chỉ user active
+        List<User> activeUsers = new java.util.ArrayList<>();
+        for (User user : users) {
+            if ("active".equalsIgnoreCase(user.getStatus())) {
+                activeUsers.add(user);
             }
-            
-            // Lấy danh sách tất cả user có role "user"
-            List<User> users = userDAO.getUsersByRole("user");
-            
-            if (users.isEmpty()) {
-                response.sendRedirect("manage-event?error=no_users_found");
-                return;
-            }
-            
-            // Tạo nội dung email
-            String subject = "Mời tham gia sự kiện: " + event.getName();
-            String emailContent = createEventEmailContent(event);
-            
-            // Gửi email cho từng user
-            int successCount = 0;
-            for (User user : users) {
-                if (user.getEmail() != null && !user.getEmail().trim().isEmpty()) {
-                    // Tạo token an toàn cho join event link
-                    String token = TokenUtils.createJoinEventToken(eventId, user.getUser_Id());
-                    
-                    if (token != null) {
-                        // Thay thế placeholder với token
-                        String personalizedContent = emailContent.replace("{JOIN_TOKEN}", token);
-                        
-                        if (EmailUtils.sendEmail(user.getEmail(), subject, personalizedContent)) {
-                            successCount++;
-                        }
+        }
+
+        if (activeUsers.isEmpty()) {
+            response.sendRedirect("manage-event?error=no_users_found");
+            return;
+        }
+
+        // Tạo nội dung email
+        String subject = "Mời tham gia sự kiện: " + event.getName();
+        String emailContent = createEventEmailContent(event);
+
+        // Gửi email cho từng user active
+        int successCount = 0;
+        for (User user : activeUsers) {
+            if (user.getEmail() != null && !user.getEmail().trim().isEmpty()) {
+                // Tạo token an toàn cho join event link
+                String token = TokenUtils.createJoinEventToken(eventId, user.getUser_Id());
+
+                if (token != null) {
+                    // Thay thế placeholder với token
+                    String personalizedContent = emailContent.replace("{JOIN_TOKEN}", token);
+
+                    if (EmailUtils.sendEmail(user.getEmail(), subject, personalizedContent)) {
+                        successCount++;
                     }
                 }
             }
-            
-            // Redirect với thông báo
-            response.sendRedirect("manage-event?success=email_sent&count=" + successCount + "&total=" + users.size());
-            
-        } catch (Exception e) {
-            e.printStackTrace();
-            response.sendRedirect("manage-event?error=send_email_failed");
         }
+
+        // Redirect với thông báo
+        response.sendRedirect("manage-event?success=email_sent&count=" + successCount + "&total=" + activeUsers.size());
+
+    } catch (Exception e) {
+        e.printStackTrace();
+        response.sendRedirect("manage-event?error=send_email_failed");
     }
+}
 
     private String createEventEmailContent(Event event) {
         // Sử dụng template chính xác từ email.jsp bao gồm cả ảnh

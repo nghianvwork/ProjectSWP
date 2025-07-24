@@ -221,7 +221,7 @@
                         <table class="table table-hover mb-0">
                             <thead>
                                 <tr>
-                                    <th><i class="fas fa-id-card"></i> ID Người dùng</th>
+                                    
                                     <th><i class="fas fa-user"></i> Tên người dùng</th>
                                     <th><i class="fas fa-clock"></i> Thời gian đăng ký</th>
                                 </tr>
@@ -229,9 +229,7 @@
                             <tbody>
                                 <c:forEach var="p" items="${participants}" varStatus="status">
                                     <tr>
-                                        <td>
-                                            <i class="fas fa-hashtag"></i> ${p.user.user_Id}
-                                        </td>
+                                       
                                         <td>
                                             <i class="fas fa-user-circle text-danger"></i> 
                                             ${p.user.fullname}

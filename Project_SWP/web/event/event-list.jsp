@@ -543,7 +543,7 @@
                                     <tr>
                                         <th><i class="fas fa-hashtag"></i> ID</th>
                                         <th><i class="fas fa-calendar-alt"></i> Tên Sự kiện</th>
-                                        <th><i class="fas fa-heading"></i> Tiêu đề</th>
+                                        <th><i class="fas fa-heading"></i> Nội dung</th>
                                         <th><i class="fas fa-clock"></i> Ngày bắt đầu</th>
                                         <th><i class="fas fa-clock"></i> Ngày kết thúc</th>
                                         <th><i class="fas fa-map-marker-alt"></i> Khu vực</th>
