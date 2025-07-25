@@ -46,17 +46,6 @@ public class BookingDAO extends DBContext {
         }
     }
 
-    public void autoCancelExpiredPendingBookings() {
-        String sql = "UPDATE Bookings SET status = 'cancelled' "
-                + "WHERE status = 'pending' "
-                + "AND DATEADD(MILLISECOND, DATEDIFF(MILLISECOND,0,start_time), CAST(date AS DATETIME)) <= GETDATE()";
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
     public int countBookingsByManager(int managerId) {
         String sql = "SELECT COUNT(*) FROM Bookings b "
                 + "JOIN Courts c ON b.court_id = c.court_id "
@@ -107,8 +96,9 @@ public class BookingDAO extends DBContext {
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, managerId);
             ResultSet rs = ps.executeQuery();
-            if (rs.next())
+            if (rs.next()) {
                 return rs.getInt(1);
+            }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -120,7 +110,7 @@ public class BookingDAO extends DBContext {
         String sql = "SELECT SUM(total_price) FROM Bookings b "
                 + "JOIN Courts c ON b.court_id = c.court_id "
                 + "JOIN Areas a ON c.area_id = a.area_id "
-                + "WHERE a.manager_id = ? AND b.status = 'completed' "
+                + "WHERE a.manager_id = ? AND b.status != 'cancelled' "
                 + "AND b.date >= DATEADD(day,-6, CAST(GETDATE() AS DATE)) "
                 + "AND b.date <= CAST(GETDATE() AS DATE)";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -325,12 +315,12 @@ public class BookingDAO extends DBContext {
     /**
      * Insert a booking and specify the total price for the reservation.
      *
-     * @param userId     id of the user making the booking
-     * @param courtId    id of the court
-     * @param date       booking date
-     * @param startTime  shift start time
-     * @param endTime    shift end time
-     * @param status     booking status
+     * @param userId id of the user making the booking
+     * @param courtId id of the court
+     * @param date booking date
+     * @param startTime shift start time
+     * @param endTime shift end time
+     * @param status booking status
      * @param totalPrice total price to persist
      * @return generated booking id or -1 on failure
      */
@@ -495,20 +485,18 @@ public class BookingDAO extends DBContext {
     }
 
     public List<Bookings> getBookingsByUserId(int userId) {
-        autoCancelExpiredPendingBookings();
         List<Bookings> bookings = new ArrayList<>();
 
-        String sql = "SELECT b.*, c.court_number, c.area_id, " +
-                "       s.name AS service_name, " +
-                "       (SELECT TOP 1 comment FROM Reviews r " +
-                "        WHERE r.user_id = b.user_id AND r.area_id = c.area_id " +
-                "          AND r.rating = b.rating ORDER BY r.created_at DESC) AS review_comment " +
-                "FROM Bookings b " +
-                "JOIN Courts c ON b.court_id = c.court_id " +
-                "LEFT JOIN Booking_Services bs ON b.booking_id = bs.booking_id " +
-                "LEFT JOIN BadmintonService s ON bs.service_id = s.service_id " +
-                "WHERE b.user_id = ? " +
-                "ORDER BY b.booking_id DESC";
+        String sql = "SELECT b.*, c.court_number, c.area_id, "
+                + "       s.name AS service_name, "
+                + "       (SELECT TOP 1 comment FROM Reviews r "
+                + "        WHERE r.user_id = b.user_id AND r.area_id = c.area_id "
+                + "          AND r.rating = b.rating ORDER BY r.created_at DESC) AS review_comment "
+                + "FROM Bookings b "
+                + "JOIN Courts c ON b.court_id = c.court_id "
+                + "LEFT JOIN Booking_Services bs ON b.booking_id = bs.booking_id "
+                + "LEFT JOIN BadmintonService s ON bs.service_id = s.service_id "
+                + "WHERE b.user_id = ?";
 
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, userId);
@@ -551,9 +539,8 @@ public class BookingDAO extends DBContext {
 
         return bookings;
     }
-    
+
     public List<Bookings> getBookingsForUser(int userId, LocalDate from, LocalDate to, String status) {
-        autoCancelExpiredPendingBookings();
         List<Bookings> list = new ArrayList<>();
         StringBuilder sql = new StringBuilder("SELECT * FROM Bookings WHERE user_id = ?");
         if (from != null) {
@@ -600,7 +587,6 @@ public class BookingDAO extends DBContext {
         return list;
     }
 
-
     public boolean cancelBookingById(int bookingId) {
         String sql = "UPDATE bookings SET status = ? WHERE booking_id = ?";
         try (
@@ -616,7 +602,6 @@ public class BookingDAO extends DBContext {
 
     public List<BookingScheduleDTO> getManagerBookings(int managerId, Integer areaId,
             LocalDate start, LocalDate end, String status) {
-        autoCancelExpiredPendingBookings();
         List<BookingScheduleDTO> list = new ArrayList<>();
 
         StringBuilder sql = new StringBuilder();
@@ -640,7 +625,7 @@ public class BookingDAO extends DBContext {
             sql.append(" AND b.status = ?");
         }
 
-        sql.append(" ORDER BY b.booking_id DESC");
+        sql.append(" ORDER BY b.date, b.start_time");
 
         try (PreparedStatement ps = conn.prepareStatement(sql.toString())) {
             int paramIndex = 1;
@@ -688,14 +673,13 @@ public class BookingDAO extends DBContext {
      * view every booking in the system without filtering by manager.
      */
     public List<BookingScheduleDTO> getAllBookings(Integer areaId, LocalDate start, LocalDate end, String status) {
-        autoCancelExpiredPendingBookings();
         List<BookingScheduleDTO> list = new ArrayList<>();
         StringBuilder sql = new StringBuilder();
         sql.append(
                 "SELECT b.booking_id, b.user_id, b.court_id, b.date, b.start_time, b.end_time, b.status, b.total_price, u.username, c.court_number, c.area_id, a.name AS area_name "
-                        + "FROM Bookings b JOIN Courts c ON b.court_id = c.court_id "
-                        + "JOIN Areas a ON c.area_id = a.area_id "
-                        + "JOIN Users u ON b.user_id = u.user_id WHERE 1=1");
+                + "FROM Bookings b JOIN Courts c ON b.court_id = c.court_id "
+                + "JOIN Areas a ON c.area_id = a.area_id "
+                + "JOIN Users u ON b.user_id = u.user_id WHERE 1=1");
         if (areaId != null) {
             sql.append(" AND a.area_id = ?");
         }
@@ -708,7 +692,7 @@ public class BookingDAO extends DBContext {
         if (status != null && !status.isEmpty()) {
             sql.append(" AND b.status = ?");
         }
-        sql.append(" ORDER BY b.booking_id DESC");
+        sql.append(" ORDER BY b.date, b.start_time");
 
         try (PreparedStatement ps = conn.prepareStatement(sql.toString())) {
             int idx = 1;
@@ -773,6 +757,8 @@ public class BookingDAO extends DBContext {
             Courts court = new CourtDAO().getCourtById(current.getCourt_id());
             PromotionDAO proDao = new PromotionDAO();
             Promotion pro = court != null ? proDao.getCurrentPromotionForArea(court.getArea_id(), date) : null;
+            BigDecimal pricePerHour = new CourtDAO().getCourtPrice(current.getCourt_id());
+            BigDecimal total1 = calculateSlotPriceWithPromotion(startTime, endTime, pricePerHour, pro);
             BigDecimal total = calculateSlotPriceWithPromotionByShift(current.getCourt_id(), startTime, endTime, pro);
             if (serviceIds != null) {
                 for (int sid : serviceIds) {
@@ -840,7 +826,11 @@ public class BookingDAO extends DBContext {
             bookings.removeIf(b -> b.getBooking_id() == bookingId);
             for (Shift sh : shifts) {
                 List<Slot> sl = SlotTime.generateSlots(sh, bookings, 60);
-                for (Slot s : sl) if (s.isAvailable()) slots.add(s);
+                for (Slot s : sl) {
+                    if (s.isAvailable()) {
+                        slots.add(s);
+                    }
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -856,7 +846,9 @@ public class BookingDAO extends DBContext {
                     break;
                 }
             }
-            if (!found) return false;
+            if (!found) {
+                return false;
+            }
             current = next;
         }
         return true;
@@ -981,69 +973,69 @@ public class BookingDAO extends DBContext {
         return BigDecimal.ZERO;
     }
 
-   // Doanh thu từng tháng trong 1 năm
-public Map<String, BigDecimal> getRevenueByMonth(int year, Integer courtId) {
-    Map<String, BigDecimal> result = new LinkedHashMap<>();
-    StringBuilder sql = new StringBuilder("SELECT MONTH([date]) AS month, SUM([total_price]) AS total " +
-                 "FROM [Bookings] WHERE YEAR([date]) = ? AND [status] != 'cancelled'");
+    // Doanh thu từng tháng trong 1 năm
+    public Map<String, BigDecimal> getRevenueByMonth(int year, Integer courtId) {
+        Map<String, BigDecimal> result = new LinkedHashMap<>();
+        StringBuilder sql = new StringBuilder("SELECT MONTH([date]) AS month, SUM([total_price]) AS total "
+                + "FROM [Bookings] WHERE YEAR([date]) = ? AND [status] != 'cancelled'");
 
-    if (courtId != null) {
-        sql.append(" AND court_id = ?");
-    }
-
-    sql.append(" GROUP BY MONTH([date]) ORDER BY month");
-
-    try (PreparedStatement ps = conn.prepareStatement(sql.toString())) {
-        ps.setInt(1, year);
         if (courtId != null) {
-            ps.setInt(2, courtId);
+            sql.append(" AND court_id = ?");
         }
 
-        ResultSet rs = ps.executeQuery();
-        while (rs.next()) {
-            int month = rs.getInt("month");
-            BigDecimal total = rs.getBigDecimal("total");
-            result.put(String.format("%02d", month), total != null ? total : BigDecimal.ZERO);
+        sql.append(" GROUP BY MONTH([date]) ORDER BY month");
+
+        try (PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+            ps.setInt(1, year);
+            if (courtId != null) {
+                ps.setInt(2, courtId);
+            }
+
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                int month = rs.getInt("month");
+                BigDecimal total = rs.getBigDecimal("total");
+                result.put(String.format("%02d", month), total != null ? total : BigDecimal.ZERO);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-    } catch (Exception e) {
-        e.printStackTrace();
+        return result;
     }
-    return result;
-}
 
 // Doanh thu từng tuần (ISO week) trong 1 năm
+    public Map<String, BigDecimal> getRevenueByWeek(int year, Integer courtId) {
+        Map<String, BigDecimal> result = new LinkedHashMap<>();
+        StringBuilder sql = new StringBuilder(
+                "SELECT DATEPART(iso_week, [date]) AS week, SUM([total_price]) AS total "
+                + "FROM [Bookings] WHERE YEAR([date]) = ? AND [status] != 'cancelled'"
+        );
 
-public Map<String, BigDecimal> getRevenueByWeek(int year, Integer courtId) {
-    Map<String, BigDecimal> result = new LinkedHashMap<>();
-    StringBuilder sql = new StringBuilder(
-        "SELECT DATEPART(iso_week, [date]) AS week, SUM([total_price]) AS total " +
-        "FROM [Bookings] WHERE YEAR([date]) = ? AND [status] != 'cancelled'"
-    );
-
-    if (courtId != null) {
-        sql.append(" AND court_id = ?");
-    }
-
-    sql.append(" GROUP BY DATEPART(iso_week, [date]) ORDER BY week");
-
-    try (PreparedStatement ps = conn.prepareStatement(sql.toString())) {
-        ps.setInt(1, year);
         if (courtId != null) {
-            ps.setInt(2, courtId);
+            sql.append(" AND court_id = ?");
         }
 
-        ResultSet rs = ps.executeQuery();
-        while (rs.next()) {
-            int week = rs.getInt("week");
-            BigDecimal total = rs.getBigDecimal("total");
-            result.put(String.valueOf(week), total != null ? total : BigDecimal.ZERO);
+        sql.append(" GROUP BY DATEPART(iso_week, [date]) ORDER BY week");
+
+        try (PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+            ps.setInt(1, year);
+            if (courtId != null) {
+                ps.setInt(2, courtId);
+            }
+
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                int week = rs.getInt("week");
+                BigDecimal total = rs.getBigDecimal("total");
+                result.put(String.valueOf(week), total != null ? total : BigDecimal.ZERO);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-    } catch (Exception e) {
-        e.printStackTrace();
+
+        return result;
     }
 
-    return result;
-}
     public BigDecimal calculateSlotPriceWithPromotionByShift(int courtId,
             Time startTime, Time endTime, Promotion promotion) {
         BigDecimal total = BigDecimal.ZERO;
@@ -1079,10 +1071,11 @@ public Map<String, BigDecimal> getRevenueByWeek(int year, Integer courtId) {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        if (total.compareTo(BigDecimal.ZERO) < 0) total = BigDecimal.ZERO;
+        if (total.compareTo(BigDecimal.ZERO) < 0) {
+            total = BigDecimal.ZERO;
+        }
         return total.setScale(0, RoundingMode.HALF_UP);
     }
-
 
     public BigDecimal calculateSlotPriceWithPromotion(
             Time startTime,

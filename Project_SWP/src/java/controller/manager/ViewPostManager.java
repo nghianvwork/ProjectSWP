@@ -82,7 +82,7 @@ public class ViewPostManager extends HttpServlet {
 
         try {
             DBContext db = new DBContext();
-            Connection conn = db.getConnection();
+Connection conn = db.getConnection();
             PostDAO dao = new PostDAO(conn);
             String status = request.getParameter("status");
             

@@ -238,7 +238,7 @@
                         <a class="nav-link" href="ViewPostManager">QUẢN LÝ BÀI VIẾT</a>
                     </li>
                      <li class="nav-item">
-                        <a class="nav-link" href="AdminCommentRPView">QUẢN LÝ BÁO CÁO</a>
+                        <a class="nav-link" href="AdminCommentRPView">QUẢN LÝ BÁO CÁO BÌNH LUẬN</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="users">QUẢN LÝ NGƯỜI DÙNG</a>

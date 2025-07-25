@@ -66,14 +66,13 @@ public class ClearMessageController extends HttpServlet {
     @Override
      protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        // Xoá message trong session
+       
         HttpSession session = request.getSession(false);
         if (session != null) {
             session.removeAttribute("message");
             session.removeAttribute("error");
         }
 
-        // Nếu dùng requestScope, thường thì đã mất sau redirect, nhưng để chắc:
         request.removeAttribute("message");
         request.removeAttribute("error");
 

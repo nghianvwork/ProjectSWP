@@ -81,11 +81,11 @@ public class PostDetail extends HttpServlet {
 
             PostDAO dao = new PostDAO(conn);
             Post post = dao.getPostById(postId);
-            if (post == null) {
+if (post == null) {
                 response.sendError(404, "Không tìm thấy bài viết");
                 return;
             }
-
+            
             CommentDAO commentDAO = new CommentDAO();
             List<Comment> commentList = commentDAO.getCommentsByPostId(post.getPostId());
 
@@ -105,7 +105,7 @@ public class PostDetail extends HttpServlet {
             request.setAttribute("post", post);
             request.setAttribute("userReaction", userReaction);
             request.setAttribute("reactionCounts", reactionCounts);
-
+            
             request.getRequestDispatcher("PostDetail.jsp").forward(request, response);
 
         } catch (Exception e) {

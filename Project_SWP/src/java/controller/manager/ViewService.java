@@ -76,7 +76,7 @@ public class ViewService extends HttpServlet {
                 case "1":
                     minPrice = 0.0;
                     maxPrice = 50000.0;
-                    break;
+break;
                 case "2":
                     minPrice = 50000.0;
                     maxPrice = 100000.0;

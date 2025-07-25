@@ -618,9 +618,9 @@ public class UserDAO extends DBContext {
                 user.setUser_Id(rs.getInt("user_id"));
                 user.setFirstname(rs.getString("firstname"));
                 user.setLastname(rs.getString("lastname"));
-               user.setPhone_number(rs.getString("phone_number"));
+                user.setPhone_number(rs.getString("phone_number"));
 
-                // Thêm các trường cần thiết khác nếu cần
+              
                 staffList.add(user);
             }
         } catch (SQLException e) {

@@ -347,7 +347,7 @@ text-align: center;
     </head>
     <body>
         <div class="header">
-            <h3><i class="fas fa-shield-alt"></i> Quản lý báo cáo</h3>
+            <h3><i class="fas fa-shield-alt"></i> Quản lý báo cáo bình luận</h3>
             <a href="login" class="logout-button">
                 <i class="fas fa-sign-out-alt"></i> Logout
             </a>

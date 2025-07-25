@@ -328,49 +328,50 @@
     </script>-->
         <script>
             document.addEventListener("DOMContentLoaded", function () {
-            var managerSelect = document.getElementById('addManagerSelect');
-            var phoneInput = document.getElementById('addPhoneInput');
-            function showPhone() {
-            var selectedOption = managerSelect.options[managerSelect.selectedIndex];
-            var phone = selectedOption.getAttribute('data-phone') || '';
-            phoneInput.value = phone;
-            }
-            managerSelect.addEventListener('change', showPhone);
-            showPhone();
+                var managerSelect = document.getElementById('addManagerSelect');
+                var phoneInput = document.getElementById('addPhoneInput');
+                function showPhone() {
+                    var selectedOption = managerSelect.options[managerSelect.selectedIndex];
+                    var phone = selectedOption.getAttribute('data-phone') || '';
+                    phoneInput.value = phone;
+                }
+                managerSelect.addEventListener('change', showPhone);
+                showPhone();
             });
-            document.querySelectorAll('.manager-select').forEach(function(select) {
-            var phoneInput = select.closest('.modal-body').querySelector('.phone-input');
-            function showPhone() {
-            var selectedOption = select.options[select.selectedIndex];
-            var phone = selectedOption.getAttribute('data-phone') || '';
-            phoneInput.value = phone;
-            }
-            select.addEventListener('change', showPhone);
-            showPhone();
+        </script>
+        <script>
+            document.querySelectorAll('.manager-select').forEach(function (select) {
+                var phoneInput = select.closest('.modal-body').querySelector('.phone-input');
+                function showPhone() {
+                    var selectedOption = select.options[select.selectedIndex];
+                    var phone = selectedOption.getAttribute('data-phone') || '';
+                    phoneInput.value = phone;
+                }
+                select.addEventListener('change', showPhone);
+                showPhone();
             });
-            });</script>
-
+        </script>
         <script>
 
             function confirmDelete() {
-            return confirm("Do you want to delete this?");
+                return confirm("Do you want to delete this?");
             }
             function closeNotification() {
-            const notification = document.getElementById('notification');
-            if (notification) {
-            notification.style.animation = 'slideOutRight 0.3s ease-out';
-            setTimeout(() => {
-            notification.style.display = 'none';
-            }, 300);
-            }
+                const notification = document.getElementById('notification');
+                if (notification) {
+                    notification.style.animation = 'slideOutRight 0.3s ease-out';
+                    setTimeout(() => {
+                        notification.style.display = 'none';
+                    }, 300);
+                }
             }
         </script>
         <c:if test="${not empty error}">
             <script>
                 Swal.fire({
-                title: "Tồn tại !",
-                        text: "Tồn tại địa điểm rồi!",
-                        icon: "warning"
+                    title: "Tồn tại !",
+                    text: "Tồn tại địa điểm rồi!",
+                    icon: "warning"
                 });
             </script>
         </c:if>

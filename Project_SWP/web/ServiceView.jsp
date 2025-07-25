@@ -109,8 +109,7 @@
                 display: flex;
                 gap: 10px;
             }
-
-            .btn {
+.btn {
                 padding: 6px 12px;
                 border-radius: 6px;
                 font-weight: bold;
@@ -219,7 +218,7 @@
     <body>
         <jsp:include page="Sidebar.jsp" />
         <%
-            List<Service> service = (List<Service>) request.getAttribute("service");
+List<Service> service = (List<Service>) request.getAttribute("service");
 if (service == null) service = java.util.Collections.emptyList();
            String status = request.getParameter("status");
         %>
@@ -271,7 +270,7 @@ if (service == null) service = java.util.Collections.emptyList();
                         <option value="2" ${param.priceRange == '2' ? 'selected' : ''}>50.000 - 100.000 VNĐ</option>
                         <option value="3" ${param.priceRange == '3' ? 'selected' : ''}>100.000 - 200.000 VNĐ</option>
                         <option value="4" ${param.priceRange == '4' ? 'selected' : ''}>&gt; 200.000 VNĐ</option>
-                    </select>
+</select>
 
                     <button type="submit">Tìm</button>
                 </form>
@@ -329,7 +328,7 @@ if (service == null) service = java.util.Collections.emptyList();
                 <!-- Phân trang -->
                 <div style="text-align: center; margin-top: 20px;">
                     <c:if test="${currentPage > 1}">
-                        <a href="ViewEquipments?page=${currentPage - 1}&keyword=${fn:escapeXml(param.keyword)}&filterStatus=${fn:escapeXml(param.filterStatus)}&category=${fn:escapeXml(param.category)}&priceRange=${param.priceRange}" class="btn-pagination">Previous</a>
+<a href="ViewEquipments?page=${currentPage - 1}&keyword=${fn:escapeXml(param.keyword)}&filterStatus=${fn:escapeXml(param.filterStatus)}&category=${fn:escapeXml(param.category)}&priceRange=${param.priceRange}" class="btn-pagination">Previous</a>
                     </c:if>
                     <c:forEach var="i" begin="1" end="${numberOfPages}">
                         <a href="ViewEquipments?page=${i}&keyword=${fn:escapeXml(param.keyword)}&filterStatus=${fn:escapeXml(param.filterStatus)}&category=${fn:escapeXml(param.category)}&priceRange=${param.priceRange}" class="btn-pagination ${currentPage == i ? 'active' : ''}">
@@ -369,7 +368,7 @@ if (service == null) service = java.util.Collections.emptyList();
                                     <div class="mb-3">
                                         <label>Mô tả</label>
                                         <textarea class="form-control" name="description"><%= eq.getDescription() %></textarea>
-                                    </div>
+</div>
                                     <div class="mb-3">
                                         <label>Trạng thái</label>
                                         <select name="status" class="form-control">
@@ -410,7 +409,7 @@ if (service == null) service = java.util.Collections.emptyList();
                                 <div class="delete-modal-icon">⚠️</div>
                                 <h5>Bạn có chắc chắn muốn xóa dịch vụ này?</h5>
                                 <p><strong>Tên dịch vụ:</strong> <%= eq.getName() %></p>
-                                <p><strong>ID:</strong> <%= eq.getService_id() %></p>
+<p><strong>ID:</strong> <%= eq.getService_id() %></p>
                                 <p class="text-muted">Hành động này không thể hoàn tác!</p>
                             </div>
                             <div class="modal-footer justify-content-center">
@@ -456,7 +455,7 @@ if (service == null) service = java.util.Collections.emptyList();
 
                                     <div style="margin-bottom: 12px;">
                                         <label style="display: block; margin-bottom: 6px;">Giá</label>
-                                        <input type="number" name="price" class="form-control" required />
+<input type="number" name="price" class="form-control" required />
                                     </div>
 
                                     <div style="margin-bottom: 12px;">

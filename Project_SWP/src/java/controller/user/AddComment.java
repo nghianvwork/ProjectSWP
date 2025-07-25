@@ -77,7 +77,7 @@ public class AddComment extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
 
         HttpSession session = request.getSession(false);
-        User user = (session != null) ? (User) session.getAttribute("user") : null;
+User user = (session != null) ? (User) session.getAttribute("user") : null;
 
         if (user == null) {
             response.sendRedirect("login.jsp");
@@ -92,11 +92,13 @@ public class AddComment extends HttpServlet {
             Integer parentId = (parentIdStr != null && !parentIdStr.isEmpty())
                     ? Integer.parseInt(parentIdStr)
                     : null;
-
+            
             new CommentDAO().addComment(postId, user.getUser_Id(), content, parentId);
 
             // Quay lại trang chi tiết bài viết
             response.sendRedirect("PostDetail?id=" + postId);
+
+
 
         } catch (Exception e) {
             e.printStackTrace();

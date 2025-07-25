@@ -10,10 +10,14 @@ import Model.Post;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.Part;
+import java.io.File;
+import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -22,6 +26,11 @@ import java.sql.SQLException;
  * @author admin
  */
 @WebServlet(name = "UpdatePostManager", urlPatterns = {"/UpdatePostManager"})
+@MultipartConfig(
+        fileSizeThreshold = 1024 * 1024 * 1, // 1MB
+        maxFileSize = 1024 * 1024 * 10, // 10MB
+        maxRequestSize = 1024 * 1024 * 15 // 15MB
+)
 public class UpdatePostManager extends HttpServlet {
 
     /**
@@ -77,7 +86,7 @@ public class UpdatePostManager extends HttpServlet {
             Post post = postDAO.getPostById(postId);
             if (post == null) {
                 response.sendRedirect("ViewPostManager");
-return;
+                return;
             }
 
             request.setAttribute("post", post);
@@ -102,14 +111,20 @@ return;
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String postIdStr = request.getParameter("postId");
-        String action = request.getParameter("action"); // lấy param action
+        String action = request.getParameter("action"); // có thể là approve, reject, hoặc null
 
-        if (postIdStr == null) {
+        if (postIdStr == null || postIdStr.isEmpty()) {
             response.sendRedirect("ViewPostManager");
             return;
         }
 
-        int postId = Integer.parseInt(postIdStr);
+        int postId;
+        try {
+            postId = Integer.parseInt(postIdStr);
+        } catch (NumberFormatException e) {
+            response.sendRedirect("ViewPostManager");
+            return;
+        }
 
         try {
             DBContext db = new DBContext();
@@ -117,34 +132,50 @@ return;
             PostDAO postDAO = new PostDAO(conn);
 
             if ("approve".equals(action) || "reject".equals(action)) {
-                // Xử lý duyệt hoặc từ chối
                 String newStatus = "approve".equals(action) ? "approved" : "rejected";
                 postDAO.updatePostStatus(postId, newStatus);
             } else {
-                // Xử lý update thông tin bài viết
-                String title = request.getParameter("title");
-                String content = request.getParameter("content");
-                String type = request.getParameter("type");
-                String image = request.getParameter("image"); // lấy tham số image (link ảnh)
-
-                if (title == null || content == null || type == null) {
-                    response.sendRedirect("ViewPostManager");
-                    return;
-                }
-
+                // Lấy post hiện tại từ DB
                 Post post = postDAO.getPostById(postId);
                 if (post == null) {
                     response.sendRedirect("ViewPostManager");
                     return;
                 }
 
-                post.setTitle(title);
-                post.setContent(content);
-                post.setType(type);
+                // Lấy dữ liệu form
+                String title = request.getParameter("title");
+                String content = request.getParameter("content");
+                String type = request.getParameter("type");
 
-                // Nếu người dùng nhập ảnh mới thì cập nhật, không thì giữ nguyên
-                if (image != null && !image.trim().isEmpty()) {
-                    post.setImage(image);
+                if (title == null || title.trim().isEmpty()
+                        || content == null || content.trim().isEmpty()
+                        || type == null || type.trim().isEmpty()) {
+                    response.sendRedirect("UpdatePostManager?postId=" + postId);
+                    return;
+                }
+
+                // Lấy file ảnh mới nếu có
+                Part filePart = request.getPart("image");
+                String fileName = null;
+                if (filePart != null && filePart.getSize() > 0) {
+                    String submittedFileName = Path.of(filePart.getSubmittedFileName()).getFileName().toString();
+                    fileName = System.currentTimeMillis() + "_" + submittedFileName;
+
+                    String uploadPath = getServletContext().getRealPath("") + File.separator + "uploads";
+                    File uploadDir = new File(uploadPath);
+                    if (!uploadDir.exists()) {
+                        uploadDir.mkdir();
+                    }
+
+                    filePart.write(uploadPath + File.separator + fileName);
+                }
+
+                // Cập nhật dữ liệu bài viết
+                post.setTitle(title.trim());
+                post.setContent(content.trim());
+                post.setType(type.trim());
+                if (fileName != null) {
+                    post.setImage(fileName);
                 }
 
                 postDAO.updatePost(post);
@@ -160,16 +191,15 @@ return;
             response.sendError(500, "Lỗi hệ thống");
         }
     }
-/**
-         * Returns a short description of the servlet.
-         *
-         * @return a String containing servlet description
-         */
-        @Override
-        public String getServletInfo
-        
-            () {
-        return "Short description";
-        }// </editor-fold>
 
-    }
+    /**
+     * Returns a short description of the servlet.
+     *
+     * @return a String containing servlet description
+     */
+    @Override
+    public String getServletInfo() {
+        return "Short description";
+    }// </editor-fold>
+
+}

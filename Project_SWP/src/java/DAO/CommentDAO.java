@@ -167,10 +167,11 @@ public class CommentDAO {
         try {
             con = new DBContext().getConnection();
             String sql = "SELECT c.*, u.username, u.firstname, u.lastname "
-                    + "FROM Comments c "
-                    + "JOIN Users u ON c.user_id = u.user_id "
-                    + "WHERE c.post_id = ? AND c.status = 1 "
-                    + "ORDER BY c.created_at ASC";
+                + "FROM Comments c "
+                + "JOIN Users u ON c.user_id = u.user_id "
+                + "WHERE c.post_id = ? AND (c.status = 1 OR c.status IS NULL) "
+                + "ORDER BY c.created_at ASC";
+
             ps = con.prepareStatement(sql);
             ps.setInt(1, postId);
             rs = ps.executeQuery();
