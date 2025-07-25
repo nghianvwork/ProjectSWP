@@ -85,6 +85,8 @@ if (currentUser == null) {
 
         boolean ok = new NotificationDAO().createNotification(n);
         if (ok) {
+                HttpSession session = request.getSession();
+                session.setAttribute("successMessage", "✅ Đã tạo thông báo thành công.");
             response.sendRedirect(request.getContextPath() + "/notification_list");
         } else {
             request.setAttribute("error", "Tạo thông báo thất bại. Vui lòng thử lại.");

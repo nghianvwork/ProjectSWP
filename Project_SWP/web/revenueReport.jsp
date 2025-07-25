@@ -7,7 +7,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Báo cáo doanh thu & lịch sử đặt sân</title>
+        <title>Báo cáo doanh thu</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet"/>
         <style>
@@ -40,7 +40,6 @@
                     margin: auto;
                 }
             }
-            
             /* Custom chart styles */
             .chart-container {
                 position: relative;
@@ -50,7 +49,6 @@
                 margin-bottom: 20px;
                 box-shadow: 0 10px 30px rgba(255, 107, 107, 0.3);
             }
-            
             .chart-title {
                 color: white;
                 font-weight: 600;
@@ -59,14 +57,12 @@
                 margin-bottom: 20px;
                 text-shadow: 0 2px 4px rgba(0,0,0,0.3);
             }
-            
             .chart-canvas {
                 background: rgba(255, 255, 255, 0.95);
                 border-radius: 15px;
                 padding: 15px;
                 backdrop-filter: blur(10px);
             }
-            
             .revenue-alert {
                 background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
                 border: none;
@@ -76,13 +72,11 @@
                 box-shadow: 0 5px 20px rgba(255, 107, 107, 0.3);
                 animation: pulse 2s infinite;
             }
-            
             @keyframes pulse {
                 0% { transform: scale(1); }
                 50% { transform: scale(1.02); }
                 100% { transform: scale(1); }
             }
-
             .filter-card {
                 background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
                 border-radius: 15px;
@@ -91,13 +85,11 @@
                 box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
                 transition: all 0.3s ease;
             }
-
             .filter-card .form-label {
                 color: white;
                 font-weight: 500;
                 margin-bottom: 8px;
             }
-
             .filter-card .form-control {
                 border-radius: 10px;
                 border: 1px solid #e0e0e0;
@@ -105,23 +97,19 @@
                 box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
                 transition: border-color 0.3s ease;
             }
-
             .filter-card .form-control:focus {
                 border-color: #ee5a24;
                 outline: none;
             }
-
             .filter-card .row {
                 display: flex;
                 flex-wrap: wrap;
                 justify-content: space-between;
             }
-
             .filter-card .col-md-3 {
                 flex: 1 1 22%;
                 margin-right: 10px;
             }
-
             .btn-filter {
                 background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
                 border: none;
@@ -133,16 +121,13 @@
                 transition: all 0.3s ease, transform 0.2s ease;
                 cursor: pointer;
             }
-
             .btn-filter:hover {
                 transform: translateY(-4px);
                 box-shadow: 0 6px 15px rgba(238, 90, 36, 0.4);
             }
-
             .btn-filter:active {
                 transform: translateY(2px);
             }
-
         </style>
     </head>
     <body class="bg-light">
@@ -167,7 +152,7 @@
                 <div class="col-lg-9 center-content">
                     <div class="w-100 py-4">
                         <div class="d-flex justify-content-between align-items-center mb-4">
-                            <h2 class="mb-0"><i class="bi bi-bar-chart-line"></i> Báo cáo doanh thu & lịch sử đặt sân</h2>
+                            <h2 class="mb-0"><i class="bi bi-bar-chart-line"></i> Báo cáo doanh thu </h2>
                         </div>
 
                         <!-- Filter Card -->
@@ -177,30 +162,38 @@
                                     <label for="fromDate" class="form-label">Từ ngày</label>
                                     <input type="date" class="form-control" id="fromDate" name="fromDate" value="${fromDate}">
                                 </div>
-
                                 <div class="col-md-3">
                                     <label for="toDate" class="form-label">Đến ngày</label>
                                     <input type="date" class="form-control" id="toDate" name="toDate" value="${toDate}">
                                 </div>
-
                                 <div class="col-md-3">
                                     <label for="courtId" class="form-label">ID Sân </label>
                                     <input type="number" class="form-control" id="courtId" name="courtId" value="${courtId != null ? courtId : ''}" min="1">
                                 </div>
-
-                           
-
                                 <div class="col-12 text-end">
                                     <button type="submit" class="btn btn-filter text-white"><i class="bi bi-funnel"></i> Lọc</button>
                                 </div>
                             </form>
                         </div>
 
-                        <!-- Revenue -->
-                        <div class="alert revenue-alert mb-4 text-center">
-                            <i class="bi bi-cash-coin me-2"></i>
-                            <b>Tổng doanh thu: </b>
-                            <fmt:formatNumber value="${totalRevenue}" type="currency" currencySymbol="₫" groupingUsed="true"/>
+                        <!-- Biểu đồ doanh thu theo tháng -->
+                        <div class="chart-container">
+                            <div class="chart-title">
+                                <i class="bi bi-calendar-month me-2"></i>Biểu đồ doanh thu theo tháng
+                            </div>
+                            <div class="chart-canvas">
+                                <canvas id="revenueMonthChart" style="height:320px"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Biểu đồ doanh thu theo tuần -->
+                        <div class="chart-container">
+                            <div class="chart-title">
+                                <i class="bi bi-calendar-week me-2"></i>Biểu đồ doanh thu theo tuần
+                            </div>
+                            <div class="chart-canvas">
+                                <canvas id="revenueWeekChart" style="height:320px"></canvas>
+                            </div>
                         </div>
 
                         <!-- Table scrollable -->
@@ -257,25 +250,13 @@
                             </div>
                         </div>
 
-                        <!-- Biểu đồ doanh thu theo tháng -->
-                        <div class="chart-container">
-                            <div class="chart-title">
-                                <i class="bi bi-calendar-month me-2"></i>Biểu đồ doanh thu theo tháng
-                            </div>
-                            <div class="chart-canvas">
-                                <canvas id="revenueMonthChart" style="height:320px"></canvas>
-                            </div>
+                        <!-- Revenue -->
+                        <div class="alert revenue-alert mb-4 text-center">
+                            <i class="bi bi-cash-coin me-2"></i>
+                            <b>Tổng doanh thu: </b>
+                            <fmt:formatNumber value="${totalRevenue}" type="currency" currencySymbol="₫" groupingUsed="true"/>
                         </div>
 
-                        <!-- Biểu đồ doanh thu theo tuần -->
-                        <div class="chart-container">
-                            <div class="chart-title">
-                                <i class="bi bi-calendar-week me-2"></i>Biểu đồ doanh thu theo tuần
-                            </div>
-                            <div class="chart-canvas">
-                                <canvas id="revenueWeekChart" style="height:320px"></canvas>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>

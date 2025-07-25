@@ -15,7 +15,7 @@
         }
         
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+           
             background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 50%, #dc2626 100%);
             min-height: 100vh;
         }
@@ -45,15 +45,7 @@
             transform: translateY(-2px);
         }
         
-        .sidebar {
-            background: rgba(255,255,255,0.95);
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.2);
-            margin: 20px 0;
-            padding: 20px;
-        }
+
         
         .main-content {
             background: rgba(255,255,255,0.95);
@@ -543,7 +535,7 @@
                                     <tr>
                                         <th><i class="fas fa-hashtag"></i> ID</th>
                                         <th><i class="fas fa-calendar-alt"></i> Tên Sự kiện</th>
-                                        <th><i class="fas fa-heading"></i> Tiêu đề</th>
+                                        <th><i class="fas fa-heading"></i> Nội dung</th>
                                         <th><i class="fas fa-clock"></i> Ngày bắt đầu</th>
                                         <th><i class="fas fa-clock"></i> Ngày kết thúc</th>
                                         <th><i class="fas fa-map-marker-alt"></i> Khu vực</th>
