@@ -15,7 +15,7 @@
         }
         
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+           
             background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 50%, #dc2626 100%);
             min-height: 100vh;
         }
@@ -45,15 +45,7 @@
             transform: translateY(-2px);
         }
         
-        .sidebar {
-            background: rgba(255,255,255,0.95);
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.2);
-            margin: 20px 0;
-            padding: 20px;
-        }
+
         
         .main-content {
             background: rgba(255,255,255,0.95);

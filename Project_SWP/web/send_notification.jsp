@@ -31,6 +31,21 @@
 
                 <!-- Nội dung chính -->
                 <div class="col-md-8">
+
+                    <!-- ✅ Thông báo thành công nếu có -->
+                    <%
+                        String successMessage = (String) session.getAttribute("successMessage");
+                        if (successMessage != null) {
+                    %>
+                        <div class="alert alert-success alert-dismissible fade show mt-2" role="alert">
+                            <%= successMessage %>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    <%
+                            session.removeAttribute("successMessage");
+                        }
+                    %>
+
                     <div class="container py-4">
                         <div class="card shadow-sm">
                             <div class="card-header bg-primary text-white">
@@ -76,12 +91,8 @@
                                                     <td class="text-center">${u.role}</td>
                                                     <td class="text-center" style=" opacity: 0.5">
                                                         <c:choose>
-                                                            <c:when test="${u.sendMail == true}">
-                                                                Có
-                                                            </c:when>
-                                                            <c:otherwise>
-                                                                Không
-                                                            </c:otherwise>
+                                                            <c:when test="${u.sendMail == true}">Có</c:when>
+                                                            <c:otherwise>Không</c:otherwise>
                                                         </c:choose>
                                                     </td>
 
@@ -131,9 +142,9 @@
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
         <script>
-                                                    document.getElementById("selectAll").addEventListener("change", function () {
-                                                        document.querySelectorAll(".singleCheckbox").forEach(cb => cb.checked = this.checked);
-                                                    });
+            document.getElementById("selectAll").addEventListener("change", function () {
+                document.querySelectorAll(".singleCheckbox").forEach(cb => cb.checked = this.checked);
+            });
         </script>
     </body>
 </html>

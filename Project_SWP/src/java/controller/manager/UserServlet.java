@@ -9,6 +9,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.sql.Date;
 import java.time.LocalDateTime;
 import java.util.Random;
@@ -164,7 +165,10 @@ public class UserServlet extends HttpServlet {
             EmailUtils.sendEmail(email, subject, content);
 
             // Chuyển hướng sau khi thêm thành công
-            response.sendRedirect("users");
+           HttpSession session = request.getSession();
+session.setAttribute("successMessage", "✅ Thêm người dùng thành công.");
+response.sendRedirect("users");
+
             return;
         } else if ("updateRole".equals(action)) {
             int userId = Integer.parseInt(request.getParameter("userId"));
@@ -220,7 +224,10 @@ public class UserServlet extends HttpServlet {
     return;
 }
 
-        response.sendRedirect("users");
+        HttpSession session = request.getSession();
+session.setAttribute("successMessage", "Xoá người dùng thành công thành công.");
+response.sendRedirect("users");
+
     }
  
 

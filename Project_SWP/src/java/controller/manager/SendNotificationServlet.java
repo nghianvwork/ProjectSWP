@@ -74,55 +74,62 @@ public class SendNotificationServlet extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+protected void doPost(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException {
 
-        String[] selectedUsers = request.getParameterValues("userIds");
-        String notificationIdRaw = request.getParameter("notificationId");
+    String[] selectedUsers = request.getParameterValues("userIds");
+    String notificationIdRaw = request.getParameter("notificationId");
 
-        if (selectedUsers == null || notificationIdRaw == null) {
-            response.sendRedirect("notification_list?error=missingData");
+    if (selectedUsers == null || notificationIdRaw == null) {
+        response.sendRedirect("notification_list?error=missingData");
+        return;
+    }
+
+    try {
+        int notificationId = Integer.parseInt(notificationIdRaw);
+        NotificationDAO ndao = new NotificationDAO();
+
+        Notification notification = ndao.getById(notificationId);
+        if (notification == null) {
+            response.sendRedirect("notification_list?error=notificationNotFound");
             return;
         }
 
-        try {
-            int notificationId = Integer.parseInt(notificationIdRaw);
-            NotificationDAO ndao = new NotificationDAO();
+        LocalDateTime sentTime = notification.getScheduledTime();
 
-            Notification notification = ndao.getById(notificationId);
-            if (notification == null) {
-                response.sendRedirect("notification_list?error=notificationNotFound");
-                return;
+        for (String uid : selectedUsers) {
+            int userId = Integer.parseInt(uid);
+            UserDAO udao = new UserDAO();
+            User user = udao.getUserById(userId);
+            if (udao.getSendMail(userId) && user.getEmail() != null && !user.getEmail().isEmpty()) {
+                // Gửi email thông báo
+                String emailSubject = notification.getTitle();
+                String emailContent = notification.getContent();
+                EmailUtils.sendEmail(user.getEmail(), emailSubject, emailContent);
             }
 
-            LocalDateTime sentTime = notification.getScheduledTime();
+            NotificationReceiver receiver = new NotificationReceiver();
+            receiver.setNotificationId(notification);
+            receiver.setUserId(user);
+            receiver.setReadAt(null);
+            receiver.setOpenedAt(sentTime);
 
-            for (String uid : selectedUsers) {
-                int userId = Integer.parseInt(uid);
-                UserDAO udao = new UserDAO();
-                User user = udao.getUserById(userId);
-                if (udao.getSendMail(userId) && user.getEmail() != null && !user.getEmail().isEmpty()) {
-                    // Gửi email thông báo
-                    String emailSubject = notification.getTitle();
-                    String emailContent = notification.getContent();
-                    EmailUtils.sendEmail(user.getEmail(), emailSubject, emailContent);
-                }
-                NotificationReceiver receiver = new NotificationReceiver();
-                receiver.setNotificationId(notification);
-                receiver.setUserId(user);
-                receiver.setReadAt(null);
-                receiver.setOpenedAt(sentTime);
-
-                ndao.insertReceiver(receiver);
-            }
-            notification.setSentTime(LocalDateTime.now());
-notification.setStatus("sent");
-ndao.update(notification);
-
-            response.sendRedirect("notification_list?msg=sent");
-        } catch (NumberFormatException e) {
-            response.sendRedirect("notification_list?error=invalidUserId");
+            ndao.insertReceiver(receiver);
         }
+
+        notification.setSentTime(LocalDateTime.now());
+        notification.setStatus("sent");
+        ndao.update(notification);
+
+        // ✅ Gửi thành công 
+        HttpSession session = request.getSession();
+        session.setAttribute("successMessage", "✅ Gửi thông báo thành công.");
+        response.sendRedirect("notification_list");
+
+    } catch (NumberFormatException e) {
+        response.sendRedirect("notification_list?error=invalidUserId");
     }
+}
+
 
 }

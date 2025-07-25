@@ -33,6 +33,21 @@
 
         <!-- Nội dung -->
         <div class="col-md-8">
+
+            <!-- ✅ Thông báo thành công sau redirect -->
+            <%
+                String successMessage = (String) session.getAttribute("successMessage");
+                if (successMessage != null) {
+            %>
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <%= successMessage %>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            <%
+                    session.removeAttribute("successMessage");
+                }
+            %>
+
             <div class="container py-4">
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h2 class="mb-0"><i class="bi bi-bell"></i> Danh sách thông báo</h2>
@@ -115,16 +130,13 @@
                                         </td>
                                         <td>${n.createdAt}</td>
                                         <td>
-                                            <!-- Kiểm tra nếu thông báo đã gửi thì chỉ cho phép xem -->
                                             <c:choose>
                                                 <c:when test="${n.status eq 'sent'}">
-                                                    <!-- Nút "Xem lại" cho thông báo đã gửi -->
                                                     <a href="${pageContext.request.contextPath}/view-notification?id=${n.notificationId}" class="btn btn-info btn-sm">
                                                         <i class="bi bi-eye"></i> Xem lại
                                                     </a>
                                                 </c:when>
                                                 <c:otherwise>
-                                                    <!-- Nút sửa chỉ dành cho các thông báo chưa gửi -->
                                                     <a href="${pageContext.request.contextPath}/edit-notification?id=${n.notificationId}" class="btn btn-warning btn-sm">
                                                         <i class="bi bi-pencil-square"></i> Sửa
                                                     </a>
@@ -132,7 +144,6 @@
                                             </c:choose>
                                         </td>
                                         <td>
-                                            <!-- Nếu thông báo đã gửi, chỉ hiển thị "Đã gửi", không cho phép gửi lại -->
                                             <c:choose>
                                                 <c:when test="${n.status eq 'sent'}">
                                                     <span class="text-muted">Đã gửi</span>

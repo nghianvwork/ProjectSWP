@@ -218,7 +218,7 @@
                     </div>
                     
                     <div class="mb-3">
-                        <label for="title" class="form-label">Tiêu đề <span class="required-asterisk">*</span></label>
+                        <label for="title" class="form-label">Nội dung <span class="required-asterisk">*</span></label>
                         <div class="input-group">
                             <input type="text" class="form-control" id="title" name="title" required>
                             <i class="fas fa-heading input-icon"></i>
