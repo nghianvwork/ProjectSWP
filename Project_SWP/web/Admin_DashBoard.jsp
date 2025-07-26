@@ -322,10 +322,16 @@
     </head>
     <body>
 
-
         <div class="container">
             <div class="sidebar">
-                <jsp:include page="Sidebar.jsp"/>
+                <c:choose>
+                    <c:when test="${sessionScope.user.role eq 'staff'}">
+                        <jsp:include page="Sidebar_Staff.jsp"/>
+                    </c:when>
+                    <c:otherwise>
+                        <jsp:include page="Sidebar.jsp"/>
+                    </c:otherwise>
+                </c:choose>
             </div>
 
             <div class="main-content">
@@ -339,7 +345,7 @@
 
                 <div class="dashboard-container">
                     <div class="title">Báo cáo tổng quan quản lý sân</div>
-
+                    
                     <div class="filter-section">
                         <form method="get" action="AdminDashBoard">
                             <label for="filter"><i class="fas fa-filter"></i> Lọc theo:</label>

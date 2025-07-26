@@ -85,7 +85,10 @@ public class AdminDashBoardController extends HttpServlet {
         String filter = request.getParameter("filter");
         if (filter == null) {
             filter = "all";
+        } else {
+            filter = filter.trim().toLowerCase();
         }
+        System.out.println("Filter received: [" + filter + "]");
         request.setAttribute("filter", filter);
 
         Map<String, Object> summary = new HashMap<>();

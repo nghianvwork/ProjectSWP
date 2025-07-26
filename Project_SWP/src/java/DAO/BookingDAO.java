@@ -1168,11 +1168,11 @@ public Map<String, BigDecimal> getRevenueByWeek(int year, Integer courtId) {
     private String getDateCondition(String filter) {
         switch (filter) {
             case "today":
-                return "WHERE CAST(date AS DATE) = CAST(GETDATE() AS DATE)";
+                return "AND CAST(date AS DATE) = CAST(GETDATE() AS DATE)";
             case "week":
-                return "WHERE DATEPART(week, date) = DATEPART(week, GETDATE()) AND YEAR(date) = YEAR(GETDATE())";
+                return "AND DATEPART(week, date) = DATEPART(week, GETDATE()) AND YEAR(date) = YEAR(GETDATE())";
             case "month":
-                return "WHERE MONTH(date) = MONTH(GETDATE()) AND YEAR(date) = YEAR(GETDATE())";
+                return "AND MONTH(date) = MONTH(GETDATE()) AND YEAR(date) = YEAR(GETDATE())";
             default:
                 return "";
         }
