@@ -99,7 +99,7 @@ public class Oauth2HandlerController extends HttpServlet {
             session.setAttribute("user", user);
             
 
-            response.sendRedirect("homepageUser.jsp");
+            response.sendRedirect("HomePageUser");
 
         } catch (GeneralSecurityException | IOException e) {
             e.printStackTrace();

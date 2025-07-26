@@ -905,7 +905,7 @@ public class BookingDAO extends DBContext {
 
     public List<Bookings> getBookingHistoryByFilter(LocalDate from, LocalDate to, Integer courtId) {
         List<Bookings> list = new ArrayList<>();
-        StringBuilder sql = new StringBuilder("SELECT * FROM Bookings WHERE status != 'cancelled'");
+        StringBuilder sql = new StringBuilder("SELECT * FROM Bookings WHERE status = 'completed'");
 
         // Kiểm tra và thêm điều kiện lọc ngày
         if (from != null) {
@@ -959,7 +959,7 @@ public class BookingDAO extends DBContext {
 
     public BigDecimal getTotalRevenue(LocalDate from, LocalDate to, Integer courtId) {
         StringBuilder sql = new StringBuilder(
-                "SELECT SUM(total_price) FROM Bookings WHERE date >= ? AND date <= ? AND status != 'cancelled'");
+                "SELECT SUM(total_price) FROM Bookings WHERE date >= ? AND date <= ? AND status = 'completed'");
         if (courtId != null) {
             sql.append(" AND court_id = ?");
         }
@@ -984,8 +984,8 @@ public class BookingDAO extends DBContext {
    // Doanh thu từng tháng trong 1 năm
 public Map<String, BigDecimal> getRevenueByMonth(int year, Integer courtId) {
     Map<String, BigDecimal> result = new LinkedHashMap<>();
-    StringBuilder sql = new StringBuilder("SELECT MONTH([date]) AS month, SUM([total_price]) AS total " +
-                 "FROM [Bookings] WHERE YEAR([date]) = ? AND [status] != 'cancelled'");
+     StringBuilder sql = new StringBuilder("SELECT MONTH([date]) AS month, SUM([total_price]) AS total " +
+                 "FROM [Bookings] WHERE YEAR([date]) = ? AND [status] = 'completed'");
 
     if (courtId != null) {
         sql.append(" AND court_id = ?");
@@ -1015,10 +1015,9 @@ public Map<String, BigDecimal> getRevenueByMonth(int year, Integer courtId) {
 
 public Map<String, BigDecimal> getRevenueByWeek(int year, Integer courtId) {
     Map<String, BigDecimal> result = new LinkedHashMap<>();
-    StringBuilder sql = new StringBuilder(
+ StringBuilder sql = new StringBuilder(
         "SELECT DATEPART(iso_week, [date]) AS week, SUM([total_price]) AS total " +
-        "FROM [Bookings] WHERE YEAR([date]) = ? AND [status] != 'cancelled'"
-    );
+        "FROM [Bookings] WHERE YEAR([date]) = ? AND [status] = 'completed'");
 
     if (courtId != null) {
         sql.append(" AND court_id = ?");

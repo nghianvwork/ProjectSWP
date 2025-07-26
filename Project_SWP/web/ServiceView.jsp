@@ -249,11 +249,12 @@ if (service == null) service = java.util.Collections.emptyList();
                     <input type="text" name="keyword" placeholder="🔍 Tìm kiếm tên dịch vụ..." value="${param.keyword != null ? param.keyword : ''}">
 
                     <!-- Filter loại dịch vụ -->
-                    <select name="category" class="form-select" style="width: 130px;">
+                    <select name="service_type" class="form-select" style="width: 150px;">
                         <option value="">-- Loại dịch vụ --</option>
-                        <c:forEach var="cat" items="${categories}">
-                            <option value="${cat}" ${param.category == cat ? 'selected' : ''}>${cat}</option>
-                        </c:forEach>
+                        <option value="bán" ${param.service_type == 'bán' ? 'selected' : ''}>Bán</option>
+                        <option value="cho thuê" ${param.service_type == 'cho thuê' ? 'selected' : ''}>Cho thuê</option>
+                        <option value="sửa chữa" ${param.service_type == 'sửa chữa' ? 'selected' : ''}>Sửa chữa</option>
+                        <option value="vệ sinh" ${param.service_type == 'vệ sinh' ? 'selected' : ''}>Vệ sinh</option>
                     </select>
 
                     <!-- Filter trạng thái -->
@@ -267,10 +268,10 @@ if (service == null) service = java.util.Collections.emptyList();
                     <select name="priceRange" class="form-select" style="width: 170px;">
                         <option value="">-- Khoảng giá --</option>
                         <option value="1" ${param.priceRange == '1' ? 'selected' : ''}>0 - 50.000 VNĐ</option>
-                        <option value="2" ${param.priceRange == '2' ? 'selected' : ''}>50.000 - 100.000 VNĐ</option>
+<option value="2" ${param.priceRange == '2' ? 'selected' : ''}>50.000 - 100.000 VNĐ</option>
                         <option value="3" ${param.priceRange == '3' ? 'selected' : ''}>100.000 - 200.000 VNĐ</option>
                         <option value="4" ${param.priceRange == '4' ? 'selected' : ''}>&gt; 200.000 VNĐ</option>
-</select>
+                    </select>
 
                     <button type="submit">Tìm</button>
                 </form>
@@ -284,14 +285,23 @@ if (service == null) service = java.util.Collections.emptyList();
                                 <th>ID</th>
                                 <th>Ảnh</th>
                                 <th>Tên dịch vụ</th>
+                                <th>Loại dịch vụ</th>
+                                <th>Mô tả</th>
                                 <th>Giá</th>
                                 <th style="width: 180px;">Hành động</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <% for (Service eq : service) { %>
+                            <% 
+int total = (request.getAttribute("numberOfServices") != null) ? (Integer) request.getAttribute("numberOfServices") : service.size();
+    int currentPage = (request.getAttribute("currentPage") != null) ? (Integer) request.getAttribute("currentPage") : 1;
+    int pageSize = (request.getAttribute("pageSize") != null) ? (Integer) request.getAttribute("pageSize") : 5; 
+    int stt = total - (currentPage - 1) * pageSize;
+    for (int i = 0; i < service.size(); i++) {
+                            Service eq = service.get(i);
+                            %>
                             <tr>
-                                <td><%= eq.getService_id() %></td>
+                                <td><%= stt - i %></td>
                                 <td>
                                     <% if (eq.getImage_url() != null && !eq.getImage_url().isEmpty()) { %>
                                     <img src="<%= request.getContextPath() + "/" + eq.getImage_url() %>" width="60" style="object-fit:cover; border-radius:8px;" />
@@ -300,9 +310,17 @@ if (service == null) service = java.util.Collections.emptyList();
                                     <% } %>
                                 </td>
                                 <td><%= eq.getName() %></td>
+                                <td>
+                                    <%
+                                    String type = eq.getService_type();
+                                    if (type == null) out.print("Chưa có");
+                                    else out.print(type.substring(0,1).toUpperCase() + type.substring(1));
+                                    %>
+                                </td>
+                                <td style="max-width: 300px;"><%= eq.getDescription() %></td>
                                 <td><%= eq.getPrice() %> VNĐ</td>
                                 <td class="action-buttons">
-                                    <button type="button" class="btn btn-warning"
+<button type="button" class="btn btn-warning"
                                             data-bs-toggle="modal" 
                                             data-bs-target="#editServiceModal<%= eq.getService_id() %>">
                                         Sửa
@@ -328,28 +346,31 @@ if (service == null) service = java.util.Collections.emptyList();
                 <!-- Phân trang -->
                 <div style="text-align: center; margin-top: 20px;">
                     <c:if test="${currentPage > 1}">
-<a href="ViewEquipments?page=${currentPage - 1}&keyword=${fn:escapeXml(param.keyword)}&filterStatus=${fn:escapeXml(param.filterStatus)}&category=${fn:escapeXml(param.category)}&priceRange=${param.priceRange}" class="btn-pagination">Previous</a>
-                    </c:if>
+                        <a href="ViewEquipments?page=${currentPage - 1}&keyword=${fn:escapeXml(param.keyword)}&filterStatus=${fn:escapeXml(param.filterStatus)}&priceRange=${param.priceRange}&service_type=${fn:escapeXml(param.service_type)}" class="btn-pagination">
+                            Previous
+                        </a>                    </c:if>
                     <c:forEach var="i" begin="1" end="${numberOfPages}">
-                        <a href="ViewEquipments?page=${i}&keyword=${fn:escapeXml(param.keyword)}&filterStatus=${fn:escapeXml(param.filterStatus)}&category=${fn:escapeXml(param.category)}&priceRange=${param.priceRange}" class="btn-pagination ${currentPage == i ? 'active' : ''}">
+                        <a href="ViewEquipments?page=${i}&keyword=${fn:escapeXml(param.keyword)}&filterStatus=${fn:escapeXml(param.filterStatus)}&priceRange=${param.priceRange}&service_type=${fn:escapeXml(param.service_type)}"
+                           class="btn-pagination ${currentPage == i ? 'active' : ''}">
                             ${i}
                         </a>
                     </c:forEach>
+
                     <c:if test="${currentPage < numberOfPages}">
-                        <a href="ViewEquipments?page=${currentPage + 1}&keyword=${fn:escapeXml(param.keyword)}&filterStatus=${fn:escapeXml(param.filterStatus)}&category=${fn:escapeXml(param.category)}&priceRange=${param.priceRange}" class="btn-pagination">Next</a>
+                        <a href="ViewEquipments?page=${currentPage + 1}&keyword=${fn:escapeXml(param.keyword)}&filterStatus=${fn:escapeXml(param.filterStatus)}&priceRange=${param.priceRange}&service_type=${fn:escapeXml(param.service_type)}"
+                           class="btn-pagination">
+                            Next
+                        </a>
+
                     </c:if>
                 </div>
-
-
-
-
 
 
                 <!-- Modal Sửa dịch vụ cho từng dòng -->
                 <% for (Service eq : service) { %>
                 <div class="modal fade" id="editServiceModal<%= eq.getService_id() %>" tabindex="-1" aria-labelledby="editServiceLabel<%= eq.getService_id() %>" aria-hidden="true">
                     <div class="modal-dialog modal-lg">
-                        <div class="modal-content">
+<div class="modal-content">
                             <form action="UpdateService" method="post" enctype="multipart/form-data">
                                 <input type="hidden" name="service_id" value="<%= eq.getService_id() %>"/>
                                 <div class="modal-header">
@@ -362,18 +383,28 @@ if (service == null) service = java.util.Collections.emptyList();
                                         <input type="text" class="form-control" name="name" value="<%= eq.getName() %>" required>
                                     </div>
                                     <div class="mb-3">
+                                        <label>Loại dịch vụ</label>
+                                        <select name="service_type" class="form-control" required>
+                                            <option value="">-- Chọn loại dịch vụ --</option>
+                                            <option value="bán" <%= "bán".equals(eq.getService_type()) ? "selected" : "" %>>Bán</option>
+                                            <option value="cho thuê" <%= "cho thuê".equals(eq.getService_type()) ? "selected" : "" %>>Cho thuê</option>
+                                            <option value="sửa chữa" <%= "sửa chữa".equals(eq.getService_type()) ? "selected" : "" %>>Sửa chữa</option>
+                                            <option value="vệ sinh" <%= "vệ sinh".equals(eq.getService_type()) ? "selected" : "" %>>Vệ sinh</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
                                         <label>Giá</label>
                                         <input type="number" class="form-control" name="price" value="<%= eq.getPrice() %>" required>
                                     </div>
                                     <div class="mb-3">
                                         <label>Mô tả</label>
                                         <textarea class="form-control" name="description"><%= eq.getDescription() %></textarea>
-</div>
+                                    </div>
                                     <div class="mb-3">
                                         <label>Trạng thái</label>
                                         <select name="status" class="form-control">
                                             <option value="Active" <%= "Active".equals(eq.getStatus()) ? "selected" : "" %>>Active</option>
-                                            <option value="Inactive" <%= "Inactive".equals(eq.getStatus()) ? "selected" : "" %>>Inactive</option>
+<option value="Inactive" <%= "Inactive".equals(eq.getStatus()) ? "selected" : "" %>>Inactive</option>
                                         </select>
                                     </div>
                                     <div class="mb-3">
@@ -409,12 +440,12 @@ if (service == null) service = java.util.Collections.emptyList();
                                 <div class="delete-modal-icon">⚠️</div>
                                 <h5>Bạn có chắc chắn muốn xóa dịch vụ này?</h5>
                                 <p><strong>Tên dịch vụ:</strong> <%= eq.getName() %></p>
-<p><strong>ID:</strong> <%= eq.getService_id() %></p>
+                                <p><strong>ID:</strong> <%= eq.getService_id() %></p>
                                 <p class="text-muted">Hành động này không thể hoàn tác!</p>
                             </div>
                             <div class="modal-footer justify-content-center">
                                 <a href="DeleteService?id=<%= eq.getService_id() %>" class="btn btn-danger">
-                                    <i class="fas fa-trash"></i> Xóa
+<i class="fas fa-trash"></i> Xóa
                                 </a>
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                                     <i class="fas fa-times"></i> Hủy
@@ -440,27 +471,24 @@ if (service == null) service = java.util.Collections.emptyList();
                                         <label style="display: block; margin-bottom: 6px;">Tên dịch vụ</label>
                                         <input type="text" name="name" class="form-control" required />
                                     </div>
-
                                     <div style="margin-bottom: 12px;">
                                         <label style="display: block; margin-bottom: 6px;">Loại dịch vụ</label>
-
-                                        <select name="category" class="form-select" required>
-                                            <option value="">-- Chọn loại --</option>
-                                            <option value="vợt">Vợt</option>
-                                            <option value="giày">Giày</option>
-                                            <option value="áo">Áo</option>
+                                        <select name="service_type" class="form-select" required>
+                                            <option value="">-- Chọn loại dịch vụ --</option>
+                                            <option value="bán">Bán</option>
+                                            <option value="cho thuê">Cho thuê</option>
+                                            <option value="sửa chữa">Sửa chữa</option>
+                                            <option value="vệ sinh">Vệ sinh</option>
                                         </select>
-
                                     </div>
-
                                     <div style="margin-bottom: 12px;">
                                         <label style="display: block; margin-bottom: 6px;">Giá</label>
-<input type="number" name="price" class="form-control" required />
+                                        <input type="number" name="price" class="form-control" required />
                                     </div>
 
                                     <div style="margin-bottom: 12px;">
                                         <label style="display: block; margin-bottom: 6px;">Ảnh dịch vụ</label>
-                                        <input type="file" name="image_file" class="form-control" accept="image/*" required />
+<input type="file" name="image_file" class="form-control" accept="image/*" required />
                                     </div>
 
                                     <div style="margin-bottom: 12px;">
