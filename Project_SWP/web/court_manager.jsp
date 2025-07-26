@@ -634,7 +634,7 @@
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <label><i class="fas fa-dollar-sign"></i> Giá</label>
+                                            <label><i class="fas fa-dollar-sign"></i> Giá thấp nhất</label>
                                             <input type="number" step="0.01" class="form-control" name="price" required>
                                         </div>
                                         <div class="form-group">
@@ -650,7 +650,7 @@
                                             <select class="form-control" name="status" required>
                                                 <option value="available">Còn trống</option>
                                                 <option value="maintenance">Bảo trì</option>
-                                                <option value="booked">Đã đặt</option>
+                                                <option value="booked">Đã đóng</option>
                                             </select>
                                         </div>
                                         <div class="form-group">
@@ -735,7 +735,7 @@
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label><i class="fas fa-dollar-sign"></i> Giá</label>
+                                        <label><i class="fas fa-dollar-sign"></i> Giá thấp nhất</label>
                                         <input type="number" step="0.01" class="form-control" id="updatePrice" name="price" required>
                                     </div>
                                     <div class="form-group">
@@ -752,7 +752,7 @@
                                         <select class="form-control" id="updateStatus" name="status" required>
                                             <option value="available">Còn trống</option>
                                             <option value="maintenance">Bảo trì</option>
-                                            <option value="booked">Đã đặt</option>
+                                            <option value="booked">Đã đóng</option>
                                         </select>
                                     </div>
                                     <div class="form-group">
@@ -857,7 +857,7 @@
                                 <th><i class="fas fa-layer-group"></i> Loại</th>
                                 <th><i class="fas fa-cube"></i> Chất Liệu</th>
                                 <th><i class="fas fa-lightbulb"></i> Chiếu Sáng</th>
-                                <th><i class="fas fa-dollar-sign"></i> Giá</th>
+                                <th><i class="fas fa-dollar-sign"></i> Giá thấp nhất</th>
                                 <th><i class="fas fa-align-left"></i> Mô Tả</th>
                                 <th><i class="fas fa-toggle-on"></i> Trạng Thái</th>
                                 <th><i class="fas fa-map-marker-alt"></i> Khu Vực</th>
@@ -892,7 +892,7 @@
                                             </c:when>
                                             <c:when test="${court.status eq 'booked'}">
                                                 <span class="status-badge status-booked">
-                                                    <i class="fas fa-calendar-check"></i> Đã đặt
+                                                    <i class="fas fa-calendar-check"></i> Đã đóng
                                                 </span>
                                             </c:when>
                                         </c:choose>

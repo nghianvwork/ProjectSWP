@@ -71,51 +71,52 @@ public class UpdateArea extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
- @Override
-protected void doPost(HttpServletRequest request, HttpServletResponse response)
-        throws ServletException, IOException {
-    request.setCharacterEncoding("UTF-8");
-    response.setCharacterEncoding("UTF-8");
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        request.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding("UTF-8");
 
-    try {
-        int id = Integer.parseInt(request.getParameter("regionID"));
-        String name = request.getParameter("RegionName");
-        String address = request.getParameter("address");
+        try {
+            int id = Integer.parseInt(request.getParameter("regionID"));
+            String name = request.getParameter("RegionName");
+            String address = request.getParameter("address");
 
-       
-        String openTimeStr = request.getParameter("openTime");
-        String closeTimeStr = request.getParameter("closeTime");
-        String description = request.getParameter("description");
+            String openTimeStr = request.getParameter("openTime");
+            String closeTimeStr = request.getParameter("closeTime");
+            String description = request.getParameter("description");
+            if (openTimeStr != null && openTimeStr.length() == 5) {
+                openTimeStr += ":00";
+            }
+            if (closeTimeStr != null && closeTimeStr.length() == 5) {
+                closeTimeStr += ":00";
+            }
 
-       
-        java.sql.Time openTime = java.sql.Time.valueOf(openTimeStr);
-        java.sql.Time closeTime = java.sql.Time.valueOf(closeTimeStr);
-        String phone_branch = request.getParameter("phone_branch");
+            java.sql.Time openTime = java.sql.Time.valueOf(openTimeStr);
+            java.sql.Time closeTime = java.sql.Time.valueOf(closeTimeStr);
 
-       
-        int manager_id = Integer.parseInt(request.getParameter("manager_id"));
+            String phone_branch = request.getParameter("phone_branch");
 
-     
-        UserDAO userDAO = new UserDAO();
-        User staff = userDAO.getUserById(manager_id);
-        String nameStaff = staff.getLastname() + " " + staff.getFirstname();
+            int manager_id = Integer.parseInt(request.getParameter("manager_id"));
 
-        AreaDAO dao = new AreaDAO();
-      
-        dao.UpdateArea(id, name, address, openTime, closeTime, description, phone_branch, manager_id, nameStaff);
+            UserDAO userDAO = new UserDAO();
+            User staff = userDAO.getUserById(manager_id);
+            String nameStaff = staff.getLastname() + " " + staff.getFirstname();
 
-        response.sendRedirect("view-region");
-    } catch (NumberFormatException e) {
-        e.printStackTrace();
-        request.setAttribute("error", "Lỗi dữ liệu nhập vào!");
-        response.sendRedirect("view-region");
-    } catch (Exception ex) {
-        ex.printStackTrace();
-        response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Có lỗi xảy ra trong quá trình cập nhật.");
+            AreaDAO dao = new AreaDAO();
+         
+            dao.UpdateArea(id, name, address, openTime, closeTime, description, phone_branch, manager_id, nameStaff);
+              request.setAttribute("success", "Thêm khu vực thành công!");
+            response.sendRedirect("view-region");
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+            request.setAttribute("error", "Lỗi dữ liệu nhập vào!");
+            response.sendRedirect("view-region");
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Có lỗi xảy ra trong quá trình cập nhật.");
+        }
     }
-}
-
-
 
     /**
      * Returns a short description of the servlet.

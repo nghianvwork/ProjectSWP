@@ -1043,47 +1043,52 @@ public Map<String, BigDecimal> getRevenueByWeek(int year, Integer courtId) {
 
     return result;
 }
-    public BigDecimal calculateSlotPriceWithPromotionByShift(int courtId,
-            Time startTime, Time endTime, Promotion promotion) {
-        BigDecimal total = BigDecimal.ZERO;
-        try {
-            ShiftDAO shiftDAO = new ShiftDAO();
-            List<Shift> shifts = shiftDAO.getShiftsByCourt(courtId);
-            LocalTime start = startTime.toLocalTime();
-            LocalTime end = endTime.toLocalTime();
-            for (Shift sh : shifts) {
-                LocalTime shStart = sh.getStartTime().toLocalTime();
-                LocalTime shEnd = sh.getEndTime().toLocalTime();
-                if (end.isAfter(shStart) && start.isBefore(shEnd)) {
-                    LocalTime segmentStart = start.isAfter(shStart) ? start : shStart;
-                    LocalTime segmentEnd = end.isBefore(shEnd) ? end : shEnd;
-                    long minutes = java.time.Duration.between(segmentStart, segmentEnd).toMinutes();
-                    long shiftMinutes = java.time.Duration.between(shStart, shEnd).toMinutes();
-                    if (minutes > 0 && shiftMinutes > 0) {
-                        BigDecimal pricePerMinute = sh.getPrice().divide(BigDecimal.valueOf(shiftMinutes), 4, RoundingMode.HALF_UP);
-                        total = total.add(pricePerMinute.multiply(BigDecimal.valueOf(minutes)));
-                    }
+  public BigDecimal calculateSlotPriceWithPromotionByShift(
+    int courtId,
+    Time startTime,
+    Time endTime,
+    Promotion promotion) {
+    BigDecimal total = BigDecimal.ZERO;
+    try {
+        ShiftDAO shiftDAO = new ShiftDAO();
+        List<Shift> shifts = shiftDAO.getShiftsByCourt(courtId);
+        LocalTime start = startTime.toLocalTime();
+        LocalTime end = endTime.toLocalTime();
+        for (Shift sh : shifts) {
+            LocalTime shStart = sh.getStartTime().toLocalTime();
+            LocalTime shEnd = sh.getEndTime().toLocalTime();
+            if (end.isAfter(shStart) && start.isBefore(shEnd)) {
+                LocalTime segmentStart = start.isAfter(shStart) ? start : shStart;
+                LocalTime segmentEnd = end.isBefore(shEnd) ? end : shEnd;
+                long minutes = java.time.Duration.between(segmentStart, segmentEnd).toMinutes();
+                long shiftMinutes = java.time.Duration.between(shStart, shEnd).toMinutes();
+                if (minutes > 0 && shiftMinutes > 0) {
+                    BigDecimal pricePerMinute = sh.getPrice().divide(BigDecimal.valueOf(shiftMinutes), 4, RoundingMode.HALF_UP);
+                    total = total.add(pricePerMinute.multiply(BigDecimal.valueOf(minutes)));
                 }
             }
-
-            if (promotion != null) {
-                if (promotion.getDiscountPercent() > 0) {
-                    BigDecimal percent = BigDecimal.valueOf(promotion.getDiscountPercent()).divide(BigDecimal.valueOf(100));
-                    total = total.subtract(total.multiply(percent));
-                }
-                if (promotion.getDiscountAmount() > 0) {
-                    total = total.subtract(BigDecimal.valueOf(promotion.getDiscountAmount()));
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
-        if (total.compareTo(BigDecimal.ZERO) < 0) total = BigDecimal.ZERO;
-        return total.setScale(0, RoundingMode.HALF_UP);
+
+        // Áp dụng promotion
+        if (promotion != null) {
+            if (promotion.getDiscountPercent() > 0) {
+                BigDecimal percent = BigDecimal.valueOf(promotion.getDiscountPercent()).divide(BigDecimal.valueOf(100));
+                total = total.subtract(total.multiply(percent));
+            }
+            if (promotion.getDiscountAmount() > 0) {
+                total = total.subtract(BigDecimal.valueOf(promotion.getDiscountAmount()));
+            }
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
     }
+    if (total.compareTo(BigDecimal.ZERO) < 0) total = BigDecimal.ZERO;
+    return total.setScale(0, RoundingMode.HALF_UP);
+}
 
 
-    public BigDecimal calculateSlotPriceWithPromotion(
+
+       public BigDecimal calculateSlotPriceWithPromotion(
             Time startTime,
             Time endTime,
             BigDecimal pricePerHour,

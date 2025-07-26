@@ -118,6 +118,22 @@
                             </select>
                             <button type="submit" class="btn btn-primary">Lọc / Tìm kiếm</button>
                         </form>
+                        <c:if test="${not empty sessionScope.success}">
+                            <div class="alert alert-success alert-dismissible fade show" role="alert" style="margin-bottom: 24px;">
+                                <strong><i class="fas fa-check-circle"></i></strong> ${sessionScope.success}
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        </c:if>
+                        <c:if test="${not empty sessionScope.error}">
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert" style="margin-bottom: 24px;">
+                                <strong><i class="fas fa-exclamation-triangle"></i></strong> ${sessionScope.error}
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        </c:if>
 
                         <!-- Regions Table -->
                         <div class="table-responsive">
@@ -138,12 +154,7 @@
 
                                     </tr>
                                 </thead>
-                                <c:if test="${not empty sessionScope.success}">
-                                    <div id="notification" class="notification success">
-                                        <i class="fas fa-check-circle"></i> ${sessionScope.success}
-                                        <button class="close-btn" onclick="closeNotification()">&times;</button>
-                                    </div>
-                                </c:if>
+
                                 <tbody>
                                     <c:forEach var="a" items="${area}" varStatus="loop">
                                         <tr>
@@ -169,7 +180,7 @@
                                                         <div class="modal-content">
                                                             <form action="UpdateArea" method="POST">
                                                                 <div class="modal-header">
-                                                                    <h5 class="modal-title">Cập nhật địa điểm</h5>
+                                                                    <h5 class="modal-title">Cập nhật khu vực</h5>
                                                                     <button type="button" class="close text-white" data-dismiss="modal">&times;</button>
                                                                 </div>
                                                                 <div class="modal-body">
@@ -248,7 +259,7 @@
                         </ul>
 
 
-                        <button class="btn btn-success mt-4" data-toggle="modal" data-target="#addModal">+ Thêm địa điểm</button>
+                        <button class="btn btn-success mt-4" data-toggle="modal" data-target="#addModal">+ Thêm khu vực</button>
 
 
                         <div class="modal fade" id="addModal" tabindex="-1" role="dialog">
@@ -356,15 +367,7 @@
             function confirmDelete() {
                 return confirm("Do you want to delete this?");
             }
-            function closeNotification() {
-                const notification = document.getElementById('notification');
-                if (notification) {
-                    notification.style.animation = 'slideOutRight 0.3s ease-out';
-                    setTimeout(() => {
-                        notification.style.display = 'none';
-                    }, 300);
-                }
-            }
+
         </script>
         <c:if test="${not empty error}">
             <script>
@@ -375,6 +378,12 @@
                 });
             </script>
         </c:if>
+           <script>
+   
+    setTimeout(function() {
+        $(".alert").alert('close');
+    }, 3000);
+</script>
 
 
         <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
