@@ -197,11 +197,11 @@ public class UserDAO extends DBContext {
             }
             int te = userByUsername.getUser_Id();
             int ss = userByEmail.getUser_Id();
-            
+
             // Logic xác định kết quả
             if (userByUsername != null && userByEmail != null) {
-                if (userByUsername.getUser_Id()== userByEmail.getUser_Id()) {
-                  
+                if (userByUsername.getUser_Id() == userByEmail.getUser_Id()) {
+
                     return new Object[]{0, userByUsername}; // cả hai đều đúng và là cùng user
                 } else {
                     return new Object[]{4, null}; // đúng cả 2 nhưng là 2 người khác nhau (trường hợp bất thường)
@@ -607,7 +607,6 @@ public class UserDAO extends DBContext {
         return false;
     }
 
-
     public List<User> getAllStaff() {
         List<User> staffList = new ArrayList<>();
         String sql = "SELECT * FROM Users WHERE role = 'staff'";
@@ -620,7 +619,6 @@ public class UserDAO extends DBContext {
                 user.setLastname(rs.getString("lastname"));
                 user.setPhone_number(rs.getString("phone_number"));
 
-              
                 staffList.add(user);
             }
         } catch (SQLException e) {
@@ -655,7 +653,7 @@ public class UserDAO extends DBContext {
     }
 
     public int getReturningUserCount(String filter) {
-        String sql = "SELECT COUNT(*) FROM (SELECT user_id FROM Bookings "
+        String sql = "SELECT COUNT(*) FROM (SELECT user_id FROM Bookings WHERE status = 'completed' "
                 + getDateCondition(filter)
                 + " GROUP BY user_id HAVING COUNT(*) > 1) AS returning_users";
         try (Connection conn = new DBContext().getConnection(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
@@ -676,11 +674,11 @@ public class UserDAO extends DBContext {
     private String getDateCondition(String filter) {
         switch (filter) {
             case "today":
-                return "WHERE CAST(date AS DATE) = CAST(GETDATE() AS DATE)";
+                return "AND CAST(date AS DATE) = CAST(GETDATE() AS DATE)";
             case "week":
-                return "WHERE DATEPART(week, date) = DATEPART(week, GETDATE()) AND YEAR(date) = YEAR(GETDATE())";
+                return "AND DATEPART(week, date) = DATEPART(week, GETDATE()) AND YEAR(date) = YEAR(GETDATE())";
             case "month":
-                return "WHERE MONTH(date) = MONTH(GETDATE()) AND YEAR(date) = YEAR(GETDATE())";
+                return "AND MONTH(date) = MONTH(GETDATE()) AND YEAR(date) = YEAR(GETDATE())";
             default:
                 return "";
         }

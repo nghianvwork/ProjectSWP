@@ -71,11 +71,22 @@ public class AdminDashBoardController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
+        // Lấy user từ session (giả sử bạn đã lưu Model.User vào session)
+        jakarta.servlet.http.HttpSession session = request.getSession(false);
+        Model.User user = (session != null) ? (Model.User) session.getAttribute("user") : null;
+
+        // Kiểm tra quyền: nếu chưa đăng nhập hoặc không phải admin thì chuyển hướng
+        if (user == null || !"admin".equalsIgnoreCase(user.getRole())) {
+            response.sendRedirect(request.getContextPath() + "/login.jsp");
+            return;
+        }
+
         String filter = request.getParameter("filter");
         if (filter == null) {
             filter = "all";
         }
-        request.setAttribute("filter", filter); 
+        request.setAttribute("filter", filter);
 
         Map<String, Object> summary = new HashMap<>();
         summary.put("totalBookings", bookingDAO.getTotalBookings(filter));

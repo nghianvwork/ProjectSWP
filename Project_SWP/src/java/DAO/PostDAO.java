@@ -289,15 +289,16 @@ if (type != null && !type.isEmpty()) {
         return rs.next() && rs.getInt(1) > 0;
     }
 
-    public void updatePost(Post post) throws SQLException {
-        String sql = "UPDATE Posts SET title = ?, content = ?, type = ?, image = ? WHERE post_id = ? AND created_by = ?";
+     public void updatePost(Post post) throws SQLException {
+        String sql = "UPDATE Posts SET title = ?, content = ?, type = ?, image = ?, status = ? WHERE post_id = ? AND created_by = ?";
         PreparedStatement stmt = conn.prepareStatement(sql);
         stmt.setString(1, post.getTitle());
         stmt.setString(2, post.getContent());
         stmt.setString(3, post.getType());
         stmt.setString(4, post.getImage());
-        stmt.setInt(5, post.getPostId());
-        stmt.setInt(6, post.getCreatedBy());
+        stmt.setString(5, "pending");
+        stmt.setInt(6, post.getPostId());
+        stmt.setInt(7, post.getCreatedBy());
         stmt.executeUpdate();
     }
 

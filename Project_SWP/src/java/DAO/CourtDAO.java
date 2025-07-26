@@ -362,12 +362,12 @@ public class CourtDAO extends DBContext {
                 + "ISNULL(SUM(CASE WHEN b.booking_id IS NOT NULL THEN b.total_price END), 0) AS revenue, "
                 + "COUNT(b.booking_id) AS bookings, "
                 + "(SELECT COUNT(DISTINCT b2.user_id) FROM Bookings b2 "
-                + "WHERE b2.court_id = c.court_id " + dateConditionWhere
-                + " AND b2.user_id IN (SELECT user_id FROM Bookings WHERE court_id = c.court_id " + dateConditionWhere
+                + "WHERE b2.court_id = c.court_id AND b2.status = 'completed' " + dateConditionWhere
+                + " AND b2.user_id IN (SELECT user_id FROM Bookings WHERE court_id = c.court_id AND status = 'completed' " + dateConditionWhere
                 + " GROUP BY user_id HAVING COUNT(*) > 1)) AS returningUsers, "
                 + "AVG(CAST(b.rating AS float)) AS avgRating "
                 + "FROM Courts c "
-                + "LEFT JOIN Bookings b ON b.court_id = c.court_id " + dateCondition
+                + "LEFT JOIN Bookings b ON b.court_id = c.court_id AND b.status = 'completed' " + dateCondition
                 + "LEFT JOIN Areas a ON c.area_id = a.area_id "
                 + "LEFT JOIN Users u ON a.manager_id = u.user_id "
                 + "GROUP BY c.court_id, c.court_number, u.fullname";

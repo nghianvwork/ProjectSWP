@@ -111,24 +111,16 @@
 
 
         <div class="sidebar">
-
             <c:choose>
-
                 <c:when test="${sessionScope.user.role eq 'staff'}">
-
                     <jsp:include page="Sidebar_Staff.jsp"/>
-
                 </c:when>
-
-                <c:otherwise>
-
+                <c:when test="${sessionScope.user.role eq 'admin'}">
                     <jsp:include page="Sidebar.jsp"/>
-
-                </c:otherwise>
-
+                </c:when>
             </c:choose>
-
         </div>
+
 
 
 
@@ -151,7 +143,7 @@
                     <div class="d-flex align-items-center mb-3" style="gap: 10px;">
 
                         <form class="d-flex align-items-center flex-grow-1" style="max-width: 650px;" action="ViewPostManager" method="get">
-<span class="search-icon">🔍</span>
+                            <span class="search-icon">🔍</span>
 
                             <input type="text" class="form-control ps-5 me-2" placeholder="Tìm tiêu đề, người đăng..." name="search" value="${param.search != null ? param.search : ''}"/>
 
@@ -331,7 +323,7 @@ if (request.getParameter("search") != null && !request.getParameter("search").is
                                     <% } else { %><%= p.getStatus() %><% } %>
 
                                 </td>
-<td>
+                                <td>
 
                                     <!-- Nút chi tiết luôn hiển thị -->
 
@@ -406,7 +398,7 @@ if (request.getParameter("search") != null && !request.getParameter("search").is
                                             <% } else if ("rejected".equals(p.getStatus())) { %>
 
                                             Từ chối
-<% } else { %>
+                                            <% } else { %>
 
                                             <%= p.getStatus() %>
 
@@ -478,12 +470,12 @@ if (request.getParameter("search") != null && !request.getParameter("search").is
 
                                                 <label class="form-label">Nội dung</label>
 
-                                                <textarea name="content" rows="6" class="form-control" required><%=p.getContent()%></textarea>
+                                                <textarea class="form-control" name="content" id="content" rows="6"></textarea>
 
                                             </div>
 
                                             <div class="mb-3">
-<label class="form-label">Loại bài viết</label>
+                                                <label class="form-label">Loại bài viết</label>
 
                                                 <select name="type" class="form-select" required>
 
@@ -491,7 +483,7 @@ if (request.getParameter("search") != null && !request.getParameter("search").is
 
                                                     <option value="common" <%= "common".equals(p.getType()) ? "selected" : "" %>>Phổ thông</option>
 
-                                                    <option value="partner" <%= "partner".equals(p.getType()) ? "selected" : "" %>>Tìm đối</option>
+
 
                                                 </select>
 
@@ -562,7 +554,7 @@ if (request.getParameter("search") != null && !request.getParameter("search").is
                     <div style="text-align: center; margin-top: 30px;">
 
                         <ul class="pagination justify-content-center">
-<% if (currentPage > 1) { %>
+                            <% if (currentPage > 1) { %>
 
                             <li class="page-item">
 
@@ -645,7 +637,7 @@ if (request.getParameter("search") != null && !request.getParameter("search").is
                                             <label class="form-label">Ảnh bài viết (không bắt buộc)</label>
 
                                             <input type="file" class="form-control" name="image" accept="image/*">
-</div>
+                                        </div>
 
                                         <div class="mb-3">
 
@@ -657,7 +649,6 @@ if (request.getParameter("search") != null && !request.getParameter("search").is
 
                                                 <option value="common">Phổ thông</option>
 
-                                                <option value="partner">Tìm đối</option>
 
                                             </select>
 
@@ -690,7 +681,10 @@ if (request.getParameter("search") != null && !request.getParameter("search").is
         </div>
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
+        <script src="https://cdn.ckeditor.com/4.22.1/standard/ckeditor.js"></script>
+        <script>
+            CKEDITOR.replace('content');
+        </script>
     </body>
 
 </html>

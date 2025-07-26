@@ -1127,7 +1127,7 @@ public Map<String, BigDecimal> getRevenueByWeek(int year, Integer courtId) {
 
     // Lấy tổng số lượt đặt sân
     public int getTotalBookings(String filter) {
-        String sql = "SELECT COUNT(*) FROM Bookings " + getDateCondition(filter);
+        String sql = "SELECT COUNT(*) FROM Bookings WHERE status = 'completed' " + getDateCondition(filter);
         try (Connection conn = new DBContext().getConnection(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
             if (rs.next()) {
                 return rs.getInt(1);
@@ -1140,7 +1140,7 @@ public Map<String, BigDecimal> getRevenueByWeek(int year, Integer courtId) {
 
     // Lấy tổng doanh thu
     public double getTotalRevenue(String filter) {
-        String sql = "SELECT SUM(total_price) FROM Bookings " + getDateCondition(filter);
+        String sql = "SELECT SUM(total_price) FROM Bookings WHERE status = 'completed' " + getDateCondition(filter);
         try (Connection conn = new DBContext().getConnection(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
             if (rs.next()) {
                 return rs.getDouble(1);
@@ -1153,7 +1153,7 @@ public Map<String, BigDecimal> getRevenueByWeek(int year, Integer courtId) {
 
     // Lấy đánh giá trung bình
     public double getAvgRating(String filter) {
-        String sql = "SELECT AVG(CAST(rating AS float)) FROM Bookings WHERE rating IS NOT NULL " + getExtraDateCondition(filter);
+        String sql = "SELECT AVG(CAST(rating AS float)) FROM Bookings WHERE rating IS NOT NULL AND status = 'completed' " + getExtraDateCondition(filter);
         try (Connection conn = new DBContext().getConnection(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
             if (rs.next()) {
                 return rs.getDouble(1);

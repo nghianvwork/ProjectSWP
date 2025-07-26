@@ -26,7 +26,7 @@
     <form method="get" action="PostView" style="display: flex; justify-content: space-between; margin-bottom: 20px;">
         <div>
             <label for="type">Loại bài viết:</label>
-            <select name="type" id="type">
+            <select name="type" id="typeFilter">
                 <option value="">Tất cả</option>
                 <option value="news" <%= "news".equals(request.getParameter("type")) ? "selected" : "" %>>Tin tức</option>
                 <option value="partner" <%= "partner".equals(request.getParameter("type")) ? "selected" : "" %>>Tìm đối</option>
@@ -54,7 +54,7 @@
     <% if (typeParam == null || typeParam.isEmpty()) { %>
     <div class="row">
         <!-- Cột to bên trái: bài tin tức mới nhất -->
-<div class="col-md-6">
+        <div class="col-md-6">
             <% Post n = newsFeatured; %>
             <% if (n != null) { %>
             <div class="card mb-4 shadow" style="overflow:hidden;">
@@ -102,7 +102,7 @@
                             📅 <%= df.format(p.getCreatedAt()) %> | 🏷️ <%= p.getType() %>
                         </div>
                     </div>
-</div>
+                </div>
             </div>
             <% }
             } else { %>
@@ -154,7 +154,7 @@
                     <h5 class="modal-title" id="createPostModalLabel">Đăng bài viết mới</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
                 </div>
-                
+
                 <form method="post" action="AddPost" enctype="multipart/form-data">
                     <div class="modal-body">
                         <div class="mb-3">
@@ -162,34 +162,38 @@
                             <input type="text" class="form-control" name="title" id="title" required>
                         </div>
 
+                        <!-- Loại bài viết -->
                         <div class="mb-3">
-<label for="content" class="form-label">Nội dung</label>
-                            <textarea class="form-control" name="content" id="content" rows="6" required></textarea>
+                            <label for="type" class="form-label">Loại bài viết</label>
+                            <select class="form-select" name="type" id="typePost" required>
+                                <option value="news">Tin tức</option>
+                                <option value="common">Phổ thông</option>
+                                <option value="partner">Tìm đối</option>
+                            </select>
                         </div>
 
+                        <!-- Nội dung, chỉ hiện nếu không phải Tìm đối -->
+                        <div class="mb-3" id="contentField">
+                            <label for="content" class="form-label">Nội dung</label>
+                            <textarea class="form-control" name="content" id="content" rows="6"></textarea>
+                        </div>
+
+                        <!-- Ảnh bài viết -->
                         <div class="mb-3">
                             <label for="image" class="form-label">Ảnh bài viết (không bắt buộc)</label>
                             <input type="file" class="form-control" name="image" id="image" accept="image/*">
                         </div>
 
-                        <div class="form-check mb-3">
-                            <input class="form-check-input" type="checkbox" name="isPartner" id="isPartner" value="true">
-                            <label class="form-check-label" for="isPartner">
-                                Tôi muốn tìm đối đánh cầu
-                            </label>
-                        </div>
-
-                        <!-- Phần thông tin tìm đối - mặc định ẩn -->
+                        <!-- Phần thông tin tìm đối, mặc định ẩn -->
                         <div id="partnerFields" style="display: none;">
                             <div class="alert alert-info">
                                 <strong>Thông tin tìm đối:</strong> Vui lòng điền đầy đủ thông tin dưới đây
                             </div>
-                            
+
                             <div class="mb-3">
                                 <label class="form-label">Trình độ mong muốn <span style="color:red">*</span></label>
                                 <input type="text" class="form-control" name="preferred_level" placeholder="Ví dụ: Trung bình, Khá, Giỏi">
                             </div>
-                            
                             <div class="mb-3">
                                 <label class="form-label">Giới tính mong muốn <span style="color:red">*</span></label>
                                 <select class="form-select" name="preferred_gender">
@@ -199,24 +203,21 @@
                                     <option value="Không yêu cầu">Không yêu cầu</option>
                                 </select>
                             </div>
-                            
                             <div class="mb-3">
                                 <label class="form-label">Thời gian mong muốn <span style="color:red">*</span></label>
                                 <input type="text" class="form-control" name="preferred_time" placeholder="Ví dụ: Thứ 2, 4, 6 từ 18:00-20:00">
                             </div>
-                            
                             <div class="mb-3">
                                 <label class="form-label">Khu vực mong muốn <span style="color:red">*</span></label>
-<input type="text" class="form-control" name="preferred_area" placeholder="Ví dụ: Hà Nội, Cầu Giấy, Hà Đông,...">
+                                <input type="text" class="form-control" name="preferred_area" placeholder="Ví dụ: Hà Nội, Cầu Giấy, Hà Đông,...">
                             </div>
-                            
                             <div class="mb-3">
                                 <label class="form-label">Ghi chú thêm</label>
                                 <textarea class="form-control" name="partner_note" rows="2" placeholder="Thông tin bổ sung khác..."></textarea>
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
                         <button type="submit" class="btn btn-danger">Đăng bài</button>
@@ -228,29 +229,44 @@
 
     <!-- Script để hiển thị/ẩn phần tìm đối -->
     <script>
-        document.getElementById('isPartner').addEventListener('change', function() {
+        function updateFormFields() {
+            const typeSelect = document.getElementById('typePost');   // dùng id mới
             const partnerFields = document.getElementById('partnerFields');
+            const contentField = document.getElementById('contentField');
+            const contentInput = document.getElementById('content');
             const partnerInputs = partnerFields.querySelectorAll('input, select, textarea');
-            
-            if (this.checked) {
+
+            if (typeSelect.value === 'partner') {
                 partnerFields.style.display = 'block';
-                // Kích hoạt các trường bắt buộc
+                contentField.style.display = 'none';
+                contentInput.required = false;
+                contentInput.value = '';
                 partnerInputs.forEach(input => {
-                    if (input.name === 'preferred_level' || input.name === 'preferred_gender' || 
-                        input.name === 'preferred_time' || input.name === 'preferred_area') {
+                    if (
+                            input.name === 'preferred_level' ||
+                            input.name === 'preferred_gender' ||
+                            input.name === 'preferred_time' ||
+                            input.name === 'preferred_area'
+                            ) {
                         input.required = true;
                     }
                 });
             } else {
                 partnerFields.style.display = 'none';
-                // Xóa yêu cầu bắt buộc và làm trống giá trị
+                contentField.style.display = 'block';
+                contentInput.required = true;
                 partnerInputs.forEach(input => {
                     input.required = false;
                     input.value = '';
                 });
             }
-        });
+        }
+        // Gắn đúng sự kiện vào select trong modal
+        document.getElementById('typePost').addEventListener('change', updateFormFields);
+        // Gọi khi trang tải xong (hoặc modal hiện lên)
+        window.onload = updateFormFields;
     </script>
+
 
     <%
     Integer currentPage = (Integer) request.getAttribute("currentPage");
@@ -271,5 +287,9 @@
             <% } %>
         </ul>
     </div>
+    <script src="https://cdn.ckeditor.com/4.22.1/standard/ckeditor.js"></script>
+    <script>
+        CKEDITOR.replace('content');
+    </script>
 </div>
 <jsp:include page="homefooter.jsp" />
