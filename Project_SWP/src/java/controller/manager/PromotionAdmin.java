@@ -32,7 +32,7 @@ public class PromotionAdmin extends HttpServlet {
             response.sendRedirect("login");
             return;
         }
-
+        
         PromotionDAO dao = new PromotionDAO();
         dao.updateExpiredPromotions(); 
 
@@ -78,10 +78,12 @@ public class PromotionAdmin extends HttpServlet {
 
         AreaDAO areaDAO = new AreaDAO();
         List<Branch> areaList = areaDAO.getAllAreas();
-
+        if(session.getAttribute("success") != null){
+            session.removeAttribute("success");
+        }
         request.setAttribute("promotionList", list); 
         request.setAttribute("areaList", areaList);
-
+ 
         request.getRequestDispatcher("manage-promotion.jsp").forward(request, response);
     }
 

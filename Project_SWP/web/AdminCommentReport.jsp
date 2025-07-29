@@ -1,5 +1,6 @@
 <%@ page import="java.util.List, Model.CommentReport" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%
     List<CommentReport> reportList = (List<CommentReport>) request.getAttribute("reportList");
     if (reportList == null) reportList = new java.util.ArrayList<>();

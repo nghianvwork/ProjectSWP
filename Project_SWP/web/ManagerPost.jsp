@@ -3,7 +3,7 @@
 <%@ page import="java.util.*, Model.Post" %>
 
 <%@ page import="java.text.SimpleDateFormat" %>
-
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 
 <html>

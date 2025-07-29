@@ -20,7 +20,7 @@ import utils.PasswordUtil;
 public class UserServlet extends HttpServlet {
 
     private UserDAO userDAO;
-    private static final int PAGE_SIZE = 10;
+    private static final int PAGE_SIZE = 5;
 
     @Override
     public void init() {
@@ -223,9 +223,10 @@ response.sendRedirect("users");
     response.sendRedirect(url);
     return;
 }
-
+      
         HttpSession session = request.getSession();
-session.setAttribute("successMessage", "Xoá người dùng thành công thành công.");
+        
+
 response.sendRedirect("users");
 
     }

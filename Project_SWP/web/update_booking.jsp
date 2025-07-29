@@ -523,13 +523,8 @@
                                 </div>
                                 <div class="form-floating icon-input">
                                     <i class="fas fa-clock"></i>
-                                    <select name="shiftIds" class="form-select" id="shiftSelect" multiple disabled>
-                                        <c:forEach var="sh" items="${shifts}">
-                                            <option value="${sh.shiftId}" <c:if test="${selectedShiftIds.contains(sh.shiftId)}">selected</c:if>>
-                                                ${sh.shiftName} (${sh.startTime} - ${sh.endTime})
-                                            </option>
-                                        </c:forEach>
-                                    </select>
+                                    <input type="text" class="form-control" id="bookingTime" value="${booking.start_time} - ${booking.end_time}" disabled>
+                                    <label for="bookingTime">Thời gian</label>
                                     <label for="shiftSelect">Ca chơi</label>
                                     <c:forEach var="sid" items="${selectedShiftIds}">
                                         <input type="hidden" name="shiftIds" value="${sid}" />

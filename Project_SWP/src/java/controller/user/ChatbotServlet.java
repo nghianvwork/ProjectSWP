@@ -153,91 +153,108 @@ public class ChatbotServlet extends HttpServlet {
         }
     }
 
-    private String handleBookingSubmission(Integer userId, String message) {
-        if (userId == null) {
-            return "Bạn cần đăng nhập trước khi đặt sân.";
+   private String handleBookingSubmission(Integer userId, String message) {
+    if (userId == null) {
+        return "Bạn cần đăng nhập trước khi đặt sân.";
+    }
+
+    Pattern pattern = Pattern.compile(
+        "đặt sân (\\d+)(?: khu vực ([^\\d]+?))? từ (\\d{2}:\\d{2}) đến (\\d{2}:\\d{2})(?: ngày (\\d{2}/\\d{2}/\\d{4}))?(?: với dịch vụ (.*))?",
+        Pattern.CASE_INSENSITIVE
+    );
+    Matcher matcher = pattern.matcher(message.toLowerCase());
+
+    if (!matcher.find()) {
+        return "Câu lệnh chưa đúng định dạng. Hãy nhập: đặt sân [id] từ hh:mm đến hh:mm với dịch vụ [tên dịch vụ, cách nhau bởi dấu phẩy nếu nhiều]";
+    }
+
+    try {
+        int courtId = Integer.parseInt(matcher.group(1));
+        String areaName = matcher.group(2) != null ? matcher.group(2).trim() : null;
+        LocalTime localStart = LocalTime.parse(matcher.group(3));
+        LocalTime localEnd = LocalTime.parse(matcher.group(4));
+
+        LocalDate bookingDate;
+        if (matcher.group(5) != null && !matcher.group(5).isEmpty()) {
+            bookingDate = LocalDate.parse(matcher.group(5), DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+        } else {
+            bookingDate = LocalDate.now();
         }
 
-        Pattern pattern = Pattern.compile(
-                "đặt sân (\\d+)(?: khu vực ([^\\d]+?))? từ (\\d{2}:\\d{2}) đến (\\d{2}:\\d{2})(?: ngày (\\d{2}/\\d{2}/\\d{4}))?(?: với dịch vụ (.*))?",
-                Pattern.CASE_INSENSITIVE
-        );
-        Matcher matcher = pattern.matcher(message.toLowerCase());
-
-        if (!matcher.find()) {
-            return "Câu lệnh chưa đúng định dạng. Hãy nhập: đặt sân [id] từ hh:mm đến hh:mm với dịch vụ [tên dịch vụ, cách nhau bởi dấu phẩy nếu nhiều]";
-        }
-
-        try {
-            int courtId = Integer.parseInt(matcher.group(1));
-            String areaName = matcher.group(2) != null ? matcher.group(2).trim() : null;
-            LocalTime localStart = LocalTime.parse(matcher.group(3));
-            LocalTime localEnd = LocalTime.parse(matcher.group(4));
-
-            LocalDate bookingDate;
-            if (matcher.group(5) != null && !matcher.group(5).isEmpty()) {
-                bookingDate = LocalDate.parse(matcher.group(5), DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-            } else {
-                bookingDate = LocalDate.now();
-            }
-            
-             if (bookingDate.equals(LocalDate.now()) && localStart.isBefore(LocalTime.now())) {
+        if (bookingDate.equals(LocalDate.now()) && localStart.isBefore(LocalTime.now())) {
             return " Không thể đặt sân cho khung giờ đã qua. "
                  + "Vui lòng chọn thời gian bắt đầu > " + LocalTime.now().truncatedTo(java.time.temporal.ChronoUnit.MINUTES);
         }
-            String serviceStr = matcher.group(6); 
+        String serviceStr = matcher.group(6);
 
-            LocalTime now = LocalTime.now();
-            Time startTime = Time.valueOf(localStart);
-            Time endTime = Time.valueOf(localEnd);
+        Time startTime = Time.valueOf(localStart);
+        Time endTime = Time.valueOf(localEnd);
 
-            CourtDAO courtDAO = new CourtDAO();
-            Courts court = courtDAO.getCourtById(courtId);
-            if (court == null) {
-                return "Không tìm thấy sân có ID: " + courtId;
-            }
-
-            BookingDAO bookingDAO = new BookingDAO();
-            if (!bookingDAO.checkSlotAvailable(courtId, bookingDate, startTime, endTime)) {
-                return "Slot đã được đặt. Vui lòng chọn slot khác.";
-            }
-
-            PromotionDAO proDAO = new PromotionDAO();
-            Promotion promotion = proDAO.getCurrentPromotionForArea(court.getArea_id(), bookingDate);
-            BigDecimal pricePerHour = courtDAO.getCourtPrice(courtId);
-            BigDecimal totalPrice = bookingDAO.calculateSlotPriceWithPromotion(startTime, endTime, pricePerHour, promotion);
-
-            Bookings booking = new Bookings();
-            booking.setUser_id(userId);
-            booking.setCourt_id(courtId);
-            booking.setDate(bookingDate);
-            booking.setStart_time(startTime);
-            booking.setEnd_time(endTime);
-            booking.setTotal_price(totalPrice.doubleValue());
-            booking.setStatus("pending");
-
-            if (matcher.group(4) != null) {
-                String[] services = matcher.group(4).split(",");
-                List<String> serviceList = new ArrayList<>();
-                for (String s : services) {
-                    serviceList.add(s.trim());
-                }
-                booking.setServices(serviceList);
-            }
-
-            if (bookingDAO.createBooking(booking)) {
-                return " Đã đặt sân thành công!\nSân: " + courtId + "\nNgày: " + bookingDate + "\nTừ " + startTime + " đến " + endTime
-                        + "\nTổng tiền: " + totalPrice + " VNĐ."
-                        + (booking.getServices() != null ? "\nDịch vụ đi kèm: " + String.join(", ", booking.getServices()) : "");
-            } else {
-                return " Có lỗi xảy ra khi đặt sân. Vui lòng thử lại sau.";
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "Có lỗi trong quá trình xử lý. Vui lòng thử lại.";
+        CourtDAO courtDAO = new CourtDAO();
+        Courts court = courtDAO.getCourtById(courtId);
+        if (court == null) {
+            return "Không tìm thấy sân có ID: " + courtId;
         }
+
+        BookingDAO bookingDAO = new BookingDAO();
+        if (!bookingDAO.checkSlotAvailable(courtId, bookingDate, startTime, endTime)) {
+            return "Slot đã được đặt. Vui lòng chọn slot khác.";
+        }
+
+        ShiftDAO shiftDAO = new ShiftDAO();
+        List<Shift> shifts = shiftDAO.getShiftsByCourt(courtId);
+
+        Shift selectedShift = null;
+        for (Shift shift : shifts) {
+            if (!localStart.isBefore(shift.getStartTime().toLocalTime()) && !localEnd.isAfter(shift.getEndTime().toLocalTime())) {
+                selectedShift = shift;
+                break;
+            }
+        }
+
+        if (selectedShift == null) {
+            return "Không tìm thấy ca (shift) phù hợp với khung giờ bạn chọn.";
+        }
+
+        BigDecimal pricePerHour = selectedShift.getPrice();
+
+        PromotionDAO proDAO = new PromotionDAO();
+        Promotion promotion = proDAO.getCurrentPromotionForArea(court.getArea_id(), bookingDate);
+
+        BigDecimal totalPrice = bookingDAO.calculateSlotPriceWithPromotion(startTime, endTime, pricePerHour, promotion);
+       
+        Bookings booking = new Bookings();
+        booking.setUser_id(userId);
+        booking.setCourt_id(courtId);
+        booking.setDate(bookingDate);
+        booking.setStart_time(startTime);
+        booking.setEnd_time(endTime);
+        booking.setTotal_price(totalPrice.doubleValue());
+        booking.setStatus("pending");
+
+        if (matcher.group(6) != null && !matcher.group(6).isEmpty()) {
+            String[] services = matcher.group(6).split(",");
+            List<String> serviceList = new ArrayList<>();
+            for (String s : services) {
+                serviceList.add(s.trim());
+            }
+            booking.setServices(serviceList);
+        }
+
+        if (bookingDAO.createBooking(booking)) {
+            return " Đã đặt sân thành công!\nSân: " + courtId + "\nNgày: " + bookingDate + "\nTừ " + startTime + " đến " + endTime
+                    + "\nTổng tiền: " + totalPrice + " VNĐ."
+                    + (booking.getServices() != null ? "\nDịch vụ đi kèm: " + String.join(", ", booking.getServices()) : "");
+        } else {
+            return " Có lỗi xảy ra khi đặt sân. Vui lòng thử lại sau.";
+        }
+
+    } catch (Exception e) {
+        e.printStackTrace();
+        return "Có lỗi trong quá trình xử lý. Vui lòng thử lại.";
     }
+}
+
 
     private String generateGeminiResponse(String message) {
         try {

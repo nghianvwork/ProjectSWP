@@ -624,7 +624,7 @@
                 <div class="divider">
                     <span>hoặc</span>
                 </div>
-
+        
                 <!-- Google Sign-In -->
                 <script src="https://accounts.google.com/gsi/client" async defer></script>
                 
@@ -634,6 +634,7 @@
                      data-ux_mode="redirect"
                      data-login_uri="http://localhost:8080/Project_SWP_2/oauth2handler"
                      data-auto_prompt="false">
+                    
                 </div>
 
                 <div class="g_id_signin"

@@ -52,24 +52,21 @@ public class ViewBranch extends HttpServlet {
                     } catch (NumberFormatException ignored) {
                     }
                 }
+              
 
-                
                 String staffIdStr = request.getParameter("staffId");
                 Integer staffId = null;
                 if (staffIdStr != null && !staffIdStr.isEmpty()) {
                     staffId = Integer.parseInt(staffIdStr);
                 }
 
-               
                 String search = request.getParameter("searchInput");
 
                 AreaDAO areaDAO = new AreaDAO();
 
-               
                 int numberofRegion = areaDAO.countAreasWithFilter(staffId, search);
                 int numberofPage = (int) Math.ceil((double) numberofRegion / recordsPerpage);
 
-               
                 List<Branch> area = areaDAO.getAreasWithFilter(staffId, search, (page - 1) * recordsPerpage, recordsPerpage);
 
                 request.setAttribute("area", area);
@@ -82,8 +79,8 @@ public class ViewBranch extends HttpServlet {
                 List<User> staffList = userDAO.getAllStaff();
                 request.setAttribute("staffList", staffList);
                 for (User staff : staffList) {
-    System.out.println("Staff: " + staff.getLastname() + ", Phone: " + staff.getPhone_number());
-}
+                    System.out.println("Staff: " + staff.getLastname() + ", Phone: " + staff.getPhone_number());
+                }
 
                 String error = (String) session.getAttribute("error");
                 if (error != null) {
@@ -107,12 +104,12 @@ public class ViewBranch extends HttpServlet {
     }
 
     private boolean validateToken(String token) {
-     
+
         return token.endsWith("_0810_token");
     }
 
     private String getUsernameFromToken(String token) {
-      
+
         return token.replace("_0810_token", "");
     }
 

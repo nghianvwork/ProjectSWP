@@ -810,7 +810,7 @@
 
         <script>
                     $(document).ready(function () {
-                        // Initialize DataTables
+                        
                         $('#shiftTable, #imageTable, #serviceTable, #courtsTable').DataTable({
                             pageLength: 3,
                             lengthChange: false,

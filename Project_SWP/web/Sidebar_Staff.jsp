@@ -241,13 +241,10 @@
                         <a class="nav-link" href="ViewPostManager">QUẢN LÝ BÀI VIẾT</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="AdminCommentRPView">QUẢN LÝ BÁO CÁO</a>
+                        <a class="nav-link" href="AdminCommentRPView">QUẢN LÝ BÁO CÁO BÌNH LUẬN</a>
                     </li>
                      <li class="nav-item">
                         <a class="nav-link" href="Notification1"> THÔNG BÁO</a>
-                    </li>
-                     <li class="nav-item">
-                        <a class="nav-link" href="AdminCommentRPView"> QUẢN LÝ BÁO CÁO</a>
                     </li>
                 </ul>
             </div>

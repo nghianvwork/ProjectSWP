@@ -109,7 +109,7 @@
                 display: flex;
                 gap: 10px;
             }
-.btn {
+            .btn {
                 padding: 6px 12px;
                 border-radius: 6px;
                 font-weight: bold;
@@ -216,7 +216,7 @@
         </style>
     </head>
     <body>
-        
+
         <div class="sidebar">
             <c:choose>
                 <c:when test="${sessionScope.user.role eq 'staff'}">
@@ -227,7 +227,7 @@
                 </c:when>
             </c:choose>
         </div>
-        
+
         <%
 List<Service> service = (List<Service>) request.getAttribute("service");
 if (service == null) service = java.util.Collections.emptyList();
@@ -279,7 +279,7 @@ if (service == null) service = java.util.Collections.emptyList();
                     <select name="priceRange" class="form-select" style="width: 170px;">
                         <option value="">-- Khoảng giá --</option>
                         <option value="1" ${param.priceRange == '1' ? 'selected' : ''}>0 - 50.000 VNĐ</option>
-<option value="2" ${param.priceRange == '2' ? 'selected' : ''}>50.000 - 100.000 VNĐ</option>
+                        <option value="2" ${param.priceRange == '2' ? 'selected' : ''}>50.000 - 100.000 VNĐ</option>
                         <option value="3" ${param.priceRange == '3' ? 'selected' : ''}>100.000 - 200.000 VNĐ</option>
                         <option value="4" ${param.priceRange == '4' ? 'selected' : ''}>&gt; 200.000 VNĐ</option>
                     </select>
@@ -331,7 +331,7 @@ int total = (request.getAttribute("numberOfServices") != null) ? (Integer) reque
                                 <td style="max-width: 300px;"><%= eq.getDescription() %></td>
                                 <td><%= eq.getPrice() %> VNĐ</td>
                                 <td class="action-buttons">
-<button type="button" class="btn btn-warning"
+                                    <button type="button" class="btn btn-warning"
                                             data-bs-toggle="modal" 
                                             data-bs-target="#editServiceModal<%= eq.getService_id() %>">
                                         Sửa
@@ -381,7 +381,7 @@ int total = (request.getAttribute("numberOfServices") != null) ? (Integer) reque
                 <% for (Service eq : service) { %>
                 <div class="modal fade" id="editServiceModal<%= eq.getService_id() %>" tabindex="-1" aria-labelledby="editServiceLabel<%= eq.getService_id() %>" aria-hidden="true">
                     <div class="modal-dialog modal-lg">
-<div class="modal-content">
+                        <div class="modal-content">
                             <form action="UpdateService" method="post" enctype="multipart/form-data">
                                 <input type="hidden" name="service_id" value="<%= eq.getService_id() %>"/>
                                 <div class="modal-header">
@@ -415,7 +415,7 @@ int total = (request.getAttribute("numberOfServices") != null) ? (Integer) reque
                                         <label>Trạng thái</label>
                                         <select name="status" class="form-control">
                                             <option value="Active" <%= "Active".equals(eq.getStatus()) ? "selected" : "" %>>Active</option>
-<option value="Inactive" <%= "Inactive".equals(eq.getStatus()) ? "selected" : "" %>>Inactive</option>
+                                            <option value="Inactive" <%= "Inactive".equals(eq.getStatus()) ? "selected" : "" %>>Inactive</option>
                                         </select>
                                     </div>
                                     <div class="mb-3">
@@ -456,7 +456,7 @@ int total = (request.getAttribute("numberOfServices") != null) ? (Integer) reque
                             </div>
                             <div class="modal-footer justify-content-center">
                                 <a href="DeleteService?id=<%= eq.getService_id() %>" class="btn btn-danger">
-<i class="fas fa-trash"></i> Xóa
+                                    <i class="fas fa-trash"></i> Xóa
                                 </a>
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                                     <i class="fas fa-times"></i> Hủy
@@ -499,7 +499,7 @@ int total = (request.getAttribute("numberOfServices") != null) ? (Integer) reque
 
                                     <div style="margin-bottom: 12px;">
                                         <label style="display: block; margin-bottom: 6px;">Ảnh dịch vụ</label>
-<input type="file" name="image_file" class="form-control" accept="image/*" required />
+                                        <input type="file" name="image_file" class="form-control" accept="image/*" required />
                                     </div>
 
                                     <div style="margin-bottom: 12px;">

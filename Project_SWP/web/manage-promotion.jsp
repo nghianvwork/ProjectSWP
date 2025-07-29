@@ -103,18 +103,23 @@
                             <button type="submit" class="btn btn-secondary">Lọc</button>
                         </form>
                        
-                        <c:if test="${not empty sessionScope.success}">
-                            <div id="notification" class="notification success">
-                                <i class="fas fa-check-circle"></i> ${sessionScope.success}
-                                <button class="close-btn" onclick="closeNotification()">&times;</button>
+                      <c:if test="${not empty sessionScope.success}">
+                            <div class="alert alert-success alert-dismissible fade show" role="alert" style="margin-bottom: 24px;">
+                                <strong><i class="fas fa-check-circle"></i></strong> ${sessionScope.success}
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
                             </div>
                         </c:if>
-                             <c:if test="${not empty sessionScope.error}">
-                            <div id="notification" class="notification success">
-                                <i class="fas fa-check-circle"></i> ${sessionScope.error}
-                                <button class="close-btn" onclick="closeNotification()">&times;</button>
+                        <c:if test="${not empty sessionScope.error}">
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert" style="margin-bottom: 24px;">
+                                <strong><i class="fas fa-exclamation-triangle"></i></strong> ${sessionScope.error}
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
                             </div>
                         </c:if>
+
 
                       
                         <div class="table-responsive">
@@ -157,7 +162,7 @@
 
                                             <td>
                                                 <button  class="btn btn-warning btn-sm" data-toggle="modal" data-target="#updateModal${loop.index}">Sửa</button>
-                                                <a href="delele-promotion?promotionId=${promo.promotionId}" class="btn btn-danger btn-sm" onclick="confirmDelete()">Xóa</a>
+                                                <a href="delele-promotion?promotionId=${promo.promotionId}" class="btn btn-danger btn-sm" onclick="return confirmDelete()">Xóa</a>
 
                                                 <div class="modal fade" id="updateModal${loop.index}" tabindex="-1" role="dialog">
                                                     <div class="modal-dialog">
@@ -309,16 +314,14 @@
             function confirmDelete() {
                 return confirm("Do you want to delete this?");
             }
-            function closeNotification() {
-                const notification = document.getElementById('notification');
-                if (notification) {
-                    notification.style.animation = 'slideOutRight 0.3s ease-out';
-                    setTimeout(() => {
-                        notification.style.display = 'none';
-                    }, 300);
-                }
-            }
+           
         </script>
+         <script>
+   
+    setTimeout(function() {
+        $(".alert").alert('close');
+    }, 3000);
+</script>
 
         <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>

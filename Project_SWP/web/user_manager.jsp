@@ -173,12 +173,7 @@
                             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                         </div>
                     </c:if>
-                    <c:if test="${not empty success}">
-                        <div class="alert alert-success alert-dismissible fade show" role="alert">
-                            ${success}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                        </div>
-                    </c:if>
+                   
                     <div class="container-fluid py-3">
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <h3 class="mb-0"><i class="fas fa-users me-2"></i>Quản lý người dùng</h3>
