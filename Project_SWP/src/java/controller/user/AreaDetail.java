@@ -86,7 +86,28 @@ public class AreaDetail extends HttpServlet {
             ReviewDAO reviewDAO = new ReviewDAO();
             Branch area = areaDAO.getAreaByIdWithManager(areaId);
 
-            List<Courts> courts = courtDAO.getCourtsByAreaId(areaId);
+            // Bổ sung filter thời gian
+            String dateStr = request.getParameter("date");
+            String fromTimeStr = request.getParameter("fromTime");
+            String toTimeStr = request.getParameter("toTime");
+
+            List<Courts> courts;
+            if (dateStr != null && fromTimeStr != null && toTimeStr != null
+                    && !dateStr.isEmpty() && !fromTimeStr.isEmpty() && !toTimeStr.isEmpty()) {
+                // Nếu có filter => chỉ lấy sân còn trống
+                java.sql.Date date = java.sql.Date.valueOf(dateStr);
+                java.sql.Time fromTime = java.sql.Time.valueOf(fromTimeStr + ":00");
+                java.sql.Time toTime = java.sql.Time.valueOf(toTimeStr + ":00");
+                courts = courtDAO.findAvailableCourts(areaId, date, fromTime, toTime);
+
+                // Để hiện lại filter trên form (không reset)
+                request.setAttribute("date", dateStr);
+                request.setAttribute("fromTime", fromTimeStr);
+                request.setAttribute("toTime", toTimeStr);
+            } else {
+                // Nếu chưa filter hoặc thiếu thông tin => hiện tất cả sân
+                courts = courtDAO.getCourtsByAreaId(areaId);
+            }
 
             request.setAttribute("area", area);
             request.setAttribute("courts", courts);

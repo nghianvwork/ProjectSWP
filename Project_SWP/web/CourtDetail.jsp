@@ -23,6 +23,30 @@
                 <p><i class="bi bi-info-circle-fill text-secondary me-2"></i><strong>Mô tả:</strong> ${area.description}</p>
             </div>
 
+            <!-- Bộ lọc thời gian -->
+            <form class="row row-cols-lg-auto g-3 align-items-center mb-4" method="get" action="AreaDetail">
+                <input type="hidden" name="area_id" value="${area.area_id}" />
+                <div class="col-12">
+                    <label class="form-label mb-0" for="date">Ngày:</label>
+                    <input type="date" class="form-control" name="date" id="date"
+                           value="${date != null ? date : ''}" required />
+                </div>
+                <div class="col-12">
+                    <label class="form-label mb-0" for="fromTime">Từ:</label>
+                    <input type="time" class="form-control" name="fromTime" id="fromTime"
+                           value="${fromTime != null ? fromTime : ''}" required />
+                </div>
+                <div class="col-12">
+                    <label class="form-label mb-0" for="toTime">Đến:</label>
+                    <input type="time" class="form-control" name="toTime" id="toTime"
+                           value="${toTime != null ? toTime : ''}" required />
+                </div>
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary">Lọc sân trống</button>
+                </div>
+            </form>
+
+
             <!-- Danh sách sân -->
             <h4 class="mb-4 text-success fw-semibold">🎯 Danh sách các sân thi đấu</h4>
 
@@ -46,7 +70,7 @@
                                     </ul>
                                 </div>
                                 <a href="book-field?courtId=${court.court_id}" class="btn btn-warning w-100 fw-semibold">⚡ Đặt ngay</a>
-                                
+
                             </div>
                         </div>
                     </div>
@@ -71,5 +95,5 @@
         <jsp:include page="homefooter.jsp" />
 
     </body>
-   
+
 </html>

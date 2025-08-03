@@ -20,6 +20,7 @@ import java.util.logging.Logger;
 import Dal.DBContext;
 import Model.AdminDashBoard;
 import Model.Courts;
+import java.util.Date;
 
 /**
  *
@@ -416,6 +417,42 @@ public class CourtDAO extends DBContext {
             default:
                 return "";
         }
+    }
+
+    public List<Courts> findAvailableCourts(int areaId, java.sql.Date date, Time fromTime, Time toTime) {
+        List<Courts> result = new ArrayList<>();
+        String sql = "SELECT c.* FROM Courts c "
+                + "WHERE c.area_id = ? "
+                + "AND NOT EXISTS ("
+                + "  SELECT 1 FROM Bookings b "
+                + "  WHERE b.court_id = c.court_id "
+                + "    AND b.date = ? "
+                + "    AND (b.start_time < ? AND b.end_time > ?)"
+                + ")";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, areaId);
+            ps.setDate(2, date);
+            ps.setTime(3, toTime);
+            ps.setTime(4, fromTime);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Courts court = new Courts();
+                court.setCourt_id(rs.getInt("court_id"));
+                court.setCourt_number(rs.getString("court_number"));
+                court.setType(rs.getString("type"));
+                court.setFloor_material(rs.getString("floor_material"));
+                court.setLighting(rs.getString("lighting"));
+                court.setDescription(rs.getString("description"));
+                court.setImage_url(rs.getString("image_url"));
+                court.setStatus(rs.getString("status"));
+                court.setArea_id(rs.getInt("area_id"));
+                court.setPrice(rs.getDouble("price"));
+                result.add(court);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return result;
     }
 
 }
